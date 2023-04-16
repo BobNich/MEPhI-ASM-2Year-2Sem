@@ -1,17 +1,18 @@
+
 BITS 64
 
 ; (a^3 + b^3) / (a^2 * c - b^2 * d + e)
 
 section .data
     ; Input variables
-    a       dw  2       ; 16-bit
-    b       db  2       ;  8-bit
-    c       dd  3       ; 32-bit
-    d       dd  4       ; 32-bit
-    e       dd  5       ; 32-bit
+    a       dw  32768    ; 16-bit
+    b       db  128       ;  8-bit
+    c       dd  10       ; 32-bit
+    d       dd  200      ; 32-bit
+    e       dd  2147483648       ; 32-bit
 
     ; Output variable
-    result  dd  0       ; 32-bit
+    result  dq  0       ; 32-bit
 
 section .text
     global _main
@@ -68,6 +69,7 @@ _denominator:
     ; Compute rax = (a^3 + b^3) / (a^2 * c - b^2 * d + e)
     mov     rax, r9     ; rax = (a^3 + b^3)
     div     rcx         ; rax = (a^3 + b^3) / (a^2 * c - b^2 * d + e)
+    mov     qword[result], rax ; result = rax 
     jmp     _exit_normal
 
 _exit_normal:
@@ -81,6 +83,6 @@ _exit_error:
     jmp     _exit
 
 _exit:
-    ; Exit program with syscall
+    ; Exit program
     mov     rax, 60     ; Syscall
     syscall
