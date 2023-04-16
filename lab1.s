@@ -12,7 +12,7 @@ section .data
     e       dd  2147483648       ; 32-bit
 
     ; Output variable
-    result  dq  0       ; 32-bit
+    result  dq  0       ; 64-bit
 
 section .text
     global _main
