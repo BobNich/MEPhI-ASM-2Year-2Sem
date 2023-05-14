@@ -24,11 +24,54 @@ _start:
 main:
     call    setup_indexes_array
     call    find_min
+    call    sort_prepare
     call    sort
     .end:
     jmp     _exit_normal
 
+
+; Actually sort
 sort:
+    mov     rax, 0               ; init local counter
+    movzx   ecx, byte [cols]    ; counter
+    .iterate_indexes_array:
+        lea     rbx, [indexes_array + rax * 8]    ; calculate the address of next element in indexes_array
+        mov     rbx, qword [rbx]                  ; load the current element
+
+        push    rcx
+        call    add_result_column                 ; add `rbx`-th column to result column
+        pop     rcx
+
+        inc     rax                               ; increment counter
+        loop     .iterate_indexes_array            ; loop
+    .end_loop:
+    ret
+
+; Add i-th column in result matrix
+add_result_column:
+    lea     rsi, [result_matrix + rax * 8] ; calculate the address of the `rbx`-th matrix column
+    lea     rdi, [matrix + rbx * 8]        ; calculate the address of the `rax`-th column
+
+    ; Iterate over each row of the two columns.
+    movzx   ecx, byte [rows]   ; rcx = number of rows
+
+    .iterate_row:
+        mov     r8, [rdi]
+        mov     qword [rsi], r8    ; store element in result_matrix
+        
+        ; Move to the next element in each column.
+        movzx   r8, byte [cols]             ; r8 = columns number
+        lea     rsi, [rsi + r8 * 8]         ; move to the next element in the result matrix column
+        lea     rdi, [rdi + r8 * 8]         ; move to the next element in the matrix column
+
+        ; Continue iterating over the rows while there are still elements left.
+        loop    .iterate_row
+    
+     ; Return to the caller.
+    ret
+
+; Sort min_array and indexes_array
+sort_prepare:
     movzx   eax, byte [cols]   ; rax = len
     dec     rax                ; rax = right = len - 1
     mov     rbx, 0             ; rbx = left
@@ -46,7 +89,7 @@ sort:
             jge      .forward_done          ; if j >= right, done
             jmp     .forward_loop
         .swap_forward_loop:
-            call    perform_swap_columns   ; swap(min[j], min[j+1])
+            call    perform_swap_indexes_array_and_min_array   ; swap(min[j], min[j+1])
             inc     rcx                    ; j++
             cmp     rcx, rax
             jge      .forward_done          ; if j >= right, done
@@ -63,7 +106,7 @@ sort:
             jle     .backward_done
             jmp     .backward_loop
         .swap_backward_loop:
-            call    perform_swap_columns   ; swap(min[j-1], min[j])
+            call    perform_swap_indexes_array_and_min_array   ; swap(min[j-1], min[j])
             dec     rcx                    ; j--
             cmp     rcx, rbx               ; if j =< left, done
             jle      .backward_done
@@ -78,16 +121,14 @@ sort:
 ; Initialize indexes array with indexes
 setup_indexes_array:
     mov r12, indexes_array      ; load the address of the indexes_array
-    mov rax, 0                  ; init local counter
-    initialize_array:
-        cmp     rax, qword [cols]
-        jge     end_loop                ; if counter > indexes array length
-        lea     r12, [r12 + rax * 8]    ; move to the next element in indexes_array
-        mov     r12, rax                ; load the current element
+    mov rax, 0                  ; init first element
+    movzx   ecx, byte [cols]    ; counter
+    .initialize_array:
+        mov     qword [r12], rax        ; load the current element
+        lea     r12, [r12 + 8]             ; move to the next element in the min array
         inc     rax                     ; increment counter
-        jmp     initialize_array        ; loop
-    end_loop:
-        ret
+        loop     .initialize_array      ; loop
+    ret
 
 ; Finds the minimum elements in the columns and adds them to the min array
 find_min:
@@ -97,23 +138,23 @@ find_min:
     mov     r11, 0            ; local row number counter
     .iterate_cols:
         mov     rbx, qword [rsi]  ; reset the minimum value first one in column
-        push    rcx           ; save the outer loop counter
-        movzx   ecx, byte [rows] ; load the number of rows
+        push    rcx               ; save the outer loop counter
+        movzx   ecx, byte [rows]  ; load the number of rows
         .iterate_rows:
-            mov    rax, qword [rsi]  ; load the current element
+            mov    rax, qword [rsi] ; load the current element
             cmp    rax, rbx         ; compare it with the minimum value
             jge    .skip_update     ; if greater or equal, skip updating the minimum value
             mov    rbx, rax         ; otherwise, update the minimum value
             .skip_update:
-            movzx   r8 , byte [cols] ; r8 = columns number
+            movzx   r8 , byte [cols]       ; r8 = columns number
             lea     rsi, [rsi + r8 * 8]    ; move to the next element in the column
-            loop    .iterate_rows    ; loop for all rows
-        pop     rcx                ; restore the outer loop counter    
-        mov     qword [rdi], rbx   ; store the minimum value in the min array
-        lea     rdi, [rdi + 8]     ; move to the next element in the min array
-        add     r11, 1             ; increment row number counter
-        lea     rsi, [matrix + r11 * 8]  ; reset 'rsi' and move to the next column
-        loop    .iterate_cols      ; loop for all columns
+            loop    .iterate_rows          ; loop for all rows
+        pop     rcx                        ; restore the outer loop counter    
+        mov     qword [rdi], rbx           ; store the minimum value in the min array
+        lea     rdi, [rdi + 8]             ; move to the next element in the min array
+        add     r11, 1                     ; increment row number counter
+        lea     rsi, [matrix + r11 * 8]    ; reset 'rsi' and move to the next column
+        loop    .iterate_cols              ; loop for all columns
     ret   
 
 ; Compare `j`-th and `j - gap`-th element of min_aray and "raise" the need_swap flag according to the sort type
@@ -145,40 +186,31 @@ compare:
         mov     rbp, 0
         ret
 
-swap_columns:
-    ; Calculate the memory addresses of the two columns.
-    lea     rax, [matrix + rsi * 8] ; calculate the address of the first column
-    lea     rbx, [matrix + rdi * 8] ; calculate the address of the second column
+swap_indexes_array_and_min_array:
+    ; Calculate the memory addresses of the two corresponing elements in "indexes_array".
+    lea     rax, [indexes_array + rsi * 8] ; calculate the address of the first column
+    lea     rbx, [indexes_array + rdi * 8] ; calculate the address of the second column
 
-    ; Iterate over each row of the two columns.
-    movzx   ecx, byte [rows]   ; rcx = number of rows
+    ; Calculate the memory addresses of the two corresponing elements in "min" array.
+    lea     rdx, [min_array + rsi * 8] ; calculate the address of the corresponing first column element
+    lea     rsi, [min_array + rdi * 8] ; calculate the address of the corresponing second column element
+
     .swap_min:
-        ; Calculate the memory addresses of the two corresponing elements in "min" array.
-        lea     rdx, [min_array + rsi * 8] ; calculate the address of the corresponing first column element
-        lea     rsi, [min_array + rdi * 8] ; calculate the address of the corresponing second column element
-
         ; Swap the values of the corresponding elements in the "min" array.
         mov r8, [rdx]
         xchg r8, [rsi]
         mov [rdx], r8
-    .iterate_rows:
+
+    .swap_indexes_array:
         ; Swap the values of the corresponding elements in the two columns.
         mov     r8, [rax]
         xchg    r8, [rbx]
         mov     [rax], r8
 
-        ; Move to the next element in each column.
-        movzx   r8, byte [cols]             ; r8 = columns number
-        lea     rax, [rax + r8 * 8]         ; move to the next element in the first column
-        lea     rbx, [rbx + r8 * 8]         ; move to the next element in the second column
-
-        ; Continue iterating over the rows while there are still elements left.
-        loop    .iterate_rows
-
     ; Return to the caller.
     ret
 
-perform_swap_columns:
+perform_swap_indexes_array_and_min_array:
     push    rax
     push    rbx
     push    rcx
@@ -186,7 +218,7 @@ perform_swap_columns:
     sub     rbp, r10
     mov     rsi, rbp
     mov     rdi, rcx
-    call    swap_columns        ; swap(rcx, rcx - r10)
+    call    swap_indexes_array_and_min_array        ; swap(rcx, rcx - r10)
     pop     rcx
     pop     rbx
     pop     rax
