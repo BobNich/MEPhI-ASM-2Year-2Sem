@@ -16,7 +16,7 @@ BITS 64
 ; 1) Buffer
 ; DONE 2) Add argc check
 ; DONE 3) FILE OPENING ERROR HANDLING
-; 4) Pointer size and filename 
+; ALMOST DONE 4) Pointer size and filename 
 ; 5) tab/..
 
 
@@ -39,13 +39,23 @@ main:
     cmp     eax, 2              ; Compare argc to 2
     jg      _argv_not_passed    ; Jump to _argv_not_passed if argc > 2
     mov     rdi, [rsp + 0x10]   ; Move the second argument (argv) to rdi
-    mov     rdi, [rdi]          ; Dereference the pointer to get the filename
-    mov     [filename], rdi     ; Store the filename in the variable
-    call    scan_file           ; Call the scan_file function to read the file
-    mov     edi, data           ; Move the address of the data variable to edi
-    call    iterate_lines       ; Call the iterate_lines function to process each line
-    mov     edi, data           ; Move the address of the data variable to edi
-    call    print               ; Call the print function to output the processed data
+
+    ; Copy the filename to the variable
+    xor rcx, rcx                    ; Reset filename legth counter to 0
+    .copy_filename_loop:
+        mov al, byte [rdi + rcx]    ; Read one character from the argument
+        cmp al, 0                   ; Check if it's the end of the string
+        je .done_filename_copying   ; If so, exit the loop
+        mov [filename + rcx], al    ; Store the character in the filename buffer
+        inc rcx                     ; Move to the next character
+        jmp .copy_filename_loop
+
+    .done_filename_copying:
+        call    scan_file           ; Call the scan_file function to read the file
+        mov     edi, data           ; Move the address of the data variable to edi
+        call    iterate_lines       ; Call the iterate_lines function to process each line
+        mov     edi, data           ; Move the address of the data variable to edi
+        call    print               ; Call the print function to output the processed data
     .end:
     jmp     _exit_normal        ; Jump to _exit_normal to exit the program
 
