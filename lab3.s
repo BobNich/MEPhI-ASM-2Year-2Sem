@@ -16,7 +16,7 @@ BITS 64
 ; 1) Buffer
 ; DONE 2) Add argc check
 ; DONE 3) FILE OPENING ERROR HANDLING
-; ALMOST DONE 4) Pointer size and filename 
+; DONE 4) Pointer size and filename 
 ; 5) tab/..
 
 
@@ -24,7 +24,7 @@ section .data
 
 err_file db "Error: invalid file or not available for reading", 0x0a, 0
 err_no_argv db "Please, use ./lab.out <filename> to run program properly", 0x0a, 0
-filename dq 0   ; Variable to store the filename
+filename db 0   ; Variable to store the filename
 data db 0       ; Variable to store the file data
 
 section .text
@@ -42,6 +42,7 @@ main:
 
     ; Copy the filename to the variable
     xor rcx, rcx                    ; Reset filename legth counter to 0
+
     .copy_filename_loop:
         mov al, byte [rdi + rcx]    ; Read one character from the argument
         cmp al, 0                   ; Check if it's the end of the string
@@ -51,6 +52,8 @@ main:
         jmp .copy_filename_loop
 
     .done_filename_copying:
+        mov [filename + rcx], al    ; Store the /0 in the end of filename
+        
         call    scan_file           ; Call the scan_file function to read the file
         mov     edi, data           ; Move the address of the data variable to edi
         call    iterate_lines       ; Call the iterate_lines function to process each line
@@ -223,7 +226,7 @@ print:
 scan_file:
     ; Open the file for reading
     mov     eax, 2                  ; Move 2 to eax (system call number for open)
-    mov     rdi, filename           ; Move the address of filename to edi (file name)
+    mov     edi, filename           ; Move the address of filename to edi (file name)
     xor     esi, esi                ; Set esi to 0 (no flags)
     syscall                         ; Call the system to open the file
     cmp     eax, 0                  ; Compare eax (return value) to 0
