@@ -112,6 +112,7 @@ get_input_data:
         .check_open_status:
             cmp     rax, 0              ; Compare return value to 0
             jl      _file_invalid       ; Jump to _file_invalid if the return value is negative (indicating an error)
+        .handle_buffer_size:
             cmp     rax, [buffer_size]
             jl      .buffer_size_less
             je      .buffer_size_equal
