@@ -5,7 +5,7 @@ err_file db "Error: invalid file or not available for reading", 0x0a, 0
 err_no_argv db "Error: no arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
 err_too_many_argv db "Error: too many arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
 
-buffer_size dq 1
+buffer_size dq 100
 
 filename dq 0
 data_buffer dq 0
@@ -37,7 +37,6 @@ task:
             call    get_input_data
             call    process_buffer
             call    put_output_data
-            jmp     .loop
     .end:
         ret
  
@@ -113,7 +112,7 @@ get_input_data:
             mov     rbp, rax            ; Move the file descriptor to ebp for later use
     .prepare_data_buffer:
         mov rsi, data_buffer            ; Buffer for reading
-        mov rdx, buffer_size            ; Number of bytes to read
+        mov rdx, qword [buffer_size]    ; Number of bytes to read
     .read_data:
         mov     rax, 0                  ; System call number for file read
         mov     rdi, rbp                ; File descriptor
@@ -164,7 +163,7 @@ _exit_normal:
 _exit_error:
     ; Exit program with error code 1
     pop     rdi                         ; Pop the address of the error message into rdi
-    call    get_output_data             ; Print the error message
+    call    put_output_data             ; Print the error message
     mov     rdi, 1                      ; Exit status (1)
     jmp     _exit
 
