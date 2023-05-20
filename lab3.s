@@ -1,6 +1,10 @@
 BITS 64
 section .data
 
+; r8 - first word in sentence length
+; r9 - current word in sentence length
+; r10 - is [size(data_buffer) < buffer_size] flag
+
 err_file db "Error: invalid file or not available for reading", 0x0a, 0
 err_no_argv db "Error: no arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
 err_too_many_argv db "Error: too many arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
@@ -19,9 +23,9 @@ _start:
 main:
     .handle_arguments:
         mov     rax, [rsp]              ; Move the first argument (argc) to rax
-        cmp     eax, 1                  ; Compare argc to 1
+        cmp     rax, 1                  ; Compare argc to 1
         je      _argv_not_passed        ; Jump to _argv_not_passed if argc = 1
-        cmp     eax, 2                  ; Compare argc to 2
+        cmp     rax, 2                  ; Compare argc to 2
         jg      _argv_to_many_passed    ; Jump to _argv_not_passed if argc > 2
         mov     rdi, [rsp + 0x10]       ; Move the second argument (argv) to rdi
     .start:
@@ -46,23 +50,23 @@ process_buffer:
 
 get_bounds_and_word_length:
     ; Get bounds and current word length
-    mov     esi, edi                ; Get current character position
+    mov     rsi, rdi                ; Get current character position
     mov     r9,  0                  ; Reset current word length to 0
     .loop:
-        cmp     byte [esi], 0x20    ; Compare current character to "space"
+        cmp     byte [rsi], 0x20    ; Compare current character to "space"
         je      .end                ; Stop, if the character is a "space"
-        cmp     byte [esi], 0x09    ; Compare current character to "tab"
+        cmp     byte [rsi], 0x09    ; Compare current character to "tab"
         je      .end                ; Stop, if the character is a "tab"
-        cmp     byte [esi], 0x0a    ; Compare current character to "newline"
+        cmp     byte [rsi], 0x0a    ; Compare current character to "newline"
         je      .end                ; Stop, if the character is a "newline"
-        cmp     byte [esi], 0       ; Compare current character to "end of data"
+        cmp     byte [rsi], 0       ; Compare current character to "end of data"
         je      .end                ; Stop, if the character is a "end of data"
-        inc     esi                 ; Move to the next character
+        inc     rsi                 ; Move to the next character
         inc     r9                  ; Increment current word length
         jmp     .loop               ; Continue checking next characters
     .end:
-    dec esi                         ; Get last valid character position
-    ret
+        dec rsi                     ; Get last valid character position
+        ret
 
 check_len_equals_first_word_len:
     ; Check task condition (First word length equals 'i'-th word length)
@@ -108,6 +112,15 @@ get_input_data:
         .check_open_status:
             cmp     rax, 0              ; Compare return value to 0
             jl      _file_invalid       ; Jump to _file_invalid if the return value is negative (indicating an error)
+            cmp     rax, [buffer_size]
+            jl      .buffer_size_less
+            je      .buffer_size_equal
+            .buffer_size_less:
+                mov     r10, 1
+                jmp     .success
+            .buffer_size_equal:
+                mov     r10, 0
+                jmp     .success    
         .success:
             mov     rbp, rax            ; Move the file descriptor to ebp for later use
     .prepare_data_buffer:
@@ -127,18 +140,18 @@ get_input_data:
 
 put_output_data:
     ; Print output into stdout
-    mov     esi, edi                ; Move edi to esi (current character position)
-    mov     edi, 1                  ; Move 1 to edi (file descriptor for stdout)
-    mov     edx, 1                  ; Move 1 to edx (number of bytes to write)
+    mov     rsi, rdi                ; Move edi to esi (current character position)
+    mov     rdi, 1                  ; Move 1 to edi (file descriptor for stdout)
+    mov     rdx, 1                  ; Move 1 to edx (number of bytes to write)
     .loop:
-        mov     eax, 1              ; Move 1 to eax (system call for write)
+        mov     rax, 1              ; Move 1 to eax (system call for write)
         syscall                     ; Call the system to write the byte at esi to stdout
-        cmp     byte [esi], 0       ; Compare the byte at esi to 0
+        cmp     byte [rsi], 0       ; Compare the byte at esi to 0
         je      .end                ; Jump to .end if the byte is 0 (end of line)
-        inc     esi                 ; Move to the next character
+        inc     rsi                 ; Move to the next character
         jmp     .loop
     .end:
-    ret
+        ret
 
 _argv_not_passed:
     ; Exit program with printing error msg (no needed argument)
