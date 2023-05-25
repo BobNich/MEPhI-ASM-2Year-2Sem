@@ -74,29 +74,27 @@ task:
         ret
  
 process_buffer:
-    push    rdi
     mov     rdi, data_buffer
-    mov     rcx, output_size
-    .check_buffer_word_undone:
-        add     rdi, rcx
-        dec     rdi
-        cmp     byte [esi], 0x20    ; check if space
-        je      .word_done
-        cmp     byte [esi], 0x09    ; check if tab
-        je      .word_done
-        cmp     byte [esi], 0x0a    ; check if \n
-        je      .word_done
-        cmp     byte [esi], 0       ; check if \0
-        je      .file_end
-        .word_undone:
-            mov     byte [is_last_symbol_transition], FALSE
-        .word_done:
-            mov     byte [is_last_symbol_transition], TRUE
-        .file_end:
-            mov     byte [is_last_line], TRUE
+    ; mov     rcx, output_size
+    ; .check_buffer_word_undone:
+    ;     add     rdi, rcx
+    ;     dec     rdi
+    ;     cmp     byte [esi], 0x20    ; check if space
+    ;     je      .word_done
+    ;     cmp     byte [esi], 0x09    ; check if tab
+    ;     je      .word_done
+    ;     cmp     byte [esi], 0x0a    ; check if \n
+    ;     je      .word_done
+    ;     cmp     byte [esi], 0       ; check if \0
+    ;     je      .file_end
+    ;     .word_undone:
+    ;         mov     byte [is_last_symbol_transition], FALSE
+    ;     .word_done:
+    ;         mov     byte [is_last_symbol_transition], TRUE
+    ;     .file_end:
+    ;         mov     byte [is_last_line], TRUE
     .end:
         add     qword [file_offset], output_size
-        pop    rdi
         ret
 
 get_filename:
