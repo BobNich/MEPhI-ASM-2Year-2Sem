@@ -79,6 +79,7 @@ process_buffer:
     mov     rcx, [output_size]
     .check_buffer_word_undone:
         add     rdi, rcx
+        dec     rdi
         cmp     byte [esi], 0x20    ; check if space
         je      .word_done
         cmp     byte [esi], 0x09    ; check if tab
