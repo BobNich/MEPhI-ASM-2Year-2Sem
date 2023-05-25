@@ -76,7 +76,7 @@ task:
 process_buffer:
     mov     rdi, data_buffer
     push    rdi
-    mov     rcx, output_size
+    mov     rcx, [output_size]
     .check_buffer_word_undone:
         add     rdi, rcx
         dec     rdi
