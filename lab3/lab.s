@@ -74,6 +74,7 @@ task:
         ret
  
 process_buffer:
+    push    rdi
     mov     rdi, data_buffer
     mov     rcx, output_size
     .check_buffer_word_undone:
@@ -95,6 +96,7 @@ process_buffer:
             mov     byte [is_last_line], TRUE
     .end:
         add     qword [file_offset], output_size
+        pop    rdi
         ret
 
 get_filename:
