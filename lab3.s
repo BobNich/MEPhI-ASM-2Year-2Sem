@@ -11,7 +11,7 @@ err_no_argv db "Error: no arguments. Please, use ./lab <filename> to run program
 err_too_many_argv db "Error: too many arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
 
 ; INTEGERS (SIZED)
-buffer_size dq 10
+buffer_size dq 100
 output_size dq 0
 
 file_offset dq 0
@@ -56,16 +56,60 @@ task:
         call    open_file
     .process_data:
         .loop:
+            cmp     byte [is_last_line], TRUE
+            je      .end
             call    get_input_data
             call    process_buffer
             call    put_output_data
+            jmp     .loop
     .end:
         call close_file
         ret
  
 process_buffer:
     mov     rdi, data_buffer
+    add     qword [file_offset], 10
     ret
+
+get_bounds_and_word_length:
+    ; Get bounds and current word length
+    mov     rsi, rdi                ; Get current character position
+    mov     r9,  0                  ; Reset current word length to 0
+    .loop:
+        cmp     byte [rsi], 0x20    ; Compare current character to "space"
+        je      .end                ; Stop, if the character is a "space"
+        cmp     byte [rsi], 0x09    ; Compare current character to "tab"
+        je      .end                ; Stop, if the character is a "tab"
+        cmp     byte [rsi], 0x0a    ; Compare current character to "newline"
+        je      .end                ; Stop, if the character is a "newline"
+        cmp     byte [rsi], 0       ; Compare current character to "end of data"
+        je      .end                ; Stop, if the character is a "end of data"
+        inc     rsi                 ; Move to the next character
+        inc     r9                  ; Increment current word length
+        jmp     .loop               ; Continue checking next characters
+    .end:
+        dec rsi                     ; Get last valid character position
+        ret
+
+check_len_equals_first_word_len:
+    ; Check task condition (First word length equals 'i'-th word length)
+    .check_if_first_word:
+        cmp     r8, 0                                               ; Compare first word length to 0
+        je      .init_first_word_length                             ; If 0 -> jump to initializing first word length
+        jmp     .check_if_current_word_len_equals_first_word_len    ; Otherwise, check whether 1st word length = 'i'-word length
+    .init_first_word_length:
+        mov     r8, r9                                              ; Current word length = first word length
+        jmp    .true                                                ; Jump to "don't delete this word" condition maker
+    .check_if_current_word_len_equals_first_word_len:
+        cmp     r8, r9                                              ; Compare first word length to current word length
+        je      .true                                               ; Jump to "Don't delete this word" if the lengths are equal
+        jmp     .false                                              ; Otherwise, jump to "Delete this word"
+    .false:
+        mov     rax, FALSE                                          ; Don't delete current word flag
+        ret
+    .true:
+        mov     rax, TRUE                                           ; Delete current word flag
+        ret
 
 get_filename:
     ; Get filename
@@ -95,17 +139,29 @@ open_file:
     ret
 
 get_input_data:
-    ; Read data from file to buffer with constant size
+    ;Read data from file to buffer with constant size
+    .offset:
+        mov rax, 8             ; sys_lseek system call
+        mov rdi, r10           ; File descriptor
+        mov rsi, [file_offset] ; Offset
+        mov rdx, 0             ; Whence (SEEK_SET)
+        syscall
     .prepare_data_buffer:
         mov rsi, data_buffer            ; Buffer for reading
         mov rdx, qword [buffer_size]    ; Number of bytes to read
     .read_data_with_offset:
-        mov rax, 0                      ; sys_lseek system call
+        mov rax, 0                      ; Read from file system call
         mov rdi, r10                    ; File descriptor
         syscall                         ; Read the file's data
     .handle_read_size:
         mov     [output_size], rax      ; Save output size  
-    ret
+        cmp     rdx, rax                ; Check if the end of file
+        jl     .handle_end_of_file      ; Set flag "Is last line" to true
+        jmp    .end
+    .handle_end_of_file:
+        mov     byte [is_last_line], TRUE
+    .end:
+        ret
 
 put_output_data:
     ; Print output into stdout
