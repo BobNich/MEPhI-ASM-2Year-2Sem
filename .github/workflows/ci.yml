@@ -1,0 +1,2 @@
+- name: Set up NASM
+  uses: ilammy/setup-nasm@v1.4.0
