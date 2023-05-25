@@ -1,6 +1,12 @@
 BITS 64
 section .data
 
+; Syscall
+SYS_OPEN    equ 0x02
+SYS_READ    equ 0
+SYS_CLOSE   equ 0x03
+SYS_LSEEK   equ 8
+
 ; r8 - first word in sentence length
 ; r9 - current word in sentence length
 
@@ -87,7 +93,7 @@ get_filename:
 
 open_file:
     ; Open file
-    mov     rax, 2                  ; System call number for file open
+    mov     rax, SYS_OPEN           ; System call number for file open
     mov     rdi, filename           ; File name
     xor     rsi, rsi                ; No flags
     syscall                         ; Open the file
@@ -101,7 +107,7 @@ open_file:
 get_input_data:
     ;Read data from file to buffer with constant size
     .offset:
-        mov rax, 8             ; sys_lseek system call
+        mov rax, SYS_LSEEK     ; sys_lseek system call
         mov rdi, [fd]          ; File descriptor
         mov rsi, [file_offset] ; Offset
         mov rdx, 0             ; Whence (SEEK_SET)
@@ -110,7 +116,7 @@ get_input_data:
         mov rsi, data_buffer            ; Buffer for reading
         mov rdx, qword [buffer_size]    ; Number of bytes to read
     .read_data_with_offset:
-        mov rax, 0                      ; Read from file system call
+        mov rax, SYS_READ               ; Read from file system call
         mov rdi, [fd]                   ; File descriptor
         syscall                         ; Read the file's data
     .handle_read_size:
@@ -134,7 +140,7 @@ put_output_data:
 
 close_file:
     ; Close file
-    mov rax, 3                      ; System call number for file close
+    mov rax, SYS_CLOSE              ; System call number for file close
     mov rdi, [fd]                   ; Move the file descriptor to edi
     syscall                         ; Close file
     ret
