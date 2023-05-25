@@ -15,9 +15,9 @@ section .data
     result  dq  0       ; 64-bit
 
 section .text
-    global _main
+    global _start
 
-_main:
+_start:
     ; Load input variables
     movzx   eax, word[a]
     movzx   ebx, byte[b]

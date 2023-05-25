@@ -7,7 +7,7 @@ LDFLAGS = -static
 SRCS = lab.s
 OBJS = $(SRCS:.s=.o)
 
-EXE = lab1
+EXE = lab
 
 all: $(SRCS) $(EXE)
 
