@@ -1,2 +1,23 @@
-- name: Set up NASM
-  uses: ilammy/setup-nasm@v1.4.0
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build each folder
+        run: |
+          cd lab1
+          make
+          cd lab2
+          make
+          cd lab3
+          make
