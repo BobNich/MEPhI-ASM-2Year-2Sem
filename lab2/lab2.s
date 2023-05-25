@@ -172,11 +172,20 @@ compare:
     ; Load the value of `min[j - gap]` into the `rsi` register
     mov   rsi, qword [rsi]
 
-    .descending:
-        ; Swap if `min[j - gap] < min[j]`
+
+    .sort_condition:
+        %ifdef UPWARD
+        cmp     rsi, rdi
+        jg      .need_swap
+        jge     .no_swap
+        %endif
+
+        %ifdef BACKWARD
         cmp     rsi, rdi
         jl      .need_swap
         jge     .no_swap
+        %endif
+
     .need_swap:
         ; Set the return value to 1 indicating that a swap is needed
         mov     rbp, 1
