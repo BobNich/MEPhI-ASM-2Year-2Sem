@@ -13,11 +13,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Install NASM
+        run: sudo apt-get update && sudo apt-get install -y nasm
+
       - name: Build each folder
         run: |
           cd lab1
+          /usr/bin/nasm -g -f elf64 lab.s -o lab.o
           make
           cd lab2
+          /usr/bin/nasm -g -f elf64 lab.s -o lab.o
           make
           cd lab3
+          /usr/bin/nasm -g -f elf64 lab.s -o lab.o
           make
