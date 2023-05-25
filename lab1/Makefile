@@ -4,7 +4,7 @@ LD = /usr/bin/ld
 ASFLAGS = -g -f elf64
 LDFLAGS = -static
 
-SRCS = lab1.s
+SRCS = lab.s
 OBJS = $(SRCS:.s=.o)
 
 EXE = lab1
