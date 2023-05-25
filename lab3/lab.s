@@ -90,8 +90,10 @@ process_buffer:
         je      .file_end
         .word_undone:
             mov     byte [is_last_symbol_transition], FALSE
+            jmp     .end
         .word_done:
             mov     byte [is_last_symbol_transition], TRUE
+            jmp     .end
         .file_end:
             mov     byte [is_last_line], TRUE
     .end:
