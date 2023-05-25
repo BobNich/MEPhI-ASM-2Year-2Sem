@@ -17,7 +17,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y nasm
 
       - name: Build each folder
-        working-directory: ./
+        working-directory: ./lab1
         run: |
           cd ../lab1
           /usr/bin/nasm -g -f elf64 lab.s -o lab.o
@@ -28,3 +28,13 @@ jobs:
           cd ../lab3
           /usr/bin/nasm -g -f elf64 lab.s -o lab.o
           make
+
+      - name: Create archive
+        run: |
+          zip -r build.zip lab1/lab lab2/lab lab3/lab
+          
+      - name: Upload archive
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifact
+          path: build.zip
