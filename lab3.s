@@ -10,6 +10,10 @@ section .data
     SYS_CLOSE   equ 0x03
     SYS_LSEEK   equ 8
 
+; BOOLEAN REPRESENTATION
+    TRUE  equ 1
+    FALSE equ 0
+
 ; CONSTANT ERROR MSGS
     err_file db "Error: invalid file or not available for reading", 0x0a, 0
     err_no_argv db "Error: no arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
@@ -31,10 +35,6 @@ section .data
 ; FLAGS
     is_last_line db 0
     is_last_symbol_transition db 0
-
-; BOOLEAN REPRESENTATION
-    TRUE  equ 1
-    FALSE equ 0
 
 
 section .text
