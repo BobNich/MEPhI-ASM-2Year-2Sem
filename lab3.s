@@ -1,39 +1,40 @@
 BITS 64
 section .data
 
-; Syscall
-SYS_OPEN    equ 0x02
-SYS_READ    equ 0
-SYS_CLOSE   equ 0x03
-SYS_LSEEK   equ 8
-
 ; r8 - first word in sentence length
 ; r9 - current word in sentence length
 
+; SYSCALLS
+    SYS_OPEN    equ 0x02
+    SYS_READ    equ 0
+    SYS_CLOSE   equ 0x03
+    SYS_LSEEK   equ 8
+
 ; CONSTANT ERROR MSGS
-err_file db "Error: invalid file or not available for reading", 0x0a, 0
-err_no_argv db "Error: no arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
-err_too_many_argv db "Error: too many arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
+    err_file db "Error: invalid file or not available for reading", 0x0a, 0
+    err_no_argv db "Error: no arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
+    err_too_many_argv db "Error: too many arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
 
-; INTEGERS (SIZED)
-buffer_size dq 100
-output_size dq 0
+; SIZES
+    buffer_size dq 100
+    output_size dq 0
 
-file_offset dq 0
+; FILE
+    filename dq 0
+    fd dq 0
+    file_offset dq 0
 
-; STRING (DATA)
-filename dq 0
-fd dq 0
-data_buffer dq 0
-output_buffer dq 0
+; DATA (INPUT/OUTPUT)
+    data_buffer dq 0
+    output_buffer dq 0
 
 ; FLAGS
-is_last_line db 0
-is_last_symbol_transition db 0
+    is_last_line db 0
+    is_last_symbol_transition db 0
 
 ; BOOLEAN REPRESENTATION
-TRUE  equ 1
-FALSE equ 0
+    TRUE  equ 1
+    FALSE equ 0
 
 
 section .text
