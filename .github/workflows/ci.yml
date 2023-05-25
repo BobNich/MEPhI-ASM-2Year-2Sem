@@ -16,11 +16,8 @@ jobs:
       - name: Install NASM
         run: sudo apt-get update && sudo apt-get install -y nasm
 
-      - name: LS Files
-        run: ls -al
-
       - name: Build each folder
-        working-directory: ./lab1
+        working-directory: ./
         run: |
           cd ../lab1
           /usr/bin/nasm -g -f elf64 lab.s -o lab.o
