@@ -18,12 +18,12 @@ jobs:
 
       - name: Build each folder
         run: |
-          cd lab1
+          cd ../lab1
           /usr/bin/nasm -g -f elf64 lab.s -o lab.o
           make
-          cd lab2
+          cd ../lab2
           /usr/bin/nasm -g -f elf64 lab.s -o lab.o
           make
-          cd lab3
+          cd ../lab3
           /usr/bin/nasm -g -f elf64 lab.s -o lab.o
           make
