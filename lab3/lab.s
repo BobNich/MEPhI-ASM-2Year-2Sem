@@ -77,6 +77,8 @@ process_buffer:
     mov     rdi, data_buffer
     push    rdi
     mov     rcx, [output_size]
+    cmp     rcx, [buffer_size]
+    jl      .file_end
     .check_buffer_word_undone:
         add     rdi, rcx
         dec     rdi
