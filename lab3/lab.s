@@ -20,7 +20,7 @@ section .data
     err_too_many_argv db "Error: too many arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
 
 ; SIZES
-    buffer_size dq 2
+    buffer_size dq 15
     output_size dq 0
 
 ; FILE
