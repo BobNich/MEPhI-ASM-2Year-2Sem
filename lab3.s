@@ -3,7 +3,6 @@ section .data
 
 ; r8 - first word in sentence length
 ; r9 - current word in sentence length
-; r10 - file descriptor
 
 ; CONSTANT ERROR MSGS
 err_file db "Error: invalid file or not available for reading", 0x0a, 0
@@ -18,6 +17,7 @@ file_offset dq 0
 
 ; STRING (DATA)
 filename dq 0
+fd dq 0
 data_buffer dq 0
 output_buffer dq 0
 
@@ -95,14 +95,14 @@ open_file:
         cmp     rax, 0              ; Compare return value to 0
         jl      _file_invalid       ; Jump to _file_invalid if the return value is negative (indicating an error)
     .success_open:
-        mov     r10, rax            ; Move the file descriptor to r10 for later use
+        mov     [fd], rax           ; Init file descriptor (fd)
     ret
 
 get_input_data:
     ;Read data from file to buffer with constant size
     .offset:
         mov rax, 8             ; sys_lseek system call
-        mov rdi, r10           ; File descriptor
+        mov rdi, [fd]          ; File descriptor
         mov rsi, [file_offset] ; Offset
         mov rdx, 0             ; Whence (SEEK_SET)
         syscall
@@ -111,7 +111,7 @@ get_input_data:
         mov rdx, qword [buffer_size]    ; Number of bytes to read
     .read_data_with_offset:
         mov rax, 0                      ; Read from file system call
-        mov rdi, r10                    ; File descriptor
+        mov rdi, [fd]                   ; File descriptor
         syscall                         ; Read the file's data
     .handle_read_size:
         mov     [output_size], rax      ; Save output size  
@@ -135,7 +135,7 @@ put_output_data:
 close_file:
     ; Close file
     mov rax, 3                      ; System call number for file close
-    mov rdi, r10                    ; Move the file descriptor to edi
+    mov rdi, [fd]                   ; Move the file descriptor to edi
     syscall                         ; Close file
     ret
 
