@@ -71,46 +71,6 @@ process_buffer:
     add     qword [file_offset], 10
     ret
 
-get_bounds_and_word_length:
-    ; Get bounds and current word length
-    mov     rsi, rdi                ; Get current character position
-    mov     r9,  0                  ; Reset current word length to 0
-    .loop:
-        cmp     byte [rsi], 0x20    ; Compare current character to "space"
-        je      .end                ; Stop, if the character is a "space"
-        cmp     byte [rsi], 0x09    ; Compare current character to "tab"
-        je      .end                ; Stop, if the character is a "tab"
-        cmp     byte [rsi], 0x0a    ; Compare current character to "newline"
-        je      .end                ; Stop, if the character is a "newline"
-        cmp     byte [rsi], 0       ; Compare current character to "end of data"
-        je      .end                ; Stop, if the character is a "end of data"
-        inc     rsi                 ; Move to the next character
-        inc     r9                  ; Increment current word length
-        jmp     .loop               ; Continue checking next characters
-    .end:
-        dec rsi                     ; Get last valid character position
-        ret
-
-check_len_equals_first_word_len:
-    ; Check task condition (First word length equals 'i'-th word length)
-    .check_if_first_word:
-        cmp     r8, 0                                               ; Compare first word length to 0
-        je      .init_first_word_length                             ; If 0 -> jump to initializing first word length
-        jmp     .check_if_current_word_len_equals_first_word_len    ; Otherwise, check whether 1st word length = 'i'-word length
-    .init_first_word_length:
-        mov     r8, r9                                              ; Current word length = first word length
-        jmp    .true                                                ; Jump to "don't delete this word" condition maker
-    .check_if_current_word_len_equals_first_word_len:
-        cmp     r8, r9                                              ; Compare first word length to current word length
-        je      .true                                               ; Jump to "Don't delete this word" if the lengths are equal
-        jmp     .false                                              ; Otherwise, jump to "Delete this word"
-    .false:
-        mov     rax, FALSE                                          ; Don't delete current word flag
-        ret
-    .true:
-        mov     rax, TRUE                                           ; Delete current word flag
-        ret
-
 get_filename:
     ; Get filename
     xor rcx, rcx                        ; Reset filename length counter to 0
