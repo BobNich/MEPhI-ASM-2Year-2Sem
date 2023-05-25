@@ -77,8 +77,9 @@ process_buffer:
     mov     rdi, data_buffer
     push    rdi
     mov     rcx, [output_size]
-    cmp     rcx, [buffer_size]
-    jl      .file_end
+    .check_is_file_end:
+        cmp     rcx, [buffer_size]
+        jl      .file_end
     .check_buffer_word_undone:
         add     rdi, rcx
         dec     rdi
@@ -88,8 +89,6 @@ process_buffer:
         je      .word_done
         cmp     byte [esi], 0x0a    ; check if \n
         je      .word_done
-        cmp     byte [esi], 0       ; check if \0
-        je      .file_end
         .word_undone:
             mov     byte [is_last_symbol_transition], FALSE
             jmp     .end
