@@ -74,7 +74,8 @@ task:
         ret
  
 process_buffer:
-    mov     rdi, data_buffer
+    mov     rdi, data_buffer    
+    mov     rsi, output_buffer
     push    rdi
     mov     rcx, [output_size]
     .check_is_file_end:
@@ -83,11 +84,11 @@ process_buffer:
     .check_buffer_word_undone:
         add     rdi, rcx
         dec     rdi
-        cmp     byte [esi], 0x20    ; check if space
+        cmp     byte [rdi], 0x20    ; check if space
         je      .word_done
-        cmp     byte [esi], 0x09    ; check if tab
+        cmp     byte [rdi], 0x09    ; check if tab
         je      .word_done
-        cmp     byte [esi], 0x0a    ; check if \n
+        cmp     byte [rdi], 0x0a    ; check if \n
         je      .word_done
         .word_undone:
             mov     byte [is_last_symbol_transition], FALSE
@@ -99,28 +100,10 @@ process_buffer:
             mov     byte [is_last_line], TRUE
             jmp     .work_with_data
     .work_with_data:
-        jmp     .clean_dividers
+        pop    rdi
     .end:
         add    qword [file_offset], rcx
-        pop    rdi
         ret
-
-clean_dividers:
-    .loop:
-        cmp     byte [rdi], 0x20    ; check if space
-        jne     .no_space
-        jmp     .delete
-        .no_space:
-        cmp     byte [rdi], 0x09    ; check if tab
-        jne     .end
-        .delete:
-        push    rdi
-        mov     rsi, 1
-        call    delete_characters
-        pop     rdi
-        jmp     .loop
-    .end:
-    ret
 
 get_filename:
     ; Get filename
