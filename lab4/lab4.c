@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 
+FILE* file;
+
 float custom(float x, float e) {
     
     float a_term = (x * x * x) / 8;
@@ -17,6 +19,7 @@ float custom(float x, float e) {
         b_term = 9 * b_term + 8;
         
         float term = a_term * b_term;
+        fprintf(file, "%i - %f\n", i, term);
 
         if (fabs(term) > e) {
             sum += term;
@@ -29,17 +32,26 @@ float custom(float x, float e) {
     return sum;
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+    
+    if (argc < 2) {
+        printf("Usage: ./program <filename>\n");
+        return 1;
+    }
     
     float x;
     float e;
+    const char* filename = argv[1];
 
     printf("Input x: ");
     scanf("%f", &x);
     printf("Input e: ");
     scanf("%f", &e);
 
+    file = fopen(filename, "w");
     float customResult = custom(x, e);
+    fclose(file);
+    
     float libraryResult = pow(sin(x), 3);
 
     printf("Custom result: %f\n", customResult);
