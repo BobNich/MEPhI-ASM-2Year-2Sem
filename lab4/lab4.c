@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <stdbool.h>
 
 FILE* file;
 
@@ -13,15 +14,19 @@ float custom(float x, float e) {
     
     int i = 1;
     
-    while (fabs(term) > e)
+    while (fabs(term) > e && isfinite(term))
     {
         a_term = a_term * (-1) * (x * x) / ((2 * i + 2) * (2 * i + 3));
         b_term = 9 * b_term + 8;
         
         float term = a_term * b_term;
         fprintf(file, "%i - %f\n", i, term);
-
-        if (fabs(term) > e) {
+        
+        if (!isfinite(term)) {
+            printf("Term became infinity.\n");
+            return sum;
+        }
+        else if (fabs(term) > e) {
             sum += term;
             i += 1;
         } else {
