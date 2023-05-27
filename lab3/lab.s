@@ -33,6 +33,7 @@ section .data
     output_buffer dq 0
 
 ; FLAGS
+    first_word_handle_done db 0
     is_last_line db 0
     is_last_symbol_transition db 0
 
@@ -72,11 +73,26 @@ task:
     .end:
         call close_file
         ret
- 
+
 process_buffer:
     mov     rdi, data_buffer    
     mov     rsi, output_buffer
+
     push    rdi
+    push    rsi
+    call    check_buffer
+    pop     rsi
+    pop     rdi
+
+    push    rdi
+    push    rsi
+    call    work_with_data
+    pop     rsi
+    pop     rdi
+
+    ret
+
+check_buffer:
     mov     rcx, [output_size]
     .check_is_file_end:
         cmp     rcx, [buffer_size]
@@ -92,18 +108,45 @@ process_buffer:
         je      .word_done
         .word_undone:
             mov     byte [is_last_symbol_transition], FALSE
-            jmp     .work_with_data
+            ret
         .word_done:
             mov     byte [is_last_symbol_transition], TRUE
-            jmp     .work_with_data
+            ret
         .file_end:
             mov     byte [is_last_line], TRUE
-            jmp     .work_with_data
-    .work_with_data:
-        pop    rdi
-    .end:
+            ret
+
+work_with_data:
+    .loop:
+        cmp    byte [rdi], 0x20    ; check if space
+        je      .transition
+        cmp     byte [rdi], 0x09   ; check if tab
+        je      .transition
+        cmp     byte [rdi], 0x0a   ; check if \n
+        je      .transition
+        cmp     byte [rdi], 0      ; check if \0
+        je      .done_work
+        jmp     .letter
+        .transition:
+            inc     rdi
+            jmp     .loop
+        .letter:
+            cmp     r8, 0
+            je      .first_word_handle
+            .first_word_handle_loop:
+                cmp    byte [rdi], 0x20    ; check if space
+                je      .done_first_word_handle
+                cmp     byte [rdi], 0x09   ; check if tab
+                je      .done_first_word_handle
+                cmp     byte [rdi], 0x0a   ; check if \n
+                je      .done_first_word_handle
+                cmp     byte [rdi], 0      ; check if \0
+                je      .done_work
+                inc     r8
+            .done_first_word_handle:
+                mov [first_word_handle_done], TRUE
+    .done_work:
         add    qword [file_offset], rcx
-        ret
 
 get_filename:
     ; Get filename
@@ -156,7 +199,7 @@ put_output_data:
     ; Print output into stdout
     mov     rsi, rdi                ; Move edi to esi (current character position)
     mov     rdi, 1                  ; File descriptor for stdout
-    mov     rdx, [output_size]        ; Number of bytes to write
+    mov     rdx, [output_size]      ; Number of bytes to write
     mov     rax, 1                  ; System call for write
     syscall
     ret
