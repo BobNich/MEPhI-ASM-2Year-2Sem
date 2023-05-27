@@ -14,7 +14,7 @@ float custom(float x, float e) {
     
     int i = 1;
     
-    while (fabs(term) > e && isfinite(term))
+    while (fabs(term) > e)
     {
         a_term = a_term * (-1) * (x * x) / ((2 * i + 2) * (2 * i + 3));
         b_term = 9 * b_term + 8;
