@@ -10,6 +10,12 @@ section .data
     SYS_CLOSE   equ 0x03
     SYS_LSEEK   equ 8
 
+; ASCII
+    SPACE       equ 0x20
+    TAB         equ 0x09
+    NEWLINE     equ 0x0a
+    END_STRING  equ 0
+
 ; BOOLEAN REPRESENTATION
     TRUE  equ 1
     FALSE equ 0
@@ -100,11 +106,11 @@ check_buffer:
     .check_buffer_word_undone:
         add     rdi, rcx
         dec     rdi
-        cmp     byte [rdi], 0x20    ; check if space
+        cmp     byte [rdi], SPACE
         je      .word_done
-        cmp     byte [rdi], 0x09    ; check if tab
+        cmp     byte [rdi], TAB
         je      .word_done
-        cmp     byte [rdi], 0x0a    ; check if \n
+        cmp     byte [rdi], NEWLINE
         je      .word_done
         .word_undone:
             mov     byte [is_last_symbol_transition], FALSE
@@ -118,13 +124,13 @@ check_buffer:
 
 work_with_data:
     .loop:
-        cmp    byte [rdi], 0x20    ; check if space
+        cmp    byte [rdi], SPACE
         je      .transition
-        cmp     byte [rdi], 0x09   ; check if tab
+        cmp     byte [rdi], TAB
         je      .transition
-        cmp     byte [rdi], 0x0a   ; check if \n
+        cmp     byte [rdi], NEWLINE
         je      .transition
-        cmp     byte [rdi], 0      ; check if \0
+        cmp     byte [rdi], END_STRING
         je      .done_work
         jmp     .letter
         .transition:
@@ -134,13 +140,13 @@ work_with_data:
             cmp     r8, 0
             je      .first_word_handle
             .first_word_handle_loop:
-                cmp    byte [rdi], 0x20    ; check if space
+                cmp    byte [rdi], SPACE
                 je      .done_first_word_handle
-                cmp     byte [rdi], 0x09   ; check if tab
+                cmp     byte [rdi], TAB
                 je      .done_first_word_handle
-                cmp     byte [rdi], 0x0a   ; check if \n
+                cmp     byte [rdi], NEWLINE
                 je      .done_first_word_handle
-                cmp     byte [rdi], 0      ; check if \0
+                cmp     byte [rdi], END_STRING
                 je      .done_work
                 inc     r8
             .done_first_word_handle:
