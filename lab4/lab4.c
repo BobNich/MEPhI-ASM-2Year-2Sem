@@ -1,33 +1,22 @@
 #include <stdio.h>
 #include <math.h>
 
-char *filename;
-
-
-void add_file_data(int number, float term) {
-    FILE *fp;
-    fp = fopen("result.txt", "w");
-    fprintf(fp, "%d: %f", number, term);
-    fclose(fp);
-}
-
 float custom(float x, float e) {
     
-    float a1 = (x * x * x) / 8;
-    float b1 = 8;
+    float a_term = (x * x * x) / 8;
+    float b_term = 8;
     
-    float term = a1 * b1;
+    float term = a_term * b_term;
     float sum = term;
     
     int i = 1;
     
     while (fabs(term) > e)
     {
-        a1 = a1 * (-1) * (x * x) / ((2 * i + 2) * (2 * i + 3));
-        b1 = 9 * b1 + 8;
+        a_term = a_term * (-1) * (x * x) / ((2 * i + 2) * (2 * i + 3));
+        b_term = 9 * b_term + 8;
         
-        float term = a1 * b1;
-        add_file_data(i, term);
+        float term = a_term * b_term;
 
         if (fabs(term) > e) {
             sum += term;
@@ -40,11 +29,7 @@ float custom(float x, float e) {
     return sum;
 }
 
-int main(int argc, char *argv[]) {
-        
-    if (argc == 2) {
-       filename = argv[1];
-    }
+int main() {
     
     float x;
     float e;

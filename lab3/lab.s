@@ -91,16 +91,36 @@ process_buffer:
         je      .word_done
         .word_undone:
             mov     byte [is_last_symbol_transition], FALSE
-            jmp     .end
+            jmp     .work_with_data
         .word_done:
             mov     byte [is_last_symbol_transition], TRUE
-            jmp     .end
+            jmp     .work_with_data
         .file_end:
             mov     byte [is_last_line], TRUE
+            jmp     .work_with_data
+    .work_with_data:
+        jmp     .clean_dividers
     .end:
         add    qword [file_offset], rcx
         pop    rdi
         ret
+
+clean_dividers:
+    .loop:
+        cmp     byte [rdi], 0x20    ; check if space
+        jne     .no_space
+        jmp     .delete
+        .no_space:
+        cmp     byte [rdi], 0x09    ; check if tab
+        jne     .end
+        .delete:
+        push    rdi
+        mov     rsi, 1
+        call    delete_characters
+        pop     rdi
+        jmp     .loop
+    .end:
+    ret
 
 get_filename:
     ; Get filename
