@@ -61,7 +61,7 @@ main:
         call    task
     .end:
         jmp     _exit_normal
-
+ 
 task:
     ; Run lab task
     .get_filename:
@@ -168,35 +168,6 @@ check_character:
     cmp     rcx, [output_size]
     je      .end_file
     jmp     .not_end_file
-    .end_file:
-        cmp     byte [last_word_undone], TRUE
-        je      .if_last_word_undone
-        cmp     byte [rdi], NEWLINE
-        je      .if_newline
-        call    put_word_into_output_buffer
-        .if_last_word_undone:
-            mov     offset, 
-            jmp     .done_work
-        .if_newline:
-            cmp     first_word_completed, TRUE
-            je      .first_word_complete
-            // Добавить '/n' к output_buffer
-            inc     rdi
-            ret
-            .first_word_complete:
-                // Удалить последний пробел
-                // Добавить '/n' к output_buffer
-                inc     rdi
-                ret
-    .not_end_file:
-        cmp     word_pointer, 0
-        je      
-        cmp     first_word_completed, TRUE
-        je      .first_word_complete
-        .first_word_complete:
-            jmp     .delete_last_space
-    .else:
-        jmp     .if_newline
     ret
 
 get_filename:
