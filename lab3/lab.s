@@ -3,6 +3,7 @@ section .data
 
 ; r8 - first word in sentence length
 ; r9 - current word in sentence length
+; r10 - current buffer output_size
 
 ; SYSCALLS
     SYS_OPEN    equ 0x02
@@ -89,9 +90,9 @@ process_buffer:
 
 check_buffer:
     ; Setup flags for lab
-    mov     rcx, [output_size]
+    mov     r10, [output_size]
     .check_buffer_word_undone:
-        add     rdi, rcx
+        add     rdi, r10
         dec     rdi
         cmp     byte [rdi], SPACE
         je      .word_done
@@ -101,9 +102,11 @@ check_buffer:
         je      .word_done
         .word_undone:
             mov     byte [last_word_undone], FALSE
+            xor     r10, r10
             ret
         .word_done:
             mov     byte [last_word_undone], TRUE
+            xor     r10, r10
             ret
 
 work_with_data:
@@ -125,7 +128,7 @@ work_with_data:
         ret
 
 check_character:
-    cmp     rcx, [output_size]
+    cmp     r10, [output_size]
     je      .end_file
     jmp     .not_end_file
     .end_file:
@@ -156,6 +159,7 @@ check_character:
             cmp     byte [rdi], NEWLINE
             call    symbol_is_newline_handling
             inc     rdi
+            inc     r10
             ret
 
 calculate_word_length:
@@ -198,23 +202,22 @@ put_word_into_output_buffer:
     .end:
         xor     word_pointer, word_pointer
         inc     rdi
+        inc     r10
         call    work_with_data
         ret
 
 symbol_is_newline_handling:
     cmp     byte[first_word_completed], TRUE
-    jmp     .remove_last_symbol
+    je     .remove_last_symbol
     // Добавить '/n' в output_buffer
-    mov     first_word_completed, FALSE
-    mov     r9, 0
-    mov     r8, 0
-    ret
+    jmp     .zero_flags
     .remove_last_symbol:
         // Удалить последний символ в output_buffer
         // Добавить '/n' в output_buffer
+    .zero_flags:
         mov     first_word_completed, FALSE
-        mov     r9, 0
-        mov     r8, 0
+        xor     r9, r9
+        xor     r8, r8
         ret
 
 get_filename:
