@@ -134,9 +134,11 @@ check_character:
         .last_is_undone_word:
             cmp     byte [first_word_completed], FALSE
             je      .offset_first_word
+            mul     r9, -1
             mov     qword [offset], r9
             ret
             .offset_first_word:
+                mul     r8, -1
                 mov     qword [offset], r8
                 ret
         .last_is_newline:
