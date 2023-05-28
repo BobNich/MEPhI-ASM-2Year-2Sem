@@ -152,7 +152,7 @@ work_with_data:
                 inc     r8
                 jmp     .first_word_handle
             .done_first_word_handle:
-                mov [first_word_handle_done], TRUE
+                mov byte [first_word_handle_done], TRUE
     .done_work:
         add    qword [file_offset], rcx
 
