@@ -47,7 +47,7 @@ Here are prerequiremenets:
                             Удалить последний пробел в output_buffer
                         Добавить '\n' в output_buffer -> 6.
                     Иначе -> 5.
-            Иначе если (word_pointer != NULL) -> 5.
+            Иначе если (word_pointer != NULL) -> 1.
             Иначе:
                 Если текущая буква '/n':
                     Если (first_word_completed == TRUE):
