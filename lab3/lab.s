@@ -139,7 +139,7 @@ work_with_data:
         .letter:
             cmp     r8, 0
             je      .first_word_handle
-            .first_word_handle_loop:
+            .first_word_handle:
                 cmp    byte [rdi], SPACE
                 je      .done_first_word_handle
                 cmp     byte [rdi], TAB
@@ -148,7 +148,9 @@ work_with_data:
                 je      .done_first_word_handle
                 cmp     byte [rdi], END_STRING
                 je      .done_work
+                inc     rdi
                 inc     r8
+                jmp     .first_word_handle
             .done_first_word_handle:
                 mov [first_word_handle_done], TRUE
     .done_work:
