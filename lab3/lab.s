@@ -121,6 +121,38 @@ work_with_data:
     .done_loop:
         ret
 
+check_character:
+    cmp     rcx, [output_size]
+    je      .end_file
+    jmp     .not_end_file
+    .end_file:
+        cmp     byte [last_word_undone], TRUE
+        je      .undone_word
+        cmp     byte [rdi], NEWLINE
+        je      .last_is_newline
+        call    put_word_into_output_buffer
+        .last_is_undone_word:
+            cmp     byte [first_word_completed], FALSE
+            je      .offset_first_word
+            mov     qword [offset], r9
+            ret
+            .offset_first_word:
+                mov     qword [offset], r8
+                ret
+        .last_is_newline:
+            call    symbol_is_newline_handling
+            ret
+    .not_end_file:
+        cmp     word_pointer, 0
+        je      .word_not_in_progress
+        call    work_with_data
+        ret
+        .word_not_in_progress:
+            cmp     byte [rdi], NEWLINE
+            call    symbol_is_newline_handling
+            inc     rdi
+            ret
+
 calculate_word_length:
     cmp     byte [first_word_completed], FALSE
     je      .calculate_first_word_length
@@ -163,38 +195,6 @@ put_word_into_output_buffer:
         inc     rdi
         call    work_with_data
         ret
-
-check_character:
-    cmp     rcx, [output_size]
-    je      .end_file
-    jmp     .not_end_file
-    .end_file:
-        cmp     byte [last_word_undone], TRUE
-        je      .undone_word
-        cmp     byte [rdi], NEWLINE
-        je      .last_is_newline
-        call    put_word_into_output_buffer
-        .last_is_undone_word:
-            cmp     byte [first_word_completed], FALSE
-            je      .offset_first_word
-            mov     qword [offset], r9
-            ret
-            .offset_first_word:
-                mov     qword [offset], r8
-                ret
-        .last_is_newline:
-            call    symbol_is_newline_handling
-            ret
-    .not_end_file:
-        cmp     word_pointer, 0
-        je      .word_not_in_progress
-        call    work_with_data
-        ret
-        .word_not_in_progress:
-            cmp     byte [rdi], NEWLINE
-            call    symbol_is_newline_handling
-            inc     rdi
-            ret
 
 symbol_is_newline_handling:
     cmp     byte[first_word_completed], TRUE
