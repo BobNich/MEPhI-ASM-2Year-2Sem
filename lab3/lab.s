@@ -197,7 +197,14 @@ put_word_into_output_buffer:
         je      .write_word
         jmp     .end
     .write_word:
-        //      Записать слово + пробел
+        .loop: 
+            cmp     r8, 0
+            je      .end
+            mov     output_buffer, byte [word_pointer]
+            inc     output_buffer
+            inc     word_pointer
+            dec     r8
+            jmp     .loop
         jmp     .end
     .end:
         xor     word_pointer, word_pointer
@@ -209,11 +216,13 @@ put_word_into_output_buffer:
 symbol_is_newline_handling:
     cmp     byte[first_word_completed], TRUE
     je     .remove_last_symbol
-    // Добавить '/n' в output_buffer
-    jmp     .zero_flags
+    .add_newline_symbol:
+        mov     output_buffer, byte [NEWLINE]
+        inc     output_buffer
+        jmp     .zero_flags
     .remove_last_symbol:
-        // Удалить последний символ в output_buffer
-        // Добавить '/n' в output_buffer
+        dec     output_buffer
+        jmp     .add_newline_symbol
     .zero_flags:
         mov     first_word_completed, FALSE
         xor     r9, r9
