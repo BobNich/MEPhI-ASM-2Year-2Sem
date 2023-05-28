@@ -37,11 +37,11 @@ section .data
 ; DATA (INPUT/OUTPUT)
     data_buffer dq 0
     output_buffer dq 0
+    word_pointer dq 0
 
 ; FLAGS
-    first_word_handle_done db 0
-    is_last_line db 0
-    is_last_symbol_transition db 0
+    first_word_completed db 0
+    last_word_undone db 0
 
 
 section .text
@@ -100,9 +100,6 @@ process_buffer:
 
 check_buffer:
     mov     rcx, [output_size]
-    .check_is_file_end:
-        cmp     rcx, [buffer_size]
-        jl      .file_end
     .check_buffer_word_undone:
         add     rdi, rcx
         dec     rdi
@@ -113,48 +110,73 @@ check_buffer:
         cmp     byte [rdi], NEWLINE
         je      .word_done
         .word_undone:
-            mov     byte [is_last_symbol_transition], FALSE
+            mov     byte [last_word_undone], FALSE
             ret
         .word_done:
-            mov     byte [is_last_symbol_transition], TRUE
-            ret
-        .file_end:
-            mov     byte [is_last_line], TRUE
+            mov     byte [last_word_undone], TRUE
             ret
 
 work_with_data:
     .loop:
-        cmp    byte [rdi], SPACE
-        je      .transition
+        cmp     byte [rdi], SPACE
+        je      .character_handling
         cmp     byte [rdi], TAB
-        je      .transition
+        call    .character_handling
         cmp     byte [rdi], NEWLINE
-        je      .transition
+        call    .character_handling
         cmp     byte [rdi], END_STRING
-        je      .done_work
-        jmp     .letter
-        .transition:
-            inc     rdi
-            jmp     .loop
-        .letter:
-            cmp     r8, 0
-            je      .first_word_handle
-            .first_word_handle:
-                cmp    byte [rdi], SPACE
-                je      .done_first_word_handle
-                cmp     byte [rdi], TAB
-                je      .done_first_word_handle
-                cmp     byte [rdi], NEWLINE
-                je      .done_first_word_handle
-                cmp     byte [rdi], END_STRING
-                je      .done_work
-                inc     rdi
-                inc     r8
-                jmp     .first_word_handle
-            .done_first_word_handle:
-                mov byte [first_word_handle_done], TRUE
-    .done_work:
-        add    qword [file_offset], rcx
+        je      .done_loop
+        call    calculate_word_length
+    .character_handling:
+        call    check_character
+    .done_loop:
+        ret
+
+calculate_word_length:
+    cmp     byte [first_word_completed], FALSE
+    je      .calculate_first_word_length
+    jmp     .calculate_current_word_length
+    .calculate_first_word_length:
+        call    handle_word_pointer
+        inc     r8
+        call    check_character
+        ret
+    .calculate_current_word_length:
+        call    handle_word_pointer
+        inc     r9
+        call    check_character   
+        ret
+
+handle_word_pointer:
+    cmp     qword [word_pointer], 0
+    je      .save_word_pointer
+    ret
+    .save_word_pointer:
+        mov     word_pointer, qword [rdi]
+        ret
+
+put_word_into_output_buffer:
+    cmp     byte [first_word_completed], FALSE
+    je      .write_first_word
+    jmp     .write_current_word
+    .write_first_word:
+        mov     byte [first_word_completed], TRUE
+        jmp     .write_word
+    .write_current_word:
+        cmp     r8, r9
+        je      .write_word
+        jmp     .end
+    .write_word:
+        //      Записать слово + пробел
+        jmp     .end
+    .end:
+        xor     word_pointer, word_pointer
+        inc     rdi
+        call    work_with_data
+        ret
+
+check_character:
+    ret
 
 get_filename:
     ; Get filename
