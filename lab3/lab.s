@@ -119,6 +119,7 @@ work_with_data:
     .character_handling:
         call    check_character
     .done_loop:
+        mov     byte [last_word_undone], FALSE
         ret
 
 check_character:
@@ -202,10 +203,16 @@ symbol_is_newline_handling:
     cmp     byte[first_word_completed], TRUE
     jmp     .remove_last_symbol
     // Добавить '/n' в output_buffer
+    mov     first_word_completed, FALSE
+    mov     r9, 0
+    mov     r8, 0
     ret
     .remove_last_symbol:
         // Удалить последний символ в output_buffer
         // Добавить '/n' в output_buffer
+        mov     first_word_completed, FALSE
+        mov     r9, 0
+        mov     r8, 0
         ret
 
 get_filename:
