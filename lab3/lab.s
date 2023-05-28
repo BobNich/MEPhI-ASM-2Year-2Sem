@@ -88,6 +88,7 @@ process_buffer:
     ret
 
 check_buffer:
+    ; Setup flags for lab
     mov     rcx, [output_size]
     .check_buffer_word_undone:
         add     rdi, rcx
@@ -106,6 +107,7 @@ check_buffer:
             ret
 
 work_with_data:
+    ; Loop througth every symbol in buffer
     .loop:
         cmp     byte [rdi], SPACE
         je      .character_handling
