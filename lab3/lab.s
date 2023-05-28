@@ -146,11 +146,11 @@ check_character:
         .last_is_undone_word:
             cmp     byte [first_word_completed], FALSE
             je      .offset_first_word
-            mul     r9, -1
+            imul     r9, -1
             mov     qword [file_offset], r9
             ret
             .offset_first_word:
-                mul     r8, -1
+                imul     r8, -1
                 mov     qword [file_offset], r8
                 ret
         .last_is_newline:
@@ -213,7 +213,7 @@ put_word_into_output_buffer:
             jmp     .loop
         jmp     .end
     .end:
-        xor     word_pointer, word_pointer
+        xor     qword [word_pointer], word_pointer
         inc     rdi
         inc     r10
         call    work_with_data
