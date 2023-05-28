@@ -43,22 +43,29 @@ Here are prerequiremenets:
                 Проверить last_word_undone = TRUE:
                     Если да -> (offset = длину последнего слова (неоконченного)) -> 6.
                     Иначе eсли текущая буква '/n':
+                        Если (first_word_completed == TRUE):
+                            Удалить последний пробел в output_buffer
                         Добавить '\n' в output_buffer
                     Иначе -> 5.
             Иначе если (word_pointer != NULL) -> 5.
             Иначе:
                 Если текущая буква '/n':
+                    Если (first_word_completed == TRUE):
+                        Удалить последний пробел в output_buffer
                     Добавить '\n' в output_buffer
                 Перейти к следующей букве -> 1.
 
     5. Записать слово в output_buffer:
         Если (first_word_completed == FALSE):
             Записать в output_buffer слово
+            Добавить пробел в output_buffer
             word_pointer = NULL 
             first_word_completed = TRUE -> (перейти к следующей букве) -> 1.
         Иначе:
             Проверить, равны ли current_word_length и first_word_length:
-                Если равны -> записать в output_buffer слово
+                Если равны: 
+                    Записать в output_buffer слово
+                    Добавить пробел в output_buffer
             word_pointer = NULL -> (перейти к следующей букве) -> 1.
 
     6. Закончить обработку:
