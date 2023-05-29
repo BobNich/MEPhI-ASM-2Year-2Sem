@@ -26,7 +26,11 @@ int process_image(char *input_filename, char *output_filename) {
         unsigned char green = image[i + 1];
         unsigned char blue = image[i + 2];
         
-        unsigned char gray = 0;
+        unsigned char inverted_red = 255 - red;
+        unsigned char inverted_green = 255 - green;
+        unsigned char inverted_blue = 255 - blue;
+
+        unsigned char gray = (inverted_red + inverted_green + inverted_blue) / 3;
         gray_image[i / channels] = gray;
     }
 
