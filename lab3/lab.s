@@ -192,13 +192,13 @@ calculate_word_length:
         call    handle_word_pointer
         inc     r8
         inc     rdi
-        call    check_character
+        call    work_with_data
         ret
     .calculate_current_word_length:
         call    handle_word_pointer
         inc     r9
         inc     rdi
-        call    check_character   
+        call    work_with_data   
         ret
 
 handle_word_pointer:
