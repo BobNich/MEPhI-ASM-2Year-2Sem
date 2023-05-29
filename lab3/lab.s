@@ -85,8 +85,12 @@ task:
 process_buffer:
     mov     rdi, data_buffer    
     mov     rsi, output_buffer
+    push    rdi
+    push    rsi
     call    check_buffer
     call    work_with_data
+    pop     rsi
+    pop     rdi
     ret
 
 check_buffer:
@@ -113,6 +117,7 @@ check_buffer:
             ret
         .last_line:
             mov     byte [is_last_line], TRUE
+            xor     r10, r10
             ret
 
 work_with_data:
@@ -220,7 +225,7 @@ put_word_into_output_buffer:
         ret
 
 symbol_is_newline_handling:
-    cmp     byte[first_word_completed], TRUE
+    cmp     byte [first_word_completed], TRUE
     je     .remove_last_symbol
     .add_newline_symbol:
         mov     byte [output_buffer], NEWLINE
@@ -284,10 +289,10 @@ get_input_data:
 
 put_output_data:
     ; Print output into stdout
-    mov     rsi, rdi                ; Move edi to esi (current character position)
-    mov     rdi, 1                  ; File descriptor for stdout
-    mov     rdx, [output_size]      ; Number of bytes to write
-    mov     rax, 1                  ; System call for write
+    mov     rsi, qword [output_buffer]  ; Move edi to esi (current character position)
+    mov     rdi, 1                      ; File descriptor for stdout
+    mov     rdx, [output_size]          ; Number of bytes to write
+    mov     rax, 1                      ; System call for write
     syscall
     ret
 
