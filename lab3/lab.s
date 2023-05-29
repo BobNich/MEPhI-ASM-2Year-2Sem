@@ -168,6 +168,8 @@ check_character:
     .not_end_file:
         cmp     qword [word_pointer], 0
         je      .word_not_in_progress
+        inc     rdi
+        inc     r10
         call    work_with_data
         ret
         .word_not_in_progress:
