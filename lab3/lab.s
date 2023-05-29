@@ -193,15 +193,11 @@ calculate_word_length:
     .calculate_first_word_length:
         call    handle_word_pointer
         inc     r8
-        inc     rdi
-        inc     r10
         call    work_with_data
         ret
     .calculate_current_word_length:
         call    handle_word_pointer
         inc     r9
-        inc     rdi
-        inc     r10
         call    work_with_data   
         ret
 
