@@ -172,10 +172,15 @@ check_character:
         ret
         .word_not_in_progress:
             cmp     byte [rdi], NEWLINE
-            call    symbol_is_newline_handling
+            je      .not_in_progress_newline
             inc     rdi
-            inc     r10
+            inc     r10  
             ret
+            .not_in_progress_newline:
+                call    symbol_is_newline_handling
+                inc     rdi
+                inc     r10
+                ret
 
 calculate_word_length:
     cmp     byte [first_word_completed], FALSE
