@@ -1,0 +1,71 @@
+Algorithm for lab3. b0.02
+
+Here are prerequiremenets:
+    1. Инициализировать word_pointer = NULL
+    2. Инициализировать first_word_completed = FALSE
+    3. Инициализировать r8 (first_word_length) = 0
+    4. Инициализировать r9 (current_word_length) = 0
+
+Алгоритм:
+    1. Проверить, пробел ли:
+        Если пробел -> 4.
+        Если не пробел -> 1.1.
+
+    1.1. Проверить, таб ли:
+        Если таб -> 4.
+        Если не таб -> 1.2.
+
+    1.2. Проверить, '/n' ли:
+        Если '/n' -> 4.
+        Если не '/n' -> 1.3.
+
+    1.3. Проверить, \0 ли:
+        Если \0 -> 6.
+        Если не \0 -> 2.
+
+    2. Проверить, первое ли слово:
+        Если first_word_completed == FALSE -> 2.1.
+        Иначе -> 2.2.
+
+    2.1. Посчитать длину первого слова:
+        Если word_pointer == NULL:
+            Сохранить указатель на первую букву слова (word_pointer = POINTER)
+        first_word_length += 1 -> 4.
+
+    2.2. Посчитать длину текущего слова:
+        Если word_pointer == NULL:
+            Сохранить указатель на первую букву слова (word_pointer = POINTER)
+        current_word_length += 1 -> 4.
+
+    4. Проверка текущей буквы и переход к следующей букве, если это возможно:
+        Проверить, пройден ли цикл обработки буфера (Cycle counter = Current buffer length):
+            Если выполнен:
+                Проверить last_word_undone = TRUE:
+                    Если да -> (offset = длину последнего слова (неоконченного)) -> 6.
+                    Иначе eсли текущая буква '/n':
+                        Если (first_word_completed == TRUE):
+                            Удалить последний пробел в output_buffer
+                        Добавить '\n' в output_buffer -> 6.
+                    Иначе -> 5.
+            Иначе если (word_pointer != NULL) -> 1.
+            Иначе:
+                Если текущая буква '/n':
+                    Если (first_word_completed == TRUE):
+                        Удалить последний пробел в output_buffer
+                    Добавить '\n' в output_buffer
+                Перейти к следующей букве -> 1.
+
+    5. Записать слово в output_buffer:
+        Если (first_word_completed == FALSE):
+            Записать в output_buffer слово
+            Добавить пробел в output_buffer
+            word_pointer = NULL 
+            first_word_completed = TRUE -> (перейти к следующей букве) -> 1.
+        Иначе:
+            Проверить, равны ли current_word_length и first_word_length:
+                Если равны: 
+                    Записать в output_buffer слово
+                    Добавить пробел в output_buffer
+            word_pointer = NULL -> (перейти к следующей букве) -> 1.
+
+    6. Закончить обработку:
