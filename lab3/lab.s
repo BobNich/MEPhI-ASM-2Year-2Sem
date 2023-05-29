@@ -88,6 +88,10 @@ process_buffer:
     push    rdi
     push    rsi
     call    check_buffer
+    pop     rsi
+    pop     rdi
+    push    rdi
+    push    rsi
     call    work_with_data
     pop     rsi
     pop     rdi
