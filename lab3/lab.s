@@ -130,9 +130,9 @@ work_with_data:
         cmp     byte [rdi], SPACE
         je      .character_handling
         cmp     byte [rdi], TAB
-        call    .character_handling
+        je      .character_handling
         cmp     byte [rdi], NEWLINE
-        call    .character_handling
+        je      .character_handling
         cmp     byte [rdi], END_STRING
         je      .done_loop
         call    calculate_word_length
