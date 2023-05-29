@@ -25,11 +25,8 @@ int process_image(char *input_filename, char *output_filename) {
         unsigned char red = image[i];
         unsigned char green = image[i + 1];
         unsigned char blue = image[i + 2];
-
-        unsigned char min_val = (red < green) ? ((red < blue) ? red : blue) : ((green < blue) ? green : blue);
-        unsigned char max_val = (red > green) ? ((red > blue) ? red : blue) : ((green > blue) ? green : blue);
-
-        unsigned char gray = (min_val + max_val) / 2;
+        
+        unsigned char gray = 0;
         gray_image[i / channels] = gray;
     }
 
