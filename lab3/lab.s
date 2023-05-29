@@ -142,6 +142,33 @@ work_with_data:
         mov     byte [last_word_undone], FALSE
         ret
 
+calculate_word_length:
+    cmp     byte [first_word_completed], FALSE
+    je      .calculate_first_word_length
+    jmp     .calculate_current_word_length
+    .calculate_first_word_length:
+        call    handle_word_pointer
+        inc     r8
+        inc     rdi
+        inc     r10
+        call    work_with_data
+        ret
+    .calculate_current_word_length:
+        call    handle_word_pointer
+        inc     r9
+        inc     rdi
+        inc     r10
+        call    work_with_data   
+        ret
+
+handle_word_pointer:
+    cmp     qword [word_pointer], 0
+    je      .save_word_pointer
+    ret
+    .save_word_pointer:
+        mov     qword [word_pointer], rdi
+        ret
+
 check_character:
     cmp     r10, [output_size]
     je      .end_file
@@ -185,33 +212,6 @@ check_character:
                 inc     r10
                 call    work_with_data
                 ret
-
-calculate_word_length:
-    cmp     byte [first_word_completed], FALSE
-    je      .calculate_first_word_length
-    jmp     .calculate_current_word_length
-    .calculate_first_word_length:
-        call    handle_word_pointer
-        inc     r8
-        inc     rdi
-        inc     r10
-        call    work_with_data
-        ret
-    .calculate_current_word_length:
-        call    handle_word_pointer
-        inc     r9
-        inc     rdi
-        inc     r10
-        call    work_with_data   
-        ret
-
-handle_word_pointer:
-    cmp     qword [word_pointer], 0
-    je      .save_word_pointer
-    ret
-    .save_word_pointer:
-        mov     qword [word_pointer], rdi
-        ret
 
 put_word_into_output_buffer:
     cmp     byte [first_word_completed], FALSE
