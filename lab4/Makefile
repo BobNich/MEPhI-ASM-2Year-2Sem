@@ -13,7 +13,7 @@ EXECUTABLE = lab.out
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CFLAGS) /usr/lib/x86_64-linux-gnu/crt1.o /usr/lib/x86_64-linux-gnu/crti.o $(OBJECTS) /usr/lib/x86_64-linux-gnu/crtn.o $(LIBS) -o $(EXECUTABLE)
+	$(CC) $(CFLAGS) $(OBJECTS) $(LIBS) -o $(EXECUTABLE)
 
 $(OBJECTS): $(SOURCE)
 	$(NASM) $(NASMFLAGS) -o $(OBJECTS) $(SOURCE)
