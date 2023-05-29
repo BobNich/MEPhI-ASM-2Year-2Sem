@@ -226,12 +226,12 @@ put_word_into_output_buffer:
         jmp     .end
     .write_word:
         .loop: 
-            cmp     r8, 0
+            cmp     r9, 0
             je      .end
             mov     qword [output_buffer], word_pointer
             inc     qword [output_buffer]
             inc     qword [word_pointer]
-            dec     r8
+            dec     r9
             jmp     .loop
         jmp     .end
     .end:
