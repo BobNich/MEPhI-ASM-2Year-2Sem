@@ -1,21 +1,22 @@
-AS = /usr/bin/nasm
-LD = /usr/bin/ld
+CC = ld
+NASM = nasm
+CFLAGS = -static -L /lib/gcc/x86_64-linux-gnu/11
+NASMFLAGS = -f elf64 -g -F dwarf
+LIBS = -lgcc -lgcc_eh -lc -lm
 
-ASFLAGS = -g -f elf64
-LDFLAGS = -static
+SOURCE = lab.asm
+OBJECTS = lab.o
+EXECUTABLE = lab.out
 
-SRCS = lab.s
-OBJS = $(SRCS:.s=.o)
+.PHONY: all clean
 
-EXE = lab
+all: $(EXECUTABLE)
 
-all: $(SRCS) $(EXE)
+$(EXECUTABLE): $(OBJECTS)
+	$(CC) $(CFLAGS) /usr/lib/x86_64-linux-gnu/crt1.o /usr/lib/x86_64-linux-gnu/crti.o $(OBJECTS) /usr/lib/x86_64-linux-gnu/crtn.o -$(LIBS) -o $(EXECUTABLE)
+
+$(OBJECTS): $(SOURCE)
+	$(NASM) $(NASMFLAGS) -o $(OBJECTS) $(SOURCE)
 
 clean:
-	rm -rf $(EXE) $(OBJS)
-
-$(EXE): $(OBJS)
-	$(LD) $(LDFLAGS) $(OBJS) -o $@
-
-.s.o:
-	$(AS) $(ASFLAGS) $< -o $@
+	rm -f $(OBJECTS) $(EXECUTABLE)
