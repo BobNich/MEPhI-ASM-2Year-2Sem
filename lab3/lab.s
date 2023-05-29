@@ -175,11 +175,13 @@ check_character:
             je      .not_in_progress_newline
             inc     rdi
             inc     r10  
+            call    work_with_data
             ret
             .not_in_progress_newline:
                 call    symbol_is_newline_handling
                 inc     rdi
                 inc     r10
+                call    work_with_data
                 ret
 
 calculate_word_length:
