@@ -1,15 +1,11 @@
-AS = nasm
-LD = ld
+AS = /usr/bin/nasm
+LD = /usr/bin/ld
 
 ASFLAGS = -g -f elf64
 LDFLAGS = -static
 
 SRCS = lab.s
 OBJS = $(SRCS:.s=.o)
-
-MODE=1
-DEF1=UPWARD
-DEF2=BACKWARD
 
 EXE = lab
 
@@ -19,7 +15,7 @@ clean:
 	rm -rf $(EXE) $(OBJS)
 
 $(EXE): $(OBJS)
-	$(LD) $(LDFLAGS) $(OBJS) -o $@ 
+	$(LD) $(LDFLAGS) $(OBJS) -o $@
 
 .s.o:
-	$(AS) $(ASFLAGS) $< -o $@ -D$(DEF$(MODE))
+	$(AS) $(ASFLAGS) $< -o $@
