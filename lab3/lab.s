@@ -112,11 +112,11 @@ check_buffer:
         cmp     byte [rdi], END_STRING
         je      .last_line
         .word_undone:
-            mov     byte [last_word_undone], FALSE
+            mov     byte [last_word_undone], TRUE
             xor     r10, r10
             ret
         .word_done:
-            mov     byte [last_word_undone], TRUE
+            mov     byte [last_word_undone], FALSE
             xor     r10, r10
             ret
         .last_line:
