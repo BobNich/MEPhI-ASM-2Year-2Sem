@@ -221,6 +221,7 @@ end_line_handle:
             ret
         .buffer_not_end:
             inc     rdi
+            call    work_with_data
             ret
 
 put_word_into_output_buffer:
