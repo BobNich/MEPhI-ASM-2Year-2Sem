@@ -39,14 +39,14 @@ Here are prerequiremenets:
                         Если (first_word_completed == TRUE):
                             Удалить последний пробел в output_buffer
                         Добавить '\n' в output_buffer -> 6.
-                    Иначе -> 5.
+                    Иначе -> 5. -> (перейти к следующей букве) -> 1.
             Иначе:
                 Если текущая буква '/n':
                     Если (first_word_completed == TRUE):
                         Удалить последний пробел в output_buffer
                     Добавить '\n' в output_buffer
                 Иначе, если (word_pointer != NULL) && (текущая буква = space/tab):
-                    Да -> 5.
+                    Да -> 5. -> (перейти к следующей букве) -> 1.
                 Иначе:
                     Перейти к следующей букве -> 1.
 
@@ -57,6 +57,5 @@ Here are prerequiremenets:
             Записать в output_buffer слово
             Добавить пробел в output_buffer
             word_pointer = NULL
-        (перейти к следующей букве) -> 1.
 
     6. Закончить обработку:
