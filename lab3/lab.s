@@ -173,7 +173,7 @@ check_character:
         je     .word_undone
         jmp     .word_done
         .word_undone:
-            mov     qword [offset], r9
+            mov     qword [file_offset], r9
             call    work_with_data
             ret
         .word_done:
@@ -211,7 +211,7 @@ end_line_handle:
         .first_word_complete:
             dec     qword [output_buffer]
         .add_newline_symbol:
-            mov     byte [output_buffer], rdi
+            mov     qword [output_buffer], rdi
             cmp     r10, qword [output_size]
             je      .buffer_end
             jmp     .buffer_not_end
