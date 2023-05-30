@@ -31,24 +31,24 @@ Here are prerequiremenets:
         current_word_length += 1 -> 4.
 
     4. Проверка текущей буквы и переход к следующей букве, если это возможно:
-        Проверить, пройден ли цикл обработки буфера (Cycle counter = Current buffer length):
-            Если выполнен:
-                Проверить last_word_undone = TRUE:
-                    Если да -> (offset = длину последнего слова (неоконченного)) -> 6.
-                    Иначе eсли текущая буква '/n':
-                        Если (first_word_completed == TRUE):
-                            Удалить последний пробел в output_buffer
-                        Добавить '\n' в output_buffer -> 6.
-                    Иначе -> 5. -> (перейти к следующей букве) -> 1.
-            Иначе:
-                Если текущая буква '/n':
-                    Если (first_word_completed == TRUE):
-                        Удалить последний пробел в output_buffer
-                    Добавить '\n' в output_buffer
-                Иначе, если (word_pointer != NULL) && (текущая буква = space/tab):
-                    Да -> 5. -> (перейти к следующей букве) -> 1.
-                Иначе:
-                    Перейти к следующей букве -> 1.
+        Текущая буква '/n':
+            Если (word_pointer != NULL) -> 5.
+            Если (first_word_completed == TRUE):
+                Удалить последний пробел в output_buffer
+            Добавить '\n' в output_buffer
+            Проверить, конец ли буфера:
+                Да -> 6.
+                Нет -> (перейти к следующей букве) -> 1.
+    
+        Конец ли буфера:
+            Да:
+                Если (last_word_undone == TRUE):
+                    Да:
+                        (offset = длину последнего слова (неоконченного)) -> 6.
+                    Иначе -> 5.
+            Нет:
+                Если (word_pointer != NULL) && (текущая буква = space/tab) -> 5.
+                (перейти к следующей букве) -> 1.
 
     5. Записать слово в output_buffer:
         Если (first_word_completed == FALSE):
@@ -56,6 +56,7 @@ Here are prerequiremenets:
         Если (current_word_length == first_word_length):
             Записать в output_buffer слово
             Добавить пробел в output_buffer
-            word_pointer = NULL
+        word_pointer = NULL
+        current_word_length = 0
 
     6. Закончить обработку:

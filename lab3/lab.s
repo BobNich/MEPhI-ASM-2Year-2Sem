@@ -143,22 +143,13 @@ work_with_data:
         ret
 
 calculate_word_length:
+    call    handle_word_pointer
     cmp     byte [first_word_completed], FALSE
-    je      .calculate_first_word_length
-    jmp     .calculate_current_word_length
-    .calculate_first_word_length:
-        call    handle_word_pointer
+    inc     r9
+    je      .first_word
+    ret
+    .first_word:
         inc     r8
-        inc     rdi
-        inc     r10
-        call    work_with_data
-        ret
-    .calculate_current_word_length:
-        call    handle_word_pointer
-        inc     r9
-        inc     rdi
-        inc     r10
-        call    work_with_data   
         ret
 
 handle_word_pointer:
@@ -180,15 +171,9 @@ check_character:
         je      .last_is_newline
         call    put_word_into_output_buffer
         .last_is_undone_word:
-            cmp     byte [first_word_completed], FALSE
-            je      .offset_first_word
-            imul     r9, -1
+            imul    r9, -1
             mov     qword [file_offset], r9
             ret
-            .offset_first_word:
-                imul     r8, -1
-                mov     qword [file_offset], r8
-                ret
         .last_is_newline:
             call    symbol_is_newline_handling
             ret
@@ -215,12 +200,12 @@ check_character:
 
 put_word_into_output_buffer:
     cmp     byte [first_word_completed], FALSE
-    je      .write_first_word
-    jmp     .write_current_word
-    .write_first_word:
+    je      .first_word_complete
+    jmp     .check_word_condition
+    .first_word_complete:
         mov     byte [first_word_completed], TRUE
-        jmp     .write_word
-    .write_current_word:
+        jmp     .check_word_condition
+    .check_word_condition:
         cmp     r8, r9
         je      .write_word
         jmp     .end
@@ -236,9 +221,6 @@ put_word_into_output_buffer:
         jmp     .end
     .end:
         xor     qword [word_pointer], word_pointer
-        inc     rdi
-        inc     r10
-        call    work_with_data
         ret
 
 symbol_is_newline_handling:
