@@ -27,8 +27,8 @@ Here are prerequiremenets:
         Если word_pointer == NULL:
             Сохранить указатель на первую букву слова (word_pointer = POINTER)
         Если (first_word_completed == FALSE):
-            Да: first_word_length += 1 -> 4.
-            Нет: current_word_length += 1 -> 4.
+            first_word_length += 1
+        current_word_length += 1 -> 4.
 
     4. Проверка текущей буквы и переход к следующей букве, если это возможно:
         Проверить, пройден ли цикл обработки буфера (Cycle counter = Current buffer length):
@@ -51,16 +51,12 @@ Here are prerequiremenets:
                     Перейти к следующей букве -> 1.
 
     5. Записать слово в output_buffer:
-        Если (first_word_completed == FALSE):
+        Проверить, равны ли current_word_length и first_word_length:
             Записать в output_buffer слово
             Добавить пробел в output_buffer
-            word_pointer = NULL 
-            first_word_completed = TRUE -> (перейти к следующей букве) -> 1.
-        Иначе:
-            Проверить, равны ли current_word_length и first_word_length:
-                Если равны: 
-                    Записать в output_buffer слово
-                    Добавить пробел в output_buffer
-            word_pointer = NULL -> (перейти к следующей букве) -> 1.
+            word_pointer = NULL
+        Если (first_word_completed == FALSE):
+            first_word_completed = TRUE
+        (перейти к следующей букве) -> 1.
 
     6. Закончить обработку:
