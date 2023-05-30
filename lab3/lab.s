@@ -100,6 +100,7 @@ process_buffer:
 check_buffer:
     ; Setup flags for lab
     mov     r10, [output_size]
+    add     qword [file_offset], r10
     .check_buffer_word_undone:
         add     rdi, r10
         dec     rdi
@@ -142,70 +143,19 @@ work_with_data:
         mov     byte [last_word_undone], FALSE
         ret
 
-check_character:
-    cmp     r10, [output_size]
-    je      .end_file
-    jmp     .not_end_file
-    .end_file:
-        cmp     byte [last_word_undone], TRUE
-        je      .last_is_undone_word
-        cmp     byte [rdi], NEWLINE
-        je      .last_is_newline
-        call    put_word_into_output_buffer
-        .last_is_undone_word:
-            cmp     byte [first_word_completed], FALSE
-            je      .offset_first_word
-            imul     r9, -1
-            mov     qword [file_offset], r9
-            ret
-            .offset_first_word:
-                imul     r8, -1
-                mov     qword [file_offset], r8
-                ret
-        .last_is_newline:
-            call    symbol_is_newline_handling
-            ret
-    .not_end_file:
-        cmp     qword [word_pointer], 0
-        je      .word_not_in_progress
-        inc     rdi
-        inc     r10
-        call    work_with_data
-        ret
-        .word_not_in_progress:
-            cmp     byte [rdi], NEWLINE
-            je      .not_in_progress_newline
-            inc     rdi
-            inc     r10  
-            call    work_with_data
-            ret
-            .not_in_progress_newline:
-                call    symbol_is_newline_handling
-                inc     rdi
-                inc     r10
-                call    work_with_data
-                ret
-
 calculate_word_length:
+    ; Calculate current word length and save needed data for future processing
+    call    handle_word_pointer
     cmp     byte [first_word_completed], FALSE
-    je      .calculate_first_word_length
-    jmp     .calculate_current_word_length
-    .calculate_first_word_length:
-        call    handle_word_pointer
+    inc     r9
+    je      .first_word
+    ret
+    .first_word:
         inc     r8
-        inc     rdi
-        inc     r10
-        call    work_with_data
-        ret
-    .calculate_current_word_length:
-        call    handle_word_pointer
-        inc     r9
-        inc     rdi
-        inc     r10
-        call    work_with_data   
         ret
 
 handle_word_pointer:
+    ; Save pointer of current word from input_buffer if needed
     cmp     qword [word_pointer], 0
     je      .save_word_pointer
     ret
@@ -213,48 +163,90 @@ handle_word_pointer:
         mov     qword [word_pointer], rdi
         ret
 
+check_character:
+    ; Handle current character from input_buffer
+    call    end_line_handle
+    cmp     r10, qword [output_size]
+    je      .buffer_end
+    jmp     .buffer_not_end
+    .buffer_end:
+        cmp     byte [last_word_undone], FALSE
+        je     .word_undone
+        jmp     .word_done
+        .word_undone:
+            dec     qword [file_offset], r9
+            call    work_with_data
+            ret
+        .word_done:
+            call put_word_into_output_buffer
+            ret
+    .buffer_not_end:
+        cmp     qword [word_pointer], 0
+        jne     .not_a_word
+        cmp     byte [rdi], SPACE
+        jne     .not_a_word
+        cmp     byte [rdi], TAB
+        jne     .not_a_word
+        call    put_word_into_output_buffer
+        ret
+        .not_a_word:
+            inc     rdi
+            call    work_with_data
+            ret
+
+end_line_handle:
+    ; Handle '\n' symbol
+    cmp     byte [rdi], NEWLINE
+    je     .newline
+    ret
+    .newline:
+        cmp     qword [word_pointer], 0
+        jne     .write_word
+        cmp     byte [first_word_completed], TRUE
+        je      .first_word_complete
+        jmp     .add_newline_symbol
+        .write_word:
+            call    put_word_into_output_buffer
+            cmp     byte [first_word_completed], TRUE
+            je      .first_word_complete
+        .first_word_complete:
+            dec     qword [output_buffer]
+        .add_newline_symbol:
+            mov     qword [output_buffer], rdi
+            cmp     r10, qword [output_size]
+            je      .buffer_end
+            jmp     .buffer_not_end
+        .buffer_end:
+            call    work_with_data
+            ret
+        .buffer_not_end:
+            inc     rdi
+            ret
+
 put_word_into_output_buffer:
+    ; Put word into output_buffer variable
     cmp     byte [first_word_completed], FALSE
-    je      .write_first_word
-    jmp     .write_current_word
-    .write_first_word:
+    je      .first_word_complete
+    jmp     .check_word_condition
+    .first_word_complete:
         mov     byte [first_word_completed], TRUE
-        jmp     .write_word
-    .write_current_word:
+        jmp     .check_word_condition
+    .check_word_condition:
         cmp     r8, r9
         je      .write_word
         jmp     .end
     .write_word:
         .loop: 
-            cmp     r8, 0
+            cmp     r9, 0
             je      .end
             mov     qword [output_buffer], word_pointer
             inc     qword [output_buffer]
             inc     qword [word_pointer]
-            dec     r8
+            dec     r9
             jmp     .loop
         jmp     .end
     .end:
         xor     qword [word_pointer], word_pointer
-        inc     rdi
-        inc     r10
-        call    work_with_data
-        ret
-
-symbol_is_newline_handling:
-    cmp     byte [first_word_completed], TRUE
-    je     .remove_last_symbol
-    .add_newline_symbol:
-        mov     byte [output_buffer], NEWLINE
-        inc     qword [output_buffer]
-        jmp     .zero_flags
-    .remove_last_symbol:
-        dec     qword [output_buffer]
-        jmp     .add_newline_symbol
-    .zero_flags:
-        mov     byte [first_word_completed], FALSE
-        xor     r9, r9
-        xor     r8, r8
         ret
 
 get_filename:
