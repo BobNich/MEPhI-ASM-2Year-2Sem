@@ -140,7 +140,6 @@ work_with_data:
     .character_handling:
         call    check_character
     .done_loop:
-        mov     byte [last_word_undone], FALSE
         ret
 
 calculate_word_length:
