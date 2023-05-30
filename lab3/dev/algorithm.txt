@@ -23,19 +23,12 @@ Here are prerequiremenets:
         Если \0 -> 6.
         Если не \0 -> 2.
 
-    2. Проверить, первое ли слово:
-        Если first_word_completed == FALSE -> 2.1.
-        Иначе -> 2.2.
-
-    2.1. Посчитать длину первого слова:
+    2. Посчитать длину слова:
         Если word_pointer == NULL:
             Сохранить указатель на первую букву слова (word_pointer = POINTER)
-        first_word_length += 1 -> 4.
-
-    2.2. Посчитать длину текущего слова:
-        Если word_pointer == NULL:
-            Сохранить указатель на первую букву слова (word_pointer = POINTER)
-        current_word_length += 1 -> 4.
+        Если (first_word_completed == FALSE):
+            Да: first_word_length += 1 -> 4.
+            Нет: current_word_length += 1 -> 4.
 
     4. Проверка текущей буквы и переход к следующей букве, если это возможно:
         Проверить, пройден ли цикл обработки буфера (Cycle counter = Current buffer length):
