@@ -7,6 +7,10 @@ Here are prerequiremenets:
     4. Инициализировать r9 (current_word_length) = 0
 
 Алгоритм:
+    0. Проверить, конец ли:
+        Конец -> завершить работу алгоритма
+        Не конец -> 1.
+
     1. Проверить, пробел ли:
         Если пробел -> 4.
         Если не пробел -> 1.1.
@@ -38,7 +42,7 @@ Here are prerequiremenets:
             Добавить '\n' в output_buffer
             Проверить, конец ли буфера:
                 Да -> 6.
-                Нет -> (перейти к следующей букве) -> 1.
+                Нет -> (перейти к следующей букве) -> 0.
     
         Конец ли буфера:
             Да:
@@ -48,7 +52,7 @@ Here are prerequiremenets:
                     Иначе -> 5.
             Нет:
                 Если (word_pointer != NULL) && (текущая буква = space/tab) -> 5.
-                (перейти к следующей букве) -> 1.
+                (перейти к следующей букве) -> 0.
 
     5. Записать слово в output_buffer:
         Если (first_word_completed == FALSE):
@@ -58,5 +62,3 @@ Here are prerequiremenets:
             Добавить пробел в output_buffer
         word_pointer = NULL
         current_word_length = 0
-
-    6. Закончить обработку:
