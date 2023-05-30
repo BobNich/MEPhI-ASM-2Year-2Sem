@@ -100,6 +100,7 @@ process_buffer:
 check_buffer:
     ; Setup flags for lab
     mov     r10, [output_size]
+    add     qword [file_offset], r10
     .check_buffer_word_undone:
         add     rdi, r10
         dec     rdi
@@ -173,8 +174,7 @@ check_character:
         je     .word_undone
         jmp     .word_done
         .word_undone:
-            imul    r9, -1
-            mov     qword [file_offset], r9
+            dec     qword [file_offset], r9
             call    work_with_data
             ret
         .word_done:
