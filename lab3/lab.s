@@ -161,42 +161,53 @@ handle_word_pointer:
         ret
 
 check_character:
-    cmp     r10, [output_size]
-    je      .end_file
-    jmp     .not_end_file
-    .end_file:
-        cmp     byte [last_word_undone], TRUE
-        je      .last_is_undone_word
-        cmp     byte [rdi], NEWLINE
-        je      .last_is_newline
-        call    put_word_into_output_buffer
-        .last_is_undone_word:
-            imul    r9, -1
-            mov     qword [file_offset], r9
-            ret
-        .last_is_newline:
-            call    symbol_is_newline_handling
-            ret
-    .not_end_file:
-        cmp     qword [word_pointer], 0
-        je      .word_not_in_progress
-        inc     rdi
-        inc     r10
-        call    work_with_data
-        ret
-        .word_not_in_progress:
-            cmp     byte [rdi], NEWLINE
-            je      .not_in_progress_newline
-            inc     rdi
-            inc     r10  
+    call    end_line_handle
+    cmp     r10, qword [output_size]
+    je      .buffer_end
+    jmp     .buffer_not_end
+    .buffer_end:
+        cmp     byte [last_word_undone], FALSE
+        je     .word_undone
+        jmp     .word_done
+        .word_undone:
+            mov     qword [offset], r9
             call    work_with_data
             ret
-            .not_in_progress_newline:
-                call    symbol_is_newline_handling
-                inc     rdi
-                inc     r10
-                call    work_with_data
-                ret
+        .word_done:
+            call put_word_into_output_buffer
+            ret
+    .buffer_not_end:
+        cmp     qword [word_pointer], 0
+        // TODO()     
+        ret
+
+end_line_handle:
+    cmp     byte [rdi], NEWLINE
+    je     .newline
+    ret
+    .newline:
+        cmp     qword [word_pointer], 0
+        jne     .write_word
+        cmp     byte [first_word_completed], TRUE
+        je      .first_word_complete
+        jmp     .add_newline_symbol
+        .write_word:
+            call    put_word_into_output_buffer
+            cmp     byte [first_word_completed], TRUE
+            je      .first_word_complete
+        .first_word_complete:
+            dec     qword [output_buffer]
+        .add_newline_symbol:
+            mov     byte [output_buffer], rdi
+            cmp     r10, qword [output_size]
+            je      .buffer_end
+            jmp     .buffer_not_end
+        .buffer_end:
+            call    work_with_data
+            ret
+        .buffer_not_end:
+            inc     rdi
+            ret
 
 put_word_into_output_buffer:
     cmp     byte [first_word_completed], FALSE
@@ -221,22 +232,6 @@ put_word_into_output_buffer:
         jmp     .end
     .end:
         xor     qword [word_pointer], word_pointer
-        ret
-
-symbol_is_newline_handling:
-    cmp     byte [first_word_completed], TRUE
-    je     .remove_last_symbol
-    .add_newline_symbol:
-        mov     byte [output_buffer], NEWLINE
-        inc     qword [output_buffer]
-        jmp     .zero_flags
-    .remove_last_symbol:
-        dec     qword [output_buffer]
-        jmp     .add_newline_symbol
-    .zero_flags:
-        mov     byte [first_word_completed], FALSE
-        xor     r9, r9
-        xor     r8, r8
         ret
 
 get_filename:
