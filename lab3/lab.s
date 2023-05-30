@@ -174,7 +174,7 @@ check_character:
         je     .word_undone
         jmp     .word_done
         .word_undone:
-            dec     qword [file_offset], r9
+            sub     qword [file_offset], r9
             call    work_with_data
             ret
         .word_done:
