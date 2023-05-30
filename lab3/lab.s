@@ -182,14 +182,13 @@ check_character:
             ret
     .buffer_not_end:
         cmp     qword [word_pointer], 0
-        jne     .not_a_word
+        je      .skip_word
         cmp     byte [rdi], SPACE
-        jne     .not_a_word
+        jne     .skip_word
         cmp     byte [rdi], TAB
-        jne     .not_a_word
+        jne     .skip_word
         call    put_word_into_output_buffer
-        ret
-        .not_a_word:
+        .skip_word:
             inc     rdi
             call    work_with_data
             ret
