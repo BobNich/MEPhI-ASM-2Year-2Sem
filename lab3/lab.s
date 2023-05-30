@@ -21,6 +21,9 @@ section .data
     TRUE  equ 1
     FALSE equ 0
 
+; ADDITIONAL CONSTANTS
+    NULL  equ 0
+
 ; CONSTANT ERROR MSGS
     err_file db "Error: invalid file or not available for reading", 0x0a, 0
     err_no_argv db "Error: no arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
@@ -155,7 +158,7 @@ calculate_word_length:
 
 handle_word_pointer:
     ; Save pointer of current word from input_buffer if needed
-    cmp     qword [word_pointer], 0
+    cmp     qword [word_pointer], NULL
     je      .save_word_pointer
     ret
     .save_word_pointer:
@@ -180,7 +183,7 @@ check_character:
             call put_word_into_output_buffer
             ret
     .buffer_not_end:
-        cmp     qword [word_pointer], 0
+        cmp     qword [word_pointer], NULL
         je      .skip_word
         cmp     byte [rdi], SPACE
         jne     .skip_word
@@ -198,7 +201,7 @@ end_line_handle:
     je     .newline
     ret
     .newline:
-        cmp     qword [word_pointer], 0
+        cmp     qword [word_pointer], NULL
         jne     .write_word
         cmp     byte [first_word_completed], TRUE
         je      .first_word_complete
