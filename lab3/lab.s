@@ -173,6 +173,7 @@ check_character:
         je     .word_undone
         jmp     .word_done
         .word_undone:
+            imul    r9, -1
             mov     qword [file_offset], r9
             call    work_with_data
             ret
