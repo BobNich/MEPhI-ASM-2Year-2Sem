@@ -181,8 +181,17 @@ check_character:
             ret
     .buffer_not_end:
         cmp     qword [word_pointer], 0
-        // TODO()     
+        jne     .not_a_word
+        cmp     byte [rdi], SPACE
+        jne     .not_a_word
+        cmp     byte [rdi], TAB
+        jne     .not_a_word
+        call    put_word_into_output_buffer
         ret
+        .not_a_word:
+            inc     rdi
+            call    work_with_data
+            ret
 
 end_line_handle:
     ; Handle '\n' symbol
