@@ -51,12 +51,12 @@ Here are prerequiremenets:
                     Перейти к следующей букве -> 1.
 
     5. Записать слово в output_buffer:
-        Проверить, равны ли current_word_length и first_word_length:
+        Если (first_word_completed == FALSE):
+            first_word_completed = TRUE
+        Если (current_word_length == first_word_length):
             Записать в output_buffer слово
             Добавить пробел в output_buffer
             word_pointer = NULL
-        Если (first_word_completed == FALSE):
-            first_word_completed = TRUE
         (перейти к следующей букве) -> 1.
 
     6. Закончить обработку:
