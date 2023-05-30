@@ -131,6 +131,7 @@ check_buffer:
 work_with_data:
     ; Loop througth every symbol in buffer
     .loop:
+        inc     r10
         cmp     byte [rdi], SPACE
         je      .character_handling
         cmp     byte [rdi], TAB
