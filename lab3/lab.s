@@ -143,6 +143,7 @@ work_with_data:
         ret
 
 calculate_word_length:
+    ; Calculate current word length and save needed data for future processing
     call    handle_word_pointer
     cmp     byte [first_word_completed], FALSE
     inc     r9
@@ -153,6 +154,7 @@ calculate_word_length:
         ret
 
 handle_word_pointer:
+    ; Save pointer of current word from input_buffer if needed
     cmp     qword [word_pointer], 0
     je      .save_word_pointer
     ret
@@ -161,6 +163,7 @@ handle_word_pointer:
         ret
 
 check_character:
+    ; Handle current character from input_buffer
     call    end_line_handle
     cmp     r10, qword [output_size]
     je      .buffer_end
@@ -182,6 +185,7 @@ check_character:
         ret
 
 end_line_handle:
+    ; Handle '\n' symbol
     cmp     byte [rdi], NEWLINE
     je     .newline
     ret
@@ -210,6 +214,7 @@ end_line_handle:
             ret
 
 put_word_into_output_buffer:
+    ; Put word into output_buffer variable
     cmp     byte [first_word_completed], FALSE
     je      .first_word_complete
     jmp     .check_word_condition
