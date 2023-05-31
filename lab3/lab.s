@@ -259,6 +259,9 @@ put_word_into_output_buffer:
             inc     rcx
             jmp     .loop
         jmp     .end
+    .end_write_word_loop:
+        mov     [output_buffer + r12], SPACE
+        inc     r12
     .end:
         mov     qword [word_pointer], NULL
         mov     r9, 0
