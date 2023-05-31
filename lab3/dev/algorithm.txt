@@ -40,8 +40,6 @@ Here are prerequiremenets:
 
         Текущая буква '/n':
             Если (word_pointer != NULL) -> 5.
-            Если (first_word_completed == TRUE):
-                Удалить последний пробел в output_buffer
             Добавить '\n' в output_buffer
             Проверить, конец ли буфера:
                 Нет -> (перейти к следующей букве)
@@ -60,7 +58,8 @@ Here are prerequiremenets:
         Если (first_word_completed == FALSE):
             first_word_completed = TRUE
         Если (current_word_length == first_word_length):
+            Если (first_word_completed == TRUE):
+                Добавить пробел в output_buffer
             Записать в output_buffer слово
-            Добавить пробел в output_buffer
         word_pointer = NULL
         current_word_length = 0
