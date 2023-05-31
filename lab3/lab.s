@@ -88,7 +88,7 @@ task:
 
 process_buffer:
     mov     rdi, data_buffer
-    mov     rsi, output_buffer
+    mov     r13, output_buffer
     push    rdi
     call    check_buffer
     pop     rdi
@@ -316,6 +316,7 @@ get_input_data:
 
 put_output_data:
     ; Print output into stdout
+    mov     rsi, qword [output_buffer]  ; Move edi to esi (current character position)
     mov     rdi, 1                      ; File descriptor for stdout
     mov     rdx, r12                    ; Number of bytes to write
     mov     rax, 1                      ; System call for write
