@@ -136,7 +136,7 @@ work_with_data:
         cmp     byte [rdi], NEWLINE
         je      .character_handling
         cmp     byte [rdi], END_STRING
-        je      .character_handling
+        je      .done_loop
         call    calculate_word_length
     .character_handling:
         call    check_character
@@ -211,10 +211,10 @@ end_line_handle:
             cmp     byte [first_word_completed], TRUE
             je      .first_word_complete
         .first_word_complete:
-            // Delete last space TODO()
+            ; Delete last space TODO()
             dec     qword [output_buffer]
         .add_newline_symbol:
-            // Add '/n' symbol TODO()
+            ; Add '/n' symbol TODO()
             mov     qword [output_buffer], rdi
             cmp     r10, qword [output_size]
             je      .buffer_end
