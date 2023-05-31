@@ -185,10 +185,12 @@ check_character:
         cmp     qword [word_pointer], NULL
         je      .skip_word
         cmp     byte [rdi], SPACE
-        jne     .skip_word
+        je      .add_word
         cmp     byte [rdi], TAB
-        jne     .skip_word
-        call    put_word_into_output_buffer
+        je      .add_word
+        jmp     .skip_word
+        .add_word:
+            call    put_word_into_output_buffer
         .skip_word:
             inc     rdi
             call    work_with_data
