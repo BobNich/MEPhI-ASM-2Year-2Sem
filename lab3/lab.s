@@ -145,8 +145,8 @@ work_with_data:
 calculate_word_length:
     ; Calculate current word length and save needed data for future processing
     call    handle_word_pointer
-    cmp     byte [first_word_completed], FALSE
     inc     r9
+    cmp     byte [first_word_completed], FALSE
     je      .first_word
     ret
     .first_word:
