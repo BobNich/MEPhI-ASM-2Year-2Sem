@@ -214,12 +214,11 @@ end_line_handle:
             cmp     byte [first_word_completed], TRUE
             je      .first_word_complete
         .first_word_complete:
-            ; Delete last space TODO()
-            dec     rsi
+            dec     r12
         .add_newline_symbol:
-            ; Add '/n' symbol TODO()
-            mov     rsi, rdi
+            mov     [output_buffer + r12], NEWLINE
             cmp     r10, qword [output_size]
+            inc     r12
             je      .buffer_end
             jmp     .buffer_not_end
         .buffer_end:
@@ -243,12 +242,14 @@ put_word_into_output_buffer:
         je      .write_word
         jmp     .end
     .write_word:
+        xor     rcx, rcx
         .loop: 
             cmp     r9, 0
             je      .end
-            mov     sil, byte [word_pointer + rcx]
-            mov     [output_buffer + rcx], sil
+            mov     al, byte [word_pointer + rcx]
+            mov     [output_buffer + r12], al
             dec     r9
+            inc     r12
             inc     rcx
             jmp     .loop
         jmp     .end
