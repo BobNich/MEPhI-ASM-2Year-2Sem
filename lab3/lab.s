@@ -243,10 +243,11 @@ put_word_into_output_buffer:
         jmp     .end
     .write_word:
         xor     rcx, rcx
+        mov     r13, qword [word_pointer]
         .loop: 
             cmp     r9, 0
             je      .end
-            mov     al, byte [word_pointer + rcx]
+            mov     al, byte [r13 + rcx]
             mov     [output_buffer + r12], al
             dec     r9
             inc     r12
