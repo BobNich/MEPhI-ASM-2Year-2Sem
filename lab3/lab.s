@@ -253,7 +253,7 @@ put_word_into_output_buffer:
             cmp     r9, 0
             je      .end
             mov     sil, byte [word_pointer + rcx]
-            mov     [word_pointer + rcx], sil
+            mov     [output_buffer + rcx], sil
             dec     r9
             inc     rcx
             jmp     .loop
