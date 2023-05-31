@@ -88,8 +88,10 @@ task:
 
 process_buffer:
     mov     rdi, data_buffer
-    mov     rsi, output_buffer
+    push    rdi
     mov     qword [output_buffer], 0
+    mov     rsi, output_buffer
+    pop     rdi
     push    rdi
     call    check_buffer
     pop     rdi
