@@ -88,7 +88,6 @@ task:
 
 process_buffer:
     mov     rdi, data_buffer
-    mov     qword [output_buffer], 0
     mov     rsi, output_buffer
     push    rdi
     call    check_buffer
@@ -117,7 +116,7 @@ check_buffer:
             mov     byte [last_word_undone], TRUE
             xor     r10, r10
             cmp     byte [rdi], END_STRING
-            je      .last_line
+            je      .last_line1
             ret
         .word_done:
             mov     byte [last_word_undone], FALSE
