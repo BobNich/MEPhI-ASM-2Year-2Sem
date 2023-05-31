@@ -166,9 +166,9 @@ handle_word_pointer:
 
 check_character:
     ; Handle current character from input_buffer
+    inc     r10
     call    end_line_handle
     cmp     r10, qword [output_size]
-    inc     r10
     je      .buffer_end
     jmp     .buffer_not_end
     .buffer_end:
