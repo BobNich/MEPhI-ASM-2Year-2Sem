@@ -178,7 +178,9 @@ check_character:
             call    work_with_data
             ret
         .word_done:
+            push    rdi
             call    put_word_into_output_buffer
+            pop    rdi
             call    work_with_data
             ret
     .buffer_not_end:
@@ -190,7 +192,9 @@ check_character:
         je      .add_word
         jmp     .skip_word
         .add_word:
+            push    rdi
             call    put_word_into_output_buffer
+            pop    rdi
         .skip_word:
             inc     rdi
             call    work_with_data
@@ -208,7 +212,9 @@ end_line_handle:
         je      .first_word_complete
         jmp     .add_newline_symbol
         .write_word:
+            push    rdi
             call    put_word_into_output_buffer
+            pop    rdi
             cmp     byte [first_word_completed], TRUE
             je      .first_word_complete
         .first_word_complete:
