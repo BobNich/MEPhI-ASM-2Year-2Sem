@@ -56,10 +56,9 @@ Here are prerequiremenets:
 
     5. Записать слово в output_buffer:
         Если (first_word_completed == FALSE):
-            first_word_completed = TRUE
+            Да: first_word_completed = TRUE
+            Иначе: Добавить пробел в output_buffer
         Если (current_word_length == first_word_length):
-            Если (first_word_completed == TRUE):
-                Добавить пробел в output_buffer
             Записать в output_buffer слово
         word_pointer = NULL
         current_word_length = 0

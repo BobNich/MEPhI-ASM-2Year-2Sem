@@ -211,15 +211,9 @@ end_line_handle:
     .newline:
         cmp     qword [word_pointer], NULL
         jne     .write_word
-        cmp     byte [first_word_completed], TRUE
-        je      .first_word_complete
         jmp     .add_newline_symbol
         .write_word:
             call    put_word_into_output_buffer
-            cmp     byte [first_word_completed], TRUE
-            je      .first_word_complete
-        .first_word_complete:
-            dec     r12
         .add_newline_symbol:
             mov     byte [output_buffer + r12], NEWLINE
             cmp     r10, qword [output_size]
@@ -238,9 +232,13 @@ put_word_into_output_buffer:
     ; Put word into output_buffer variable
     cmp     byte [first_word_completed], FALSE
     je      .first_word_complete
-    jmp     .check_word_condition
+    jmp     .first_word_incomplete
     .first_word_complete:
         mov     byte [first_word_completed], TRUE
+        jmp     .check_word_condition
+    .first_word_incomplete:
+        mov     byte [output_buffer + r12], SPACE
+        inc     r12
         jmp     .check_word_condition
     .check_word_condition:
         cmp     r8, r9
@@ -249,19 +247,15 @@ put_word_into_output_buffer:
     .write_word:
         xor     rcx, rcx
         mov     r13, qword [word_pointer]
-        .loop: 
+        .loop:
             cmp     r9, 0
-            je      .end_write_word_loop
+            je      .end
             mov     al, byte [r13 + rcx]
             mov     [output_buffer + r12], al
             dec     r9
             inc     r12
             inc     rcx
             jmp     .loop
-        .end_write_word_loop:
-            mov     byte [output_buffer + r12], SPACE
-            inc     r12
-            jmp     .end
     .end:
         mov     qword [word_pointer], NULL
         mov     r9, 0
