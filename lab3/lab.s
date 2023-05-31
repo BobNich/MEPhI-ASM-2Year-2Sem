@@ -312,6 +312,7 @@ get_input_data:
     .handle_read_size:
         mov     [output_size], rax      ; Save output size  
     .end:
+        xor     rsi, rsi
         ret
 
 put_output_data:
