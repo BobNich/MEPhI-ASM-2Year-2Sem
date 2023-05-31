@@ -303,6 +303,7 @@ get_input_data:
         mov rdx, 0             ; Whence (SEEK_SET)
         syscall
     .prepare_data_buffer:
+        mov rsi, data_buffer            ; Buffer for reading
         mov rdx, qword [buffer_size]    ; Number of bytes to read
     .read_data_with_offset:
         mov rax, SYS_READ               ; Read from file system call
