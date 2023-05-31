@@ -255,7 +255,7 @@ put_word_into_output_buffer:
             jmp     .loop
         jmp     .end
     .end:
-        xor     qword [word_pointer], word_pointer
+        mov     qword [word_pointer], NULL
         mov     r9, 0
         ret
 
