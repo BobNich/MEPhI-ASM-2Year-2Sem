@@ -75,7 +75,6 @@ task:
     .open_file:
         call    open_file
     .process_data:
-        mov     rdi, data_buffer
         mov     rsi, output_buffer
         .loop:
             cmp     byte [is_last_line], TRUE
@@ -89,6 +88,7 @@ task:
         ret
 
 process_buffer:
+    mov     rdi, data_buffer
     mov     qword [output_buffer], 0
     push    rdi
     call    check_buffer
