@@ -88,7 +88,7 @@ task:
 
 process_buffer:
     mov     rdi, data_buffer
-    mov     output_buffer, 0
+    mov     qword [output_buffer], 0
     mov     rsi, output_buffer
     push    rdi
     call    check_buffer
@@ -260,7 +260,7 @@ put_word_into_output_buffer:
             jmp     .loop
         jmp     .end
     .end_write_word_loop:
-        mov     [output_buffer + r12], SPACE
+        mov     byte [output_buffer + r12], SPACE
         inc     r12
     .end:
         mov     qword [word_pointer], NULL
