@@ -216,7 +216,7 @@ end_line_handle:
         .first_word_complete:
             dec     r12
         .add_newline_symbol:
-            mov     [output_buffer + r12], NEWLINE
+            mov     byte [output_buffer + r12], NEWLINE
             cmp     r10, qword [output_size]
             inc     r12
             je      .buffer_end
