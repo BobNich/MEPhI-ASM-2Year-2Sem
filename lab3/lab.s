@@ -220,10 +220,10 @@ end_line_handle:
             je      .first_word_complete
         .first_word_complete:
             ; Delete last space TODO()
-            dec     qword [output_buffer]
+            dec     rsi
         .add_newline_symbol:
             ; Add '/n' symbol TODO()
-            mov     qword [output_buffer], rdi
+            mov     rsi, rdi
             cmp     r10, qword [output_size]
             je      .buffer_end
             jmp     .buffer_not_end
@@ -251,8 +251,8 @@ put_word_into_output_buffer:
         .loop: 
             cmp     r9, 0
             je      .end
-            mov     qword [output_buffer], word_pointer
-            inc     qword [output_buffer]
+            mov     rsi, word_pointer
+            inc     rsi
             inc     qword [word_pointer]
             dec     r9
             jmp     .loop
