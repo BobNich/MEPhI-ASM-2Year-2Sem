@@ -251,7 +251,7 @@ put_word_into_output_buffer:
         .loop: 
             cmp     r9, 0
             je      .end
-            mov     rsi, word_pointer
+            mov     rsi, byte [word_pointer]
             inc     rsi
             inc     qword [word_pointer]
             dec     r9
