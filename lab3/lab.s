@@ -89,14 +89,10 @@ process_buffer:
     mov     rdi, data_buffer    
     mov     rsi, output_buffer
     push    rdi
-    push    rsi
     call    check_buffer
-    pop     rsi
     pop     rdi
     push    rdi
-    push    rsi
     call    work_with_data
-    pop     rsi
     pop     rdi
     ret
 
@@ -133,7 +129,6 @@ work_with_data:
     .loop:
         cmp     qword [output_size], r10
         je      .done_loop
-        inc     r10
         cmp     byte [rdi], SPACE
         je      .character_handling
         cmp     byte [rdi], TAB
@@ -141,7 +136,7 @@ work_with_data:
         cmp     byte [rdi], NEWLINE
         je      .character_handling
         cmp     byte [rdi], END_STRING
-        je      .done_loop
+        je      .character_handling
         call    calculate_word_length
     .character_handling:
         call    check_character
@@ -170,12 +165,13 @@ handle_word_pointer:
 
 check_character:
     ; Handle current character from input_buffer
+    inc     r10
     call    end_line_handle
     cmp     r10, qword [output_size]
     je      .buffer_end
     jmp     .buffer_not_end
     .buffer_end:
-        cmp     byte [last_word_undone], FALSE
+        cmp     byte [last_word_undone], TRUE
         je     .word_undone
         jmp     .word_done
         .word_undone:
@@ -183,7 +179,8 @@ check_character:
             call    work_with_data
             ret
         .word_done:
-            call put_word_into_output_buffer
+            call    put_word_into_output_buffer
+            call    work_with_data
             ret
     .buffer_not_end:
         cmp     qword [word_pointer], NULL
@@ -214,8 +211,10 @@ end_line_handle:
             cmp     byte [first_word_completed], TRUE
             je      .first_word_complete
         .first_word_complete:
+            // Delete last space TODO()
             dec     qword [output_buffer]
         .add_newline_symbol:
+            // Add '/n' symbol TODO()
             mov     qword [output_buffer], rdi
             cmp     r10, qword [output_size]
             je      .buffer_end
@@ -252,6 +251,7 @@ put_word_into_output_buffer:
         jmp     .end
     .end:
         xor     qword [word_pointer], word_pointer
+        mov     r9, 0
         ret
 
 get_filename:
