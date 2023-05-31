@@ -258,7 +258,6 @@ put_word_into_output_buffer:
             inc     r12
             inc     rcx
             jmp     .loop
-        jmp     .end
         .end_write_word_loop:
             mov     byte [output_buffer + r12], SPACE
             inc     r12
