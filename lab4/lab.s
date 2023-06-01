@@ -40,7 +40,7 @@ main:
     mov     rsi, rdx        ; precision
     mov     rdi, rax        ; x
     call    scan
-    ; call    open_file
+    call    open_file
     ; call    close_file
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
@@ -282,7 +282,7 @@ print:
 open_file:
     push    rbp
     mov     rbp, rsp
-    sub     rsp, 10h
+    sub     rsp, 8
     mov     rdi, filename
     mov     rax, 0
     call    fopen
@@ -300,9 +300,7 @@ open_file:
 close_file:
     push    rbp
     mov     rbp, rsp
-    sub     rsp, 10h
     mov     rax, qword [fd]
-    mov     rdi, rax
     call    fclose
     nop
     leave
@@ -311,7 +309,6 @@ close_file:
 ; print_file:
 ;     push    rbp
 ;     mov     rbp, rsp
-;     sub     rsp, 10h
 ;     movss   [rbp - 4h], xmm0  ; series_member
 ;     mov     qword[rbp - 8h], fd
 ;     mov     rdx, [rbp - 4h]
