@@ -39,15 +39,15 @@ section .data
     fd dq 0
     file_offset dq 0
 
-; DATA (INPUT/OUTPUT)
-    data_buffer dq 10
-    output_buffer dq 10
-
 ; FLAGS
     first_word_completed db 0
     last_word_undone db 0
     is_last_line db 0
 
+section .bss
+    ; DATA (INPUT/OUTPUT)
+    data_buffer dq 10
+    output_buffer dq 10
 
 section .text
     global _start
