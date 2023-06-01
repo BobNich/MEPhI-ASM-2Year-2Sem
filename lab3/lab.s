@@ -237,6 +237,8 @@ check_character:
 put_word_into_output_buffer:
     ; Put word into output_buffer variable
     .check_word_condition:
+        cmp     r9, 0
+        je      .end
         cmp     r8, r9
         je      .write_word
         jmp     .end
