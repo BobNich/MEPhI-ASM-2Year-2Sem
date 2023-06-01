@@ -215,6 +215,8 @@ end_line_handle:
         .write_word:
             call    put_word_into_output_buffer
         .add_newline_symbol:
+            mov     byte [first_word_completed], FALSE
+            xor     r8, r8
             mov     byte [rsi + r12], NEWLINE
             inc     r12
             cmp     r10, qword [output_size]
@@ -230,7 +232,6 @@ end_line_handle:
 
 put_word_into_output_buffer:
     ; Put word into output_buffer variable
-    mov     byte [first_word_completed], TRUE
     .check_word_condition:
         cmp     r8, r9
         je      .write_word
@@ -240,6 +241,7 @@ put_word_into_output_buffer:
         je      .add_space
         jmp     .add_word
         .add_space:
+            mov     byte [first_word_completed], TRUE
             mov     byte [rsi + r12], SPACE
             inc     r12
         .add_word:
