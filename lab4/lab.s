@@ -107,6 +107,7 @@ custom:
         mov     edi, edx        ; n
         movd    xmm0, eax       ; x
         call    series_member
+        call    print_file
         movd    eax, xmm0
         mov     [rbp - 4h], eax
         movss   xmm0, [rbp - 8h]
