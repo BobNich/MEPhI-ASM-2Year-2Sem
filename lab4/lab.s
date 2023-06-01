@@ -21,6 +21,8 @@ section .text
     extern  printf
     extern  pow
     extern  fprintf
+    extern  fopen
+    extern  fclose
     extern  fabs
     extern  sin
     global  main
