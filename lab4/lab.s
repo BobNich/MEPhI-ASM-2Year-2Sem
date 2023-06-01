@@ -299,7 +299,9 @@ open_file:
     cmp     qword[fd], 0
     jmp     .end
     .file_open_failed:
-        lea     rdi, aFileOpenFailed
+        lea     rax, aFileOpenFailed
+        mov     rdi, rax
+        mov     eax, 0
         call    printf
     .end:
         nop
