@@ -87,14 +87,14 @@ task:
         ret
 
 process_buffer:
-    mov     rdi, data_buffer
+    mov     r14, data_buffer
     mov     rsi, output_buffer
-    push    rdi
+    push    r14
     call    check_buffer
-    pop     rdi
-    push    rdi
+    pop     r14
+    push    r14
     call    work_with_data
-    pop     rdi
+    pop     r14
     ret
 
 check_buffer:
@@ -103,26 +103,26 @@ check_buffer:
         add     qword [file_offset], r10
         xor     r12, r12
     .check_buffer_word_undone:
-        add     rdi, r10
-        dec     rdi
-        cmp     byte [rdi], SPACE
+        add     r14, r10
+        dec     r14
+        cmp     byte [r14], SPACE
         je      .word_done
-        cmp     byte [rdi], TAB
+        cmp     byte [r14], TAB
         je      .word_done
-        cmp     byte [rdi], NEWLINE
+        cmp     byte [r14], NEWLINE
         je      .word_done
-        cmp     byte [rdi], END_STRING
+        cmp     byte [r14], END_STRING
         je      .last_line
         .word_undone:
             mov     byte [last_word_undone], TRUE
             xor     r10, r10
-            cmp     byte [rdi], END_STRING
+            cmp     byte [r14], END_STRING
             je      .last_line
             ret
         .word_done:
             mov     byte [last_word_undone], FALSE
             xor     r10, r10
-            cmp     byte [rdi], END_STRING
+            cmp     byte [r14], END_STRING
             je      .last_line
             ret
         .last_line:
@@ -135,13 +135,13 @@ work_with_data:
     .loop:
         cmp     qword [output_size], r10
         je      .done_loop
-        cmp     byte [rdi], SPACE
+        cmp     byte [r14], SPACE
         je      .character_handling
-        cmp     byte [rdi], TAB
+        cmp     byte [r14], TAB
         je      .character_handling
-        cmp     byte [rdi], NEWLINE
+        cmp     byte [r14], NEWLINE
         je      .character_handling
-        cmp     byte [rdi], END_STRING
+        cmp     byte [r14], END_STRING
         je      .done_loop
         call    calculate_word_length
     .character_handling:
@@ -166,13 +166,13 @@ handle_word_pointer:
     je      .save_word_pointer
     ret
     .save_word_pointer:
-        mov     qword [word_pointer], rdi
+        mov     qword [word_pointer], r14
         ret
 
 check_character:
     ; Handle current character from input_buffer
     inc     r10
-    cmp     byte [rdi], NEWLINE
+    cmp     byte [r14], NEWLINE
     je      .newline
     jmp     .continue
     .newline:
@@ -193,7 +193,7 @@ check_character:
             call    work_with_data
             ret
         .newline_buffer_not_end:
-            inc     rdi
+            inc     r14
             call    work_with_data
             ret
     .continue:
@@ -215,15 +215,15 @@ check_character:
     .buffer_not_end:
         cmp     qword [word_pointer], NULL
         je      .skip_word
-        cmp     byte [rdi], SPACE
+        cmp     byte [r14], SPACE
         je      .add_word
-        cmp     byte [rdi], TAB
+        cmp     byte [r14], TAB
         je      .add_word
         jmp     .skip_word
         .add_word:
             call    put_word_into_output_buffer
         .skip_word:
-            inc     rdi
+            inc     r14
             call    work_with_data
             ret
 
