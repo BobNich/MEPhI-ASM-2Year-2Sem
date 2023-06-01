@@ -2,7 +2,6 @@ BITS 64
 
 section .data
     filename        db 'output.txt', 0
-
     aInputX         db 'Input x: ',0
     aFloatFormat    db '%f',0
     aStringFormat   db '%f', 0
@@ -10,7 +9,6 @@ section .data
     aInputPrecision db 'Input precision: ',0
     aLibResultF     db 'Lib result: %f',0Ah,0
     aCustomResultF  db 'Custom result: %f',0Ah,0
-    aInfinityTerm   db 'Term is infinity, stopped.',0
     three_double    dq 4008000000000000h
     one             dd 3F800000h
     minus_one       dd 0BF800000h
@@ -22,7 +20,6 @@ section .text
     extern  scanf
     extern  printf
     extern  pow
-    extern  isfinite
     extern  fprintf
     extern  fabs
     extern  sin
