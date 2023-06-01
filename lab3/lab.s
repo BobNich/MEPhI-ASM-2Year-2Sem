@@ -88,7 +88,7 @@ task:
 
 process_buffer:
     mov     rdi, data_buffer
-    mov     r14, output_buffer
+    mov     rsi, output_buffer
     push    rdi
     call    check_buffer
     pop     rdi
@@ -215,7 +215,7 @@ end_line_handle:
         .write_word:
             call    put_word_into_output_buffer
         .add_newline_symbol:
-            mov     byte [output_buffer + r12], NEWLINE
+            mov     byte [rsi + r12], NEWLINE
             inc     r12
             cmp     r10, qword [output_size]
             je      .buffer_end
@@ -237,7 +237,7 @@ put_word_into_output_buffer:
         mov     byte [first_word_completed], TRUE
         jmp     .check_word_condition
     .first_word_incomplete:
-        mov     byte [output_buffer + r12], SPACE
+        mov     byte [rsi + r12], SPACE
         inc     r12
         jmp     .check_word_condition
     .check_word_condition:
@@ -251,7 +251,7 @@ put_word_into_output_buffer:
             cmp     r9, 0
             je      .end
             mov     al, byte [r13 + rcx]
-            mov     [output_buffer + r12], al
+            mov     [rsi + r12], al
             dec     r9
             inc     r12
             inc     rcx
