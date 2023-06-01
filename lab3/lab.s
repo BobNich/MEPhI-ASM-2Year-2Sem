@@ -86,6 +86,7 @@ task:
         ret
 
 process_buffer:
+    mov     rsi, output_buffer
     mov     rdi, data_buffer
     push    rdi
     call    check_buffer
