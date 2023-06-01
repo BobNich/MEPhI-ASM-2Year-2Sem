@@ -212,7 +212,6 @@ check_character:
             jmp     .not_complete
             .complete:
                 xor     r8, r8
-                mov     byte [first_word_completed], TRUE
             .not_complete:
                 call    work_with_data
                 ret
