@@ -101,6 +101,7 @@ check_buffer:
         mov     r10, [output_size]
         add     qword [file_offset], r10
         xor     r12, r12
+        xor     r9, r9
     .check_buffer_word_undone:
         add     rdi, r10
         dec     rdi
