@@ -67,7 +67,7 @@ main:
         call    task
     .end:
         jmp     _exit_normal
- 
+
 task:
     ; Run lab task
     .get_filename:
@@ -88,7 +88,7 @@ task:
 
 process_buffer:
     mov     rdi, data_buffer
-    mov     r14, output_buffer
+    mov     rsi, output_buffer
     push    rdi
     call    check_buffer
     pop     rdi
@@ -306,6 +306,7 @@ get_input_data:
     .handle_read_size:
         mov     [output_size], rax      ; Save output size  
     .end:
+        mov     byte [rsi], 0
         ret
 
 put_output_data:
