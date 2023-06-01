@@ -320,7 +320,7 @@ print_file:
     mov     rbp, rsp
     sub     rsp, 8
     mov     rdx, 0
-    movss   qword[rsp], xmm0  ; series_member
+    movss   [rbp - 4h], xmm0  ; series_member
     mov		rsi, aSeriesMember
     mov     rdi, fd
     mov     rax, 1
