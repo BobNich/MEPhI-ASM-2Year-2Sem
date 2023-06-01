@@ -216,8 +216,8 @@ end_line_handle:
             call    put_word_into_output_buffer
         .add_newline_symbol:
             mov     byte [output_buffer + r12], NEWLINE
-            cmp     r10, qword [output_size]
             inc     r12
+            cmp     r10, qword [output_size]
             je      .buffer_end
             jmp     .buffer_not_end
         .buffer_end:
