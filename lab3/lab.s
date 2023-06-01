@@ -172,10 +172,34 @@ handle_word_pointer:
 check_character:
     ; Handle current character from input_buffer
     inc     r10
-    call    end_line_handle
-    cmp     r10, qword [output_size]
-    je      .buffer_end
-    jmp     .buffer_not_end
+    cmp     byte [rdi], NEWLINE
+    je      .newline
+    jmp     .continue
+    .newline:
+        cmp     qword [word_pointer], NULL
+        jne     .write_word
+        jmp     .add_newline_symbol
+        .write_word:
+            call    put_word_into_output_buffer
+        .add_newline_symbol:
+            mov     byte [first_word_completed], FALSE
+            xor     r8, r8
+            mov     byte [rsi + r12], NEWLINE
+            inc     r12
+            cmp     r10, qword [output_size]
+            je      .buffer_end
+            jmp     .buffer_not_end
+        .buffer_end:
+            call    work_with_data
+            ret
+        .buffer_not_end:
+            inc     rdi
+            call    work_with_data
+            ret
+    .continue:
+        cmp     r10, qword [output_size]
+        je      .buffer_end
+        jmp     .buffer_not_end
     .buffer_end:
         cmp     byte [last_word_undone], TRUE
         je     .word_undone
@@ -199,33 +223,6 @@ check_character:
         .add_word:
             call    put_word_into_output_buffer
         .skip_word:
-            inc     rdi
-            call    work_with_data
-            ret
-
-end_line_handle:
-    ; Handle '\n' symbol
-    cmp     byte [rdi], NEWLINE
-    je     .newline
-    ret
-    .newline:
-        cmp     qword [word_pointer], NULL
-        jne     .write_word
-        jmp     .add_newline_symbol
-        .write_word:
-            call    put_word_into_output_buffer
-        .add_newline_symbol:
-            mov     byte [first_word_completed], FALSE
-            xor     r8, r8
-            mov     byte [rsi + r12], NEWLINE
-            inc     r12
-            cmp     r10, qword [output_size]
-            je      .buffer_end
-            jmp     .buffer_not_end
-        .buffer_end:
-            call    work_with_data
-            ret
-        .buffer_not_end:
             inc     rdi
             call    work_with_data
             ret
