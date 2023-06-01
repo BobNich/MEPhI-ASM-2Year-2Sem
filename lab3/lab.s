@@ -88,24 +88,14 @@ task:
 
 process_buffer:
     mov     rdi, data_buffer
-    xor     rcx, rcx
-    .data_buffer_copy_loop:
-        cmp     rcx, [output_size]
-        je .start_process
-        mov al, byte [rsi + rcx]
-        mov [data_buffer + rcx], al
-        inc rcx
-        jmp .data_buffer_copy_loop
-    .start_process:
-        xor     rsi, rsi
-        mov     rsi, output_buffer
-        push    rdi
-        call    check_buffer
-        pop     rdi
-        push    rdi
-        call    work_with_data
-        pop     rdi
-        ret
+    mov     rsi, output_buffer
+    push    rdi
+    call    check_buffer
+    pop     rdi
+    push    rdi
+    call    work_with_data
+    pop     rdi
+    ret
 
 check_buffer:
     .setup_counters:
