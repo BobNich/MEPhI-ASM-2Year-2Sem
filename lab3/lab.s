@@ -88,7 +88,7 @@ task:
 
 process_buffer:
     mov     r14, data_buffer
-    mov     rsi, output_buffer
+    mov     r15, output_buffer
     push    r14
     call    check_buffer
     pop     r14
@@ -184,7 +184,7 @@ check_character:
         .add_newline_symbol:
             mov     byte [first_word_completed], FALSE
             xor     r8, r8
-            mov     byte [rsi + r12], NEWLINE
+            mov     byte [r15 + r12], NEWLINE
             inc     r12
             cmp     r10, qword [output_size]
             je      .newline_buffer_end
@@ -238,7 +238,7 @@ put_word_into_output_buffer:
         mov     byte [first_word_completed], TRUE
         je      .add_word
         .add_space:
-            mov     byte [rsi + r12], SPACE
+            mov     byte [r15 + r12], SPACE
             inc     r12
         .add_word:
             xor     rcx, rcx
@@ -247,7 +247,7 @@ put_word_into_output_buffer:
                 cmp     r9, 0
                 je      .end
                 mov     al, byte [r13 + rcx]
-                mov     [rsi + r12], al
+                mov     [r15 + r12], al
                 dec     r9
                 inc     r12
                 inc     rcx
@@ -307,6 +307,7 @@ get_input_data:
 
 put_output_data:
     ; Print output into stdout
+    mov     rsi, r15
     mov     rdi, 1                      ; File descriptor for stdout
     mov     rdx, r12                    ; Number of bytes to write
     mov     rax, 1                      ; System call for write
