@@ -42,7 +42,6 @@ section .data
 ; DATA (INPUT/OUTPUT)
     data_buffer dq 0
     output_buffer dq 0
-    word_pointer dq 0
 
 ; FLAGS
     first_word_completed db 0
