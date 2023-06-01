@@ -303,7 +303,7 @@ print_file:
     mov     rbp, rsp
     sub     rsp, 10h
     movss   [rbp - 4h], xmm0  ; series_member
-    mov     [rbp - 8h], fd
+    mov     qword[rbp - 8h], fd
     mov     rdx, [rbp - 4h]
     mov     rax, [rbp - 8h]
     mov     rdi, aStringFormat
