@@ -41,6 +41,7 @@ section .data
 
 ; DATA (INPUT/OUTPUT)
     data_buffer dq 0
+    input_buffer dq 0
     output_buffer dq 0
 
 ; FLAGS
@@ -86,14 +87,23 @@ task:
         ret
 
 process_buffer:
-    mov     rdi, data_buffer
-    push    rdi
-    call    check_buffer
-    pop     rdi
-    push    rdi
-    call    work_with_data
-    pop     rdi
-    ret
+    mov     rdi, input_buffer
+    xor     rcx, rcx
+    .loop_copying:
+        cmp     rcx, [output_size]
+        je      .process
+        mov     al, byte [rsi + rcx]        ; Read one character from the argument
+        mov     [rdi + rcx], al             ; Store the character in the filename buffer
+        inc     rcx                         ; Move to the next character
+        jmp     .loop_copying
+    .process:
+        push    rdi
+        call    check_buffer
+        pop     rdi
+        push    rdi
+        call    work_with_data
+        pop     rdi
+        ret
 
 check_buffer:
     .setup_counters:
