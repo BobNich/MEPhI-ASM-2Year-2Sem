@@ -35,9 +35,9 @@ main:
     push    rbx
     sub     rsp, 18h
 
-    mov	rax, [rsi + 8]
-	mov	rax, [rax]
-	mov	[filename], rax
+    ; mov	rax, [rsi + 8]
+	; mov	rax, [rax]
+	; mov	[filename], rax
 
     mov     [rbp - 18h], rax
     xor     eax, eax
