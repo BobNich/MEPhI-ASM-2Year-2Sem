@@ -258,7 +258,8 @@ put_word_into_output_buffer:
             jmp     .loop
     .end:
         mov     qword [word_pointer], NULL
-        mov     r9, 0
+        xor     r13, r13
+        xor     r9, r9
         ret
 
 get_filename:
