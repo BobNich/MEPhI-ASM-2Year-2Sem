@@ -2,6 +2,7 @@ BITS 64
 
 section .data
     filename        db 'output.txt', 0
+    fd              dq 0
     aInputX         db 'Input x: ',0
     aFloatFormat    db '%f',0
     aStringFormat   db '%f', 0
@@ -277,29 +278,45 @@ print:
     leave
     retn
 
-print_file:
+open_file:
     push    rbp
     mov     rbp, rsp
     sub     rsp, 10h
-    movss   [rbp - 4h], xmm0     ; Save the series_member value in [rbp - 4h]
-    mov     rdi, filename        ; Set the filename
-    mov     rax, 0               ; File open mode: 0 (write mode)
-    call    fopen                ; Open the file
-    mov     [rbp - 8h], rax      ; Save the file pointer in [rbp - 8h]
-    cmp     dword[rbp - 8h], 0   ; Check if file pointer is NULL (file opening failed)
-    je      .file_open_failed    ; If file opening failed, jump to file_open_failed
-    mov     rdx, [rbp - 4h]      ; Load the series_member value into rdx
-    mov     rax, [rbp - 8h]      ; Load the file pointer into rax
-    mov     rdi, aStringFormat   ; Set the format string for fprintf
-    call    fprintf              ; Print the series_member value to the file
-    mov     rax, [rbp - 8h]      ; Load the file pointer into rax
-    mov     rdi, rax             ; Set the file pointer as the argument for fclose
-    call    fclose               ; Close the file
-    jmp     .end                 ; Jump to the end of the function
+    mov     rdi, filename
+    mov     rax, 0
+    call    fopen
+    mov     fd, rax
+    cmp     qword[fd], 0
+    jmp     .end
     .file_open_failed:
-        lea     rdi, [aFileOpenFailed]       ; Load the error message
-        call    printf                       ; Print the error message to the console
+        lea     rdi, aFileOpenFailed
+        call    printf
     .end:
         nop
         leave
         retn
+
+print_file:
+    push    rbp
+    mov     rbp, rsp
+    sub     rsp, 10h
+    movss   [rbp - 4h], xmm0  ; series_member
+    mov     [rbp - 8h], fd
+    mov     rdx, [rbp - 4h]
+    mov     rax, [rbp - 8h]
+    mov     rdi, aStringFormat
+    call    fprintf
+    nop
+    leave
+    retn
+
+close_file:
+    push    rbp
+    mov     rbp, rsp
+    sub     rsp, 10h
+    mov     rax, fd
+    mov     rdi, rax
+    call    fclose
+    nop
+    leave
+    retn
