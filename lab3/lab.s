@@ -91,7 +91,7 @@ process_buffer:
     .data_buffer_copy_loop:
         cmp     rcx, [output_size]
         je .start_process
-        mov al, byte [data_buffer + rcx]
+        mov al, byte [rsi + rcx]
         mov [rdi + rcx], al
         inc rcx
         jmp .data_buffer_copy_loop
