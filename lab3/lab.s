@@ -167,7 +167,7 @@ handle_word_pointer:
     je      .save_word_pointer
     ret
     .save_word_pointer:
-        mov     r13, rdi
+        mov     r13, qword [data_buffer]
         ret
 
 check_character:
