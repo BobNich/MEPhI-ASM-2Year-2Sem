@@ -11,6 +11,7 @@ section .data
     aInputPrecision db 'Input precision: ',0
     aLibResultF     db 'Lib result: %f',0Ah,0
     aCustomResultF  db 'Custom result: %f',0Ah,0
+    aSeriesMember	db "%-10d %f",0x0a,0
     three_double    dq 4008000000000000h
     one             dd 3F800000h
     minus_one       dd 0BF800000h
@@ -318,11 +319,11 @@ print_file:
     push    rbp
     mov     rbp, rsp
     sub     rsp, 8
-    movss   [rbp - 4h], xmm0  ; series_member
+    mov     rdx, 0
+    movss   qword[rsp], xmm0  ; series_member
+    mov		rsi, aSeriesMember
     mov     rdi, fd
-    mov     rdx, [rbp - 4h]
-    mov     rax, [rbp - 8h]
-    mov     rdi, aStringFormat
+    mov     rax, 1
     call    fprintf
     nop
     leave
