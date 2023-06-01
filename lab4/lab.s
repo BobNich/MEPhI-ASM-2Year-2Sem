@@ -1,7 +1,8 @@
 BITS 64
 
 section .data
-    filename        db 'output.txt', 0
+    filename        dq 0
+    file_w_m      	db "w", 0
     fd              dq 0
     aInputX         db 'Input x: ',0
     aFloatFormat    db '%f',0
@@ -33,6 +34,11 @@ main:
     mov     rbp, rsp
     push    rbx
     sub     rsp, 18h
+
+    mov	rax, [rsi + 8]
+	mov	rax, [rax]
+	mov	[filename], rax
+
     mov     [rbp - 18h], rax
     xor     eax, eax
     lea     rdx, [rbp - 1Ch]
@@ -41,6 +47,7 @@ main:
     mov     rdi, rax        ; x
     call    scan
     call    open_file
+    call    close_file
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
     movaps  xmm1, xmm0      ; precision
@@ -284,10 +291,11 @@ open_file:
     push    rbp
     mov     rbp, rsp
     sub     rsp, 8
-    mov     rdi, filename
-    mov     rax, 0
-    call    fopen
-    mov     [fd], rax
+    xor	    rax, rax
+	mov	    rdi, filename
+	mov	    rsi, file_w_m
+	call	fopen
+	mov	    [fd], rax 	; fd
     cmp     qword[fd], 0
     jmp     .end
     .file_open_failed:
@@ -301,6 +309,7 @@ open_file:
 close_file:
     push    rbp
     mov     rbp, rsp
+    mov	    rax, 1
     mov     rdi, [fd]
     call    fclose
     nop
@@ -310,8 +319,9 @@ close_file:
 print_file:
     push    rbp
     mov     rbp, rsp
+    sub     rsp, 8
     movss   [rbp - 4h], xmm0  ; series_member
-    mov     qword[rbp - 8h], fd
+    mov     rdi, fd
     mov     rdx, [rbp - 4h]
     mov     rax, [rbp - 8h]
     mov     rdi, aStringFormat
