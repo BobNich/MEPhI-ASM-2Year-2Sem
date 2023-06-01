@@ -301,12 +301,12 @@ close_file:
     push    rbp
     mov     rbp, rsp
     sub     rsp, 10h
-    mov     rax, fd
+    mov     rax, qword [fd]
     mov     rdi, rax
     call    fclose
     nop
     leave
-    retn
+    ret
 
 ; print_file:
 ;     push    rbp
