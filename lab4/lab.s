@@ -287,7 +287,7 @@ open_file:
     mov     rdi, filename
     mov     rax, 0
     call    fopen
-    mov     fd, rax
+    mov     [fd], rax
     cmp     qword[fd], 0
     jmp     .end
     .file_open_failed:
