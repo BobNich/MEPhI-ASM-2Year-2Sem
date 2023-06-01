@@ -205,6 +205,7 @@ check_character:
         jmp     .word_done
         .word_undone:
             sub     qword [file_offset], r9
+            xor     r9, r9
             call    work_with_data
             ret
         .word_done:
