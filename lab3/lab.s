@@ -306,7 +306,6 @@ get_input_data:
     .handle_read_size:
         mov     [output_size], rax      ; Save output size  
     .end:
-        mov     byte [rsi], 0
         ret
 
 put_output_data:
