@@ -323,7 +323,7 @@ print_file:
     mov     rdx, 0
     movss   [rbp - 4h], xmm0  ; series_member
     mov		rsi, aSeriesMember
-    mov     rdi, fd
+    mov     rdi, [fd]
     mov     rax, 1
     call    fprintf
     nop
