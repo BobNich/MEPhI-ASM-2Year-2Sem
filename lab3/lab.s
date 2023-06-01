@@ -310,7 +310,6 @@ get_input_data:
 
 put_output_data:
     ; Print output into stdout
-    mov     rsi, [rsi]
     mov     rdi, 1                      ; File descriptor for stdout
     mov     rdx, r12                    ; Number of bytes to write
     mov     rax, 1                      ; System call for write
