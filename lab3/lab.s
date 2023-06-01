@@ -230,7 +230,7 @@ end_line_handle:
 
 put_word_into_output_buffer:
     ; Put word into output_buffer variable
-    cmp     byte [first_word_completed], FALSE
+    cmp     byte [first_word_completed], TRUE
     je      .first_word_complete
     jmp     .first_word_incomplete
     .first_word_complete:
