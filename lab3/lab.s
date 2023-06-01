@@ -87,12 +87,13 @@ task:
         ret
 
 process_buffer:
+    mov     rdi, data_buffer
     xor     rcx, rcx
     .data_buffer_copy_loop:
         cmp     rcx, [output_size]
         je .start_process
         mov al, byte [rsi + rcx]
-        mov [rdi + rcx], al
+        mov [data_buffer + rcx], al
         inc rcx
         jmp .data_buffer_copy_loop
     .start_process:
