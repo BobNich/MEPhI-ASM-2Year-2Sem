@@ -238,7 +238,9 @@ put_word_into_output_buffer:
         mov     byte [first_word_completed], TRUE
         je      .add_word
         .add_space:
+            push    r12
             mov     byte [rsi + r12], SPACE
+            push    r12
             inc     r12
         .add_word:
             xor     rcx, rcx
