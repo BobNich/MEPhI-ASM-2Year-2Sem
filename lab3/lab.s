@@ -46,8 +46,8 @@ section .data
 
 section .bss
     ; DATA (INPUT/OUTPUT)
-    data_buffer dq 10
-    output_buffer dq 10
+    data_buffer resq 10
+    output_buffer resq 10
 
 section .text
     global _start
