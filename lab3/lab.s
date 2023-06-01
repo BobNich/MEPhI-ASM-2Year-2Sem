@@ -98,7 +98,7 @@ process_buffer:
     ret
 
 check_buffer:
-    ; Setup flags for lab
+    .setup_counters:
     mov     r10, [output_size]
     add     qword [file_offset], r10
     xor     r12, r12
