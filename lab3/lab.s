@@ -40,8 +40,8 @@ section .data
     file_offset dq 0
 
 ; DATA (INPUT/OUTPUT)
-    data_buffer dq 0
-    output_buffer dq 0
+    data_buffer dq 10
+    output_buffer dq 10
 
 ; FLAGS
     first_word_completed db 0
@@ -184,7 +184,7 @@ check_character:
         .add_newline_symbol:
             mov     byte [first_word_completed], FALSE
             xor     r8, r8
-            mov     byte [r15 + r12], NEWLINE
+            mov     byte [rsi + r12], NEWLINE
             inc     r12
             cmp     r10, qword [output_size]
             je      .newline_buffer_end
@@ -238,7 +238,7 @@ put_word_into_output_buffer:
         mov     byte [first_word_completed], TRUE
         je      .add_word
         .add_space:
-            mov     byte [r15 + r12], SPACE
+            mov     byte [rsi + r12], SPACE
             inc     r12
         .add_word:
             xor     rcx, rcx
@@ -246,7 +246,7 @@ put_word_into_output_buffer:
                 cmp     r9, 0
                 je      .end
                 mov     al, byte [r13 + rcx]
-                mov     [r15 + r12], al
+                mov     [rsi + r12], al
                 dec     r9
                 inc     r12
                 inc     rcx
@@ -305,7 +305,6 @@ get_input_data:
 
 put_output_data:
     ; Print output into stdout
-    mov     rsi, r15
     mov     rdi, 1                      ; File descriptor for stdout
     mov     rdx, r12                    ; Number of bytes to write
     mov     rax, 1                      ; System call for write
