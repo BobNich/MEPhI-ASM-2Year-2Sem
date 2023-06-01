@@ -238,9 +238,9 @@ put_word_into_output_buffer:
         jmp     .end
     .write_word:
         cmp     byte [first_word_completed], FALSE
+        mov     byte [first_word_completed], TRUE
         je      .add_word
         .add_space:
-            mov     byte [first_word_completed], TRUE
             mov     byte [rsi + r12], SPACE
             inc     r12
         .add_word:
