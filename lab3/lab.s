@@ -187,12 +187,12 @@ check_character:
             mov     byte [rsi + r12], NEWLINE
             inc     r12
             cmp     r10, qword [output_size]
-            je      .buffer_end
-            jmp     .buffer_not_end
-        .buffer_end:
+            je      .newline_buffer_end
+            jmp     .newline_buffer_not_end
+        .newline_buffer_end:
             call    work_with_data
             ret
-        .buffer_not_end:
+        .newline_buffer_not_end:
             inc     rdi
             call    work_with_data
             ret
