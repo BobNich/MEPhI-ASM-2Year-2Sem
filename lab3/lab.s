@@ -87,14 +87,14 @@ task:
         ret
 
 process_buffer:
-    mov     r14, data_buffer
-    mov     r15, output_buffer
-    push    r14
+    mov     rdi, data_buffer
+    mov     rsi, output_buffer
+    push    rdi
     call    check_buffer
-    pop     r14
-    push    r14
+    pop     rdi
+    push    rdi
     call    work_with_data
-    pop     r14
+    pop     rdi
     ret
 
 check_buffer:
@@ -103,26 +103,26 @@ check_buffer:
         add     qword [file_offset], r10
         xor     r12, r12
     .check_buffer_word_undone:
-        add     r14, r10
-        dec     r14
-        cmp     byte [r14], SPACE
+        add     rdi, r10
+        dec     rdi
+        cmp     byte [rdi], SPACE
         je      .word_done
-        cmp     byte [r14], TAB
+        cmp     byte [rdi], TAB
         je      .word_done
-        cmp     byte [r14], NEWLINE
+        cmp     byte [rdi], NEWLINE
         je      .word_done
-        cmp     byte [r14], END_STRING
+        cmp     byte [rdi], END_STRING
         je      .last_line
         .word_undone:
             mov     byte [last_word_undone], TRUE
             xor     r10, r10
-            cmp     byte [r14], END_STRING
+            cmp     byte [rdi], END_STRING
             je      .last_line
             ret
         .word_done:
             mov     byte [last_word_undone], FALSE
             xor     r10, r10
-            cmp     byte [r14], END_STRING
+            cmp     byte [rdi], END_STRING
             je      .last_line
             ret
         .last_line:
@@ -135,13 +135,13 @@ work_with_data:
     .loop:
         cmp     qword [output_size], r10
         je      .done_loop
-        cmp     byte [r14], SPACE
+        cmp     byte [rdi], SPACE
         je      .character_handling
-        cmp     byte [r14], TAB
+        cmp     byte [rdi], TAB
         je      .character_handling
-        cmp     byte [r14], NEWLINE
+        cmp     byte [rdi], NEWLINE
         je      .character_handling
-        cmp     byte [r14], END_STRING
+        cmp     byte [rdi], END_STRING
         je      .done_loop
         call    calculate_word_length
     .character_handling:
@@ -166,13 +166,13 @@ handle_word_pointer:
     je      .save_word_pointer
     ret
     .save_word_pointer:
-        mov     qword [word_pointer], r14
+        mov     qword [word_pointer], rdi
         ret
 
 check_character:
     ; Handle current character from input_buffer
     inc     r10
-    cmp     byte [r14], NEWLINE
+    cmp     byte [rdi], NEWLINE
     je      .newline
     jmp     .continue
     .newline:
@@ -184,7 +184,7 @@ check_character:
         .add_newline_symbol:
             mov     byte [first_word_completed], FALSE
             xor     r8, r8
-            mov     byte [r15 + r12], NEWLINE
+            mov     byte [rsi + r12], NEWLINE
             inc     r12
             cmp     r10, qword [output_size]
             je      .newline_buffer_end
@@ -193,7 +193,7 @@ check_character:
             call    work_with_data
             ret
         .newline_buffer_not_end:
-            inc     r14
+            inc     rdi
             call    work_with_data
             ret
     .continue:
@@ -215,15 +215,15 @@ check_character:
     .buffer_not_end:
         cmp     qword [word_pointer], NULL
         je      .skip_word
-        cmp     byte [r14], SPACE
+        cmp     byte [rdi], SPACE
         je      .add_word
-        cmp     byte [r14], TAB
+        cmp     byte [rdi], TAB
         je      .add_word
         jmp     .skip_word
         .add_word:
             call    put_word_into_output_buffer
         .skip_word:
-            inc     r14
+            inc     rdi
             call    work_with_data
             ret
 
@@ -238,7 +238,7 @@ put_word_into_output_buffer:
         mov     byte [first_word_completed], TRUE
         je      .add_word
         .add_space:
-            mov     byte [r15 + r12], SPACE
+            mov     byte [rsi + r12], SPACE
             inc     r12
         .add_word:
             xor     rcx, rcx
@@ -247,7 +247,7 @@ put_word_into_output_buffer:
                 cmp     r9, 0
                 je      .end
                 mov     al, byte [r13 + rcx]
-                mov     [r15 + r12], al
+                mov     [rsi + r12], al
                 dec     r9
                 inc     r12
                 inc     rcx
@@ -307,7 +307,6 @@ get_input_data:
 
 put_output_data:
     ; Print output into stdout
-    mov     rsi, r15
     mov     rdi, 1                      ; File descriptor for stdout
     mov     rdx, r12                    ; Number of bytes to write
     mov     rax, 1                      ; System call for write
