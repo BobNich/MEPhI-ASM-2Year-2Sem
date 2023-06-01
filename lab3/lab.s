@@ -103,7 +103,6 @@ check_buffer:
         xor     r12, r12
         xor     r9, r9
         xor     r13, r13
-        mov     qword [word_pointer], NULL
     .check_buffer_word_undone:
         add     rdi, r10
         dec     rdi
@@ -164,11 +163,11 @@ calculate_word_length:
 
 handle_word_pointer:
     ; Save pointer of current word from input_buffer if needed
-    cmp     qword [word_pointer], NULL
+    cmp     r13, NULL
     je      .save_word_pointer
     ret
     .save_word_pointer:
-        mov     qword [word_pointer], rdi
+        mov     r13, rdi
         ret
 
 check_character:
@@ -178,7 +177,7 @@ check_character:
     je      .newline
     jmp     .continue
     .newline:
-        cmp     qword [word_pointer], NULL
+        cmp     r13, NULL
         jne     .write_word
         jmp     .add_newline_symbol
         .write_word:
@@ -215,7 +214,7 @@ check_character:
             call    work_with_data
             ret
     .buffer_not_end:
-        cmp     qword [word_pointer], NULL
+        cmp     r13, NULL
         je      .skip_word
         cmp     byte [rdi], SPACE
         je      .add_word
@@ -244,7 +243,6 @@ put_word_into_output_buffer:
             inc     r12
         .add_word:
             xor     rcx, rcx
-            mov     r13, qword [word_pointer]
             .loop:
                 cmp     r9, 0
                 je      .end
@@ -255,7 +253,6 @@ put_word_into_output_buffer:
                 inc     rcx
                 jmp     .loop
     .end:
-        mov     qword [word_pointer], NULL
         xor     r13, r13
         xor     r9, r9
         ret
