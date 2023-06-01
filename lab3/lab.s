@@ -158,8 +158,6 @@ calculate_word_length:
     je      .first_word
     ret
     .first_word:
-        cmp     r8, 0
-        je
         inc     r8
         ret
 
