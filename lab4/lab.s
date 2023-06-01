@@ -41,7 +41,7 @@ main:
     mov     rdi, rax        ; x
     call    scan
     call    open_file
-    ; call    close_file
+    call    close_file
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
     movaps  xmm1, xmm0      ; precision
