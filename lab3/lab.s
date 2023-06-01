@@ -158,6 +158,8 @@ calculate_word_length:
     je      .first_word
     ret
     .first_word:
+        cmp     r8, 0
+        je
         inc     r8
         ret
 
@@ -207,8 +209,14 @@ check_character:
         jmp     .word_done
         .word_undone:
             sub     qword [file_offset], r9
-            call    work_with_data
-            ret
+            cmp     byte [first_word_completed], FALSE
+            je      .complete
+            jmp     .not_complete
+            .complete:
+                xor     r8, r8
+            .not_complete:
+                call    work_with_data
+                ret
         .word_done:
             call    put_word_into_output_buffer
             call    work_with_data
