@@ -300,7 +300,7 @@ open_file:
 close_file:
     push    rbp
     mov     rbp, rsp
-    mov     rax, qword [fd]
+    mov     rdi, [fd]
     call    fclose
     nop
     leave
