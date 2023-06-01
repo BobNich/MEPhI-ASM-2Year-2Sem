@@ -41,7 +41,7 @@ main:
     mov     rdi, rax        ; x
     call    scan
     call    open_file
-    ; call    close_file
+    call    close_file
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
     movaps  xmm1, xmm0      ; precision
@@ -297,6 +297,17 @@ open_file:
         leave
         retn
 
+close_file:
+    push    rbp
+    mov     rbp, rsp
+    sub     rsp, 10h
+    mov     rax, fd
+    mov     rdi, rax
+    call    fclose
+    nop
+    leave
+    retn
+
 ; print_file:
 ;     push    rbp
 ;     mov     rbp, rsp
@@ -307,17 +318,6 @@ open_file:
 ;     mov     rax, [rbp - 8h]
 ;     mov     rdi, aStringFormat
 ;     call    fprintf
-;     nop
-;     leave
-;     retn
-
-; close_file:
-;     push    rbp
-;     mov     rbp, rsp
-;     sub     rsp, 10h
-;     mov     rax, fd
-;     mov     rdi, rax
-;     call    fclose
 ;     nop
 ;     leave
 ;     retn
