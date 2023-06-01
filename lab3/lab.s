@@ -3,7 +3,8 @@ section .data
 
 ; r8 - first word in sentence length
 ; r9 - current word in sentence length
-; r10 - current buffer output_size
+; r10 - counter for input_buffer
+; r12 - current output_buffer size
 
 ; SYSCALLS
     SYS_OPEN    equ 0x02
@@ -21,6 +22,9 @@ section .data
     TRUE  equ 1
     FALSE equ 0
 
+; ADDITIONAL CONSTANTS
+    NULL  equ 0
+
 ; CONSTANT ERROR MSGS
     err_file db "Error: invalid file or not available for reading", 0x0a, 0
     err_no_argv db "Error: no arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
@@ -35,16 +39,15 @@ section .data
     fd dq 0
     file_offset dq 0
 
-; DATA (INPUT/OUTPUT)
-    data_buffer dq 0
-    output_buffer dq 0
-    word_pointer dq 0
-
 ; FLAGS
     first_word_completed db 0
     last_word_undone db 0
     is_last_line db 0
 
+section .bss
+    ; DATA (INPUT/OUTPUT)
+    data_buffer resq 10
+    output_buffer resq 10
 
 section .text
     global _start
@@ -63,7 +66,7 @@ main:
         call    task
     .end:
         jmp     _exit_normal
- 
+
 task:
     ; Run lab task
     .get_filename:
@@ -83,24 +86,23 @@ task:
         ret
 
 process_buffer:
-    mov     rdi, data_buffer    
     mov     rsi, output_buffer
+    mov     rdi, data_buffer
     push    rdi
-    push    rsi
     call    check_buffer
-    pop     rsi
     pop     rdi
     push    rdi
-    push    rsi
     call    work_with_data
-    pop     rsi
     pop     rdi
     ret
 
 check_buffer:
-    ; Setup flags for lab
-    mov     r10, [output_size]
-    add     qword [file_offset], r10
+    .setup_counters:
+        mov     r10, [output_size]
+        add     qword [file_offset], r10
+        xor     r12, r12
+        xor     r9, r9
+        xor     r13, r13
     .check_buffer_word_undone:
         add     rdi, r10
         dec     rdi
@@ -115,10 +117,14 @@ check_buffer:
         .word_undone:
             mov     byte [last_word_undone], TRUE
             xor     r10, r10
+            cmp     byte [rdi], END_STRING
+            je      .last_line
             ret
         .word_done:
             mov     byte [last_word_undone], FALSE
             xor     r10, r10
+            cmp     byte [rdi], END_STRING
+            je      .last_line
             ret
         .last_line:
             mov     byte [is_last_line], TRUE
@@ -128,6 +134,8 @@ check_buffer:
 work_with_data:
     ; Loop througth every symbol in buffer
     .loop:
+        cmp     qword [output_size], r10
+        je      .done_loop
         cmp     byte [rdi], SPACE
         je      .character_handling
         cmp     byte [rdi], TAB
@@ -140,14 +148,13 @@ work_with_data:
     .character_handling:
         call    check_character
     .done_loop:
-        mov     byte [last_word_undone], FALSE
         ret
 
 calculate_word_length:
     ; Calculate current word length and save needed data for future processing
     call    handle_word_pointer
-    cmp     byte [first_word_completed], FALSE
     inc     r9
+    cmp     byte [first_word_completed], FALSE
     je      .first_word
     ret
     .first_word:
@@ -156,21 +163,46 @@ calculate_word_length:
 
 handle_word_pointer:
     ; Save pointer of current word from input_buffer if needed
-    cmp     qword [word_pointer], 0
+    cmp     r13, NULL
     je      .save_word_pointer
     ret
     .save_word_pointer:
-        mov     qword [word_pointer], rdi
+        mov     r13, rdi
         ret
 
 check_character:
     ; Handle current character from input_buffer
-    call    end_line_handle
-    cmp     r10, qword [output_size]
-    je      .buffer_end
-    jmp     .buffer_not_end
+    inc     r10
+    cmp     byte [rdi], NEWLINE
+    je      .newline
+    jmp     .continue
+    .newline:
+        cmp     r13, NULL
+        jne     .write_word
+        jmp     .add_newline_symbol
+        .write_word:
+            call    put_word_into_output_buffer
+        .add_newline_symbol:
+            mov     byte [first_word_completed], FALSE
+            xor     r8, r8
+            mov     byte [rsi + r12], NEWLINE
+            inc     r12
+            cmp     r10, qword [output_size]
+            je      .newline_buffer_end
+            jmp     .newline_buffer_not_end
+        .newline_buffer_end:
+            call    work_with_data
+            ret
+        .newline_buffer_not_end:
+            inc     rdi
+            call    work_with_data
+            ret
+    .continue:
+        cmp     r10, qword [output_size]
+        je      .buffer_end
+        jmp     .buffer_not_end
     .buffer_end:
-        cmp     byte [last_word_undone], FALSE
+        cmp     byte [last_word_undone], TRUE
         je     .word_undone
         jmp     .word_done
         .word_undone:
@@ -178,75 +210,51 @@ check_character:
             call    work_with_data
             ret
         .word_done:
-            call put_word_into_output_buffer
+            call    put_word_into_output_buffer
+            call    work_with_data
             ret
     .buffer_not_end:
-        cmp     qword [word_pointer], 0
-        jne     .not_a_word
+        cmp     r13, NULL
+        je      .skip_word
         cmp     byte [rdi], SPACE
-        jne     .not_a_word
+        je      .add_word
         cmp     byte [rdi], TAB
-        jne     .not_a_word
-        call    put_word_into_output_buffer
-        ret
-        .not_a_word:
-            inc     rdi
-            call    work_with_data
-            ret
-
-end_line_handle:
-    ; Handle '\n' symbol
-    cmp     byte [rdi], NEWLINE
-    je     .newline
-    ret
-    .newline:
-        cmp     qword [word_pointer], 0
-        jne     .write_word
-        cmp     byte [first_word_completed], TRUE
-        je      .first_word_complete
-        jmp     .add_newline_symbol
-        .write_word:
+        je      .add_word
+        jmp     .skip_word
+        .add_word:
             call    put_word_into_output_buffer
-            cmp     byte [first_word_completed], TRUE
-            je      .first_word_complete
-        .first_word_complete:
-            dec     qword [output_buffer]
-        .add_newline_symbol:
-            mov     qword [output_buffer], rdi
-            cmp     r10, qword [output_size]
-            je      .buffer_end
-            jmp     .buffer_not_end
-        .buffer_end:
-            call    work_with_data
-            ret
-        .buffer_not_end:
+        .skip_word:
             inc     rdi
+            call    work_with_data
             ret
 
 put_word_into_output_buffer:
     ; Put word into output_buffer variable
-    cmp     byte [first_word_completed], FALSE
-    je      .first_word_complete
-    jmp     .check_word_condition
-    .first_word_complete:
-        mov     byte [first_word_completed], TRUE
-        jmp     .check_word_condition
     .check_word_condition:
         cmp     r8, r9
         je      .write_word
         jmp     .end
     .write_word:
-        .loop: 
-            cmp     r9, 0
-            je      .end
-            mov     qword [output_buffer], word_pointer
-            inc     qword [output_buffer]
-            inc     qword [word_pointer]
-            dec     r9
-            jmp     .loop
-        jmp     .end
+        cmp     byte [first_word_completed], FALSE
+        mov     byte [first_word_completed], TRUE
+        je      .add_word
+        .add_space:
+            mov     byte [rsi + r12], SPACE
+            inc     r12
+        .add_word:
+            xor     rcx, rcx
+            .loop:
+                cmp     r9, 0
+                je      .end
+                mov     al, byte [r13 + rcx]
+                mov     [rsi + r12], al
+                dec     r9
+                inc     r12
+                inc     rcx
+                jmp     .loop
     .end:
-        xor     qword [word_pointer], word_pointer
+        xor     r13, r13
+        xor     r9, r9
         ret
 
 get_filename:
@@ -298,9 +306,8 @@ get_input_data:
 
 put_output_data:
     ; Print output into stdout
-    mov     rsi, qword [output_buffer]  ; Move edi to esi (current character position)
     mov     rdi, 1                      ; File descriptor for stdout
-    mov     rdx, [output_size]          ; Number of bytes to write
+    mov     rdx, r12                    ; Number of bytes to write
     mov     rax, 1                      ; System call for write
     syscall
     ret
