@@ -37,8 +37,8 @@ main:
     sub     rsp, 18h
 
     mov	rax, [rsi + 8]
-	mov	rax, [rax]
-	mov	[filename], rax
+    mov	rax, [rax]
+    mov	[filename], rax
 
     mov     [rbp - 18h], rax
     xor     eax, eax
@@ -291,10 +291,10 @@ open_file:
     mov     rbp, rsp
     sub     rsp, 8
     xor	    rax, rax
-	mov	    rdi, filename
-	mov	    rsi, file_w_m
-	call	fopen
-	mov	    [fd], rax 	; fd
+    mov	    rdi, filename
+    mov	    rsi, file_w_m
+    call	fopen
+    mov	    [fd], rax 	; fd
     cmp     qword[fd], 0
     jmp     .end
     .file_open_failed:
@@ -323,7 +323,7 @@ print_file:
     sub     rsp, 8
     mov     rdx, 0
     movss   [rbp - 4h], xmm0  ; series_member
-    mov		rsi, aSeriesMember
+    mov     rsi, aSeriesMember
     mov     rdi, [fd]
     mov     rax, 1
     call    fprintf
