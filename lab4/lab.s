@@ -2,7 +2,7 @@ BITS 64
 
 section .data
     filename        dq 0
-    file_w_m      	db "w", 0
+    file_w_m        db "w", 0
     fd              dq 0
     aInputX         db 'Input x: ',0
     aFloatFormat    db '%f',0
@@ -12,7 +12,7 @@ section .data
     aInputPrecision db 'Input precision: ',0
     aLibResultF     db 'Lib result: %f',0Ah,0
     aCustomResultF  db 'Custom result: %f',0Ah,0
-    aSeriesMember	db "%-10d %f",0x0a,0
+    aSeriesMember   db "%-10d %f",0x0a,0
     three_double    dq 4008000000000000h
     one             dd 3F800000h
     minus_one       dd 0BF800000h
@@ -303,11 +303,11 @@ open_file:
     push    rbp
     mov     rbp, rsp
     sub     rsp, 8
-    xor	    rax, rax
-    mov	    rdi, filename
-    mov	    rsi, file_w_m
-    call	fopen
-    mov	    [fd], rax 	; fd
+    xor     rax, rax
+    mov     rdi, filename
+    mov     rsi, file_w_m
+    call    fopen
+    mov     [fd], rax 	; fd
     cmp     qword[fd], 0
     jmp     .end
     .file_open_failed:
