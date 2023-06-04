@@ -35,11 +35,8 @@ main:
     mov     rbp, rsp
     push    rbx
     sub     rsp, 18h
-
-    mov	rax, [rsi + 8]
-    mov	rax, [rax]
-    mov	[filename], rax
-
+    mov	rdi, [rsi + 8]
+    call    get_filename
     mov     [rbp - 18h], rax
     xor     eax, eax
     lea     rdx, [rbp - 1Ch]
@@ -285,6 +282,23 @@ print:
     nop
     leave
     retn
+
+get_filename:
+    push    rbp
+    mov     rbp, rsp
+    xor rcx, rcx
+    .copy_loop:
+        mov al, byte [rdi + rcx]
+        mov [filename + rcx], al
+        cmp al, 0
+        je .done_copy
+        inc rcx
+        jmp .copy_loop
+    .done_copy:
+        mov [filename + rcx], al
+        nop
+        leave
+        retn
 
 open_file:
     push    rbp
