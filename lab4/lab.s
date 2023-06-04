@@ -51,7 +51,9 @@ main:
     mov     rsi, rdx        ; precision
     mov     rdi, rax        ; x
     call    scan
-    call    open_file
+    ; -------------------------------------------
+    ; call    open_file
+    ; -------------------------------------------
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
     movaps  xmm1, xmm0      ; precision
@@ -68,7 +70,9 @@ main:
     mov     eax, 0
     mov     rdx, [rbp - 18h]
     mov     rbx, [rbp - 8h]
-    call    close_file
+    ; -------------------------------------------
+    ; call    close_file
+    ; -------------------------------------------
     leave
     retn
 
