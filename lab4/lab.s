@@ -30,19 +30,6 @@ section .text
     extern  sin
     global  main
 
-get_filename:
-    xor rcx, rcx
-    .copy_loop:
-        mov al, byte [rdi + rcx]
-        mov [filename + rcx], al
-        cmp al, 0
-        je .done_copy
-        inc rcx
-        jmp .copy_loop
-    .done_copy:
-        leave
-        ret
-
 main:
     push    rbp
     mov     rbp, rsp
@@ -295,6 +282,19 @@ print:
     nop
     leave
     retn
+
+get_filename:
+    xor rcx, rcx
+    .copy_loop:
+        mov al, byte [rdi + rcx]
+        mov [filename + rcx], al
+        cmp al, 0
+        je .done_copy
+        inc rcx
+        jmp .copy_loop
+    .done_copy:
+        leave
+        ret
 
 open_file:
     push    rbp
