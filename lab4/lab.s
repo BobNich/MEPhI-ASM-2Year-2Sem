@@ -36,9 +36,12 @@ main:
     push    rbx
     sub     rsp, 18h
 
+    ; -------------------------------------------
+    ; TODO() Handle filename and arguments number
     mov	rax, [rsi + 8]
     mov	rax, [rax]
     mov	[filename], rax
+    ; -------------------------------------------
 
     mov     [rbp - 18h], rax
     xor     eax, eax
@@ -318,6 +321,8 @@ close_file:
     ret
 
 print_file:
+    ; -------------------------------------------
+    ; TODO() Print series member correctly
     push    rbp
     mov     rbp, rsp
     sub     rsp, 8
@@ -330,3 +335,4 @@ print_file:
     nop
     leave
     retn
+    ; -------------------------------------------
