@@ -35,7 +35,8 @@ main:
     mov     rbp, rsp
     push    rbx
     sub     rsp, 18h
-    mov	rdi, [rsi + 8]
+    mov	rax, [rsi + 8]
+    mov	rdi, [rax]
     call    get_filename
     mov     [rbp - 18h], rax
     xor     eax, eax
