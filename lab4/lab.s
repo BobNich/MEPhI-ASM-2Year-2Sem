@@ -38,7 +38,7 @@ main:
     sub     rsp, 18h
 
     ; -------------------------------------------
-    ; TODO() Handle filename and arguments number
+    ; TODO #1 (Handle filename and arguments number)
     ; mov	rax, [rsi + 8]
     ; mov	rax, [rax]
     ; mov	[filename], rax
@@ -52,6 +52,8 @@ main:
     mov     rdi, rax        ; x
     call    scan
     ; -------------------------------------------
+    ; TODO #2 (Uncomment when file writing works
+    ; correctly)
     ; call    open_file
     ; -------------------------------------------
     movss   xmm0, [rbp - 1Ch]
@@ -71,6 +73,8 @@ main:
     mov     rdx, [rbp - 18h]
     mov     rbx, [rbp - 8h]
     ; -------------------------------------------
+    ; TODO #3 (Uncomment when file writing works
+    ; correctly)
     ; call    close_file
     ; -------------------------------------------
     leave
@@ -116,9 +120,9 @@ custom:
         movd    xmm0, eax       ; x
         call    series_member
         ; -------------------------------------------------
-        ; TODO() Print term to file and handle infinity.
+        ; TODO #4 (Print term to file and handle infinity.
         ; If intinity -> end program, close file
-        ; and print <aTermInfinity> msg
+        ; and print <aTermInfinity> msg)
         ; call    print_file
         ; -------------------------------------------------
         movd    eax, xmm0
@@ -332,17 +336,17 @@ close_file:
 
 print_file:
     ; -------------------------------------------
-    ; TODO() Print series member correctly
-    push    rbp
-    mov     rbp, rsp
-    sub     rsp, 8
-    mov     rdx, 0
-    movss   [rbp - 4h], xmm0  ; series_member
-    mov     rsi, aSeriesMember
-    mov     rdi, [fd]
-    mov     rax, 1
-    call    fprintf
-    nop
-    leave
-    retn
+    ; TODO #5 (Print series member correctly)
+    ; push    rbp
+    ; mov     rbp, rsp
+    ; sub     rsp, 8
+    ; mov     rdx, 0
+    ; movss   [rbp - 4h], xmm0  ; series_member
+    ; mov     rsi, aSeriesMember
+    ; mov     rdi, [fd]
+    ; mov     rax, 1
+    ; call    fprintf
+    ; nop
+    ; leave
+    ; retn
     ; -------------------------------------------
