@@ -36,14 +36,12 @@ main:
     mov     rbp, rsp
     push    rbx
     sub     rsp, 18h
-
     ; -------------------------------------------
-    ; TODO #1 (Handle filename and arguments number)
-    ; mov	rax, [rsi + 8]
-    ; mov	rax, [rax]
-    ; mov	[filename], rax
+    ; TODO #1 (Handle arguments number)
     ; -------------------------------------------
-
+    mov     rsi, [rbp - 18h]
+    mov     rdi, filename
+    call    copy_string
     mov     [rbp - 18h], rax
     xor     eax, eax
     lea     rdx, [rbp - 1Ch]
@@ -102,6 +100,16 @@ lib:
     cvtsd2ss xmm0, xmm0
     leave
     retn
+
+copy_string:
+    mov     rcx, 0
+    .copy_loop:
+        mov     al, byte [rsi + rcx]
+        mov     byte [rdi + rcx], al
+        inc     rcx
+        cmp     al, 0
+        jne     .copy_loop
+    ret
 
 custom:
     push    rbp
