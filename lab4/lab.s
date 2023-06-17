@@ -39,7 +39,7 @@ main:
     ; -------------------------------------------
     ; TODO #1 (Handle arguments number)
     ; -------------------------------------------
-    ; mov     rsi, [rbp - 18h]
+    mov     rsi, [rbp - 18h]
     ; mov     rdi, filename
     ; call    copy_string
     mov     [rbp - 18h], rax
