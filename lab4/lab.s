@@ -39,9 +39,8 @@ main:
     ; -------------------------------------------
     ; TODO #1 (Handle arguments number)
     ; -------------------------------------------
-    mov     rsi, [rbp - 18h]
-    mov     rdi, filename
-    ; call    copy_string
+    mov     rdi, [rbp - 18h]
+    call    get_filename
     mov     [rbp - 18h], rax
     xor     eax, eax
     lea     rdx, [rbp - 1Ch]
@@ -101,15 +100,18 @@ lib:
     leave
     retn
 
-copy_string:
-    mov     rcx, 0
-    .copy_loop:
-        mov     al, byte [rsi + rcx]
-        mov     byte [rdi + rcx], al
-        inc     rcx
-        cmp     al, 0
-        jne     .copy_loop
-    ret
+get_filename:
+    xor rcx, rcx
+    .copy_filename_loop:
+        mov al, byte [rdi + rcx]
+        mov [filename + rcx], al
+        cmp al, 0
+        je .done_filename_copying
+        inc rcx
+        jmp .copy_filename_loop
+    .done_filename_copying:
+        mov [filename + rcx], al
+        ret
 
 custom:
     push    rbp
