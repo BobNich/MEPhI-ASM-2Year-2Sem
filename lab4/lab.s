@@ -331,22 +331,22 @@ open_file:
     js      .file_open_failed
     jmp     .end
     .file_open_failed:
-        lea     rdi, [rel aFileOpenFailed]
-        xor     eax, eax
+        lea     rax, aFileOpenFailed
+        mov     rdi, rax
+        mov     eax, 0
         call    printf
     .end:
         nop
         leave
-        add     rsp, 8
-        ret
+        retn
 
 close_file:
     push    rbp
     mov     rbp, rsp
     mov     rdi, [fd]
     call    fclose
+    nop
     leave
-    add     rsp, 8
     ret
 
 print_file:
