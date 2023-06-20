@@ -43,6 +43,10 @@ main:
     call    get_filename
     ; -------------------------------------------
 
+    mov rdi, filename
+    mov rax, 0
+    call printf
+
     mov     [rbp - 18h], rax
     xor     eax, eax
     lea     rdx, [rbp - 1Ch]
