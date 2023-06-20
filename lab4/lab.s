@@ -39,8 +39,8 @@ main:
 
     ; -------------------------------------------
     ; TODO #1 (Handle filename and arguments number)
-    mov	    rax, [rsi + 8]
-    mov	    rcx, [rax]
+    mov	    rcx, [rsi + 8]
+    ; mov	    rcx, [rax]
     ; call    get_filename
     ; -------------------------------------------
 
