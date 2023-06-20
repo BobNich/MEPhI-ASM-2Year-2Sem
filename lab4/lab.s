@@ -51,11 +51,7 @@ main:
     mov     rsi, rdx        ; precision
     mov     rdi, rax        ; x
     call    scan
-    ; -------------------------------------------
-    ; TODO #2 (Uncomment when file writing works
-    ; correctly)
     call    open_file
-    ; -------------------------------------------
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
     movaps  xmm1, xmm0      ; precision
