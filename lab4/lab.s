@@ -53,7 +53,7 @@ main:
     ; -------------------------------------------
     ; TODO #2 (Uncomment when file writing works
     ; correctly)
-    ; call    open_file
+    call    open_file
     ; -------------------------------------------
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
@@ -74,7 +74,7 @@ main:
     ; -------------------------------------------
     ; TODO #3 (Uncomment when file writing works
     ; correctly)
-    ; call    close_file
+    call    close_file
     ; -------------------------------------------
     leave
     retn
