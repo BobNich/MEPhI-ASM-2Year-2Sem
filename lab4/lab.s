@@ -37,8 +37,8 @@ main:
     push    rbx
     sub     rsp, 18h
     mov     rdi, [rsp + 8]
-    ; cmp     rdi, 2
-    ; jne      .end
+    cmp     rdi, 2
+    jne      .end
     mov	    rcx, [rsi + 8]
     call    get_filename
     mov     [rbp - 18h], rax
