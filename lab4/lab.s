@@ -74,7 +74,7 @@ main:
     ; -------------------------------------------
     ; TODO #3 (Uncomment when file writing works
     ; correctly)
-    call    close_file
+    ; call    close_file
     ; -------------------------------------------
     leave
     retn
