@@ -38,7 +38,6 @@ main:
     sub     rsp, 18h
     mov     rdi, [rsp + 8]
 
-    mov rdi, [rdi]
     mov rax, 0
     call    printf
 
