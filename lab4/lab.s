@@ -36,13 +36,12 @@ main:
     mov     rbp, rsp
     push    rbx
     sub     rsp, 18h
-    mov     rdi, [rsp + 8]
-
-    mov rax, 0
-    call    printf
-
-    cmp     rdi, 2
-    jne      .end
+    ; -------------------------------------------
+    ; TODO #6 (argc handling)
+    ; mov     rdi, [rsp + 8]
+    ; cmp     rdi, 2
+    ; jne      .end
+    ; -------------------------------------------
     mov	    rcx, [rsi + 8]
     call    get_filename
     mov     [rbp - 18h], rax
