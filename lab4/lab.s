@@ -92,7 +92,8 @@ get_filename:
         jmp .copy_filename_loop
     .done_filename_copying:
         mov [filename + rdx], al
-        ret
+        leave
+        retn
 
 lib:
     push    rbp
