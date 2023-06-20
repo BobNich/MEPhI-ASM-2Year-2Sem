@@ -345,7 +345,6 @@ close_file:
     mov     rbp, rsp
     mov     rdi, [fd]
     call    fclose
-    nop
     leave
     ret
 
