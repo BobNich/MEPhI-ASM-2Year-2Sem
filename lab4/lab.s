@@ -40,8 +40,7 @@ main:
     ; -------------------------------------------
     ; TODO #1 (Handle filename and arguments number)
     mov	    rcx, [rsi + 8]
-    ; mov	    rcx, [rax]
-    ; call    get_filename
+    call    get_filename
     ; -------------------------------------------
 
     mov     [rbp - 18h], rax
