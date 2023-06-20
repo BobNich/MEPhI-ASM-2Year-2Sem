@@ -39,9 +39,9 @@ main:
 
     ; -------------------------------------------
     ; TODO #1 (Handle filename and arguments number)
-    ; mov	rax, [rsi + 8]
-    ; mov	rax, [rax]
-    ; mov	[filename], rax
+    mov	    rax, [rsi + 8]
+    mov	    rcx, [rax]
+    call    get_filename
     ; -------------------------------------------
 
     mov     [rbp - 18h], rax
@@ -79,6 +79,21 @@ main:
     ; -------------------------------------------
     leave
     retn
+
+get_filename:
+    push    rbp
+    mov     rbp, rsp
+    xor rdx, rdx
+    .copy_filename_loop:
+        mov al, byte [rcx + rdx]
+        mov [filename + rdx], al
+        cmp al, 0
+        je .done_filename_copying
+        inc rdx
+        jmp .copy_filename_loop
+    .done_filename_copying:
+        mov [filename + rdx], al
+        ret
 
 lib:
     push    rbp
