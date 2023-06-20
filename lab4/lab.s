@@ -36,6 +36,9 @@ main:
     mov     rbp, rsp
     push    rbx
     sub     rsp, 18h
+    mov     rdi, [rsp + 8]
+    cmp     rdi, 2
+    jne      .end
     mov	    rcx, [rsi + 8]
     call    get_filename
     mov     [rbp - 18h], rax
@@ -66,13 +69,14 @@ main:
     mov     eax, 0
     mov     rdx, [rbp - 18h]
     mov     rbx, [rbp - 8h]
+    .end:
     ; -------------------------------------------
     ; TODO #3 (Uncomment when file writing works
     ; correctly)
     ; call    close_file
     ; -------------------------------------------
-    leave
-    retn
+        leave
+        retn
 
 get_filename:
     push    rbp
