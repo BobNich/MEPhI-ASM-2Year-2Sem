@@ -353,7 +353,7 @@ _exit_error:
     mov     r12, 100
     call    put_output_data             ; Print the error message
     mov     rdi, 1                      ; Exit status (1)
-    jmp     _exitg
+    jmp     _exit
 
 _exit:
     ; Exit program
