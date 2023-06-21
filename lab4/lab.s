@@ -42,6 +42,8 @@ main:
     ; -------------------------------------------
     mov	rcx, [rsi + 8]
     call  get_filename
+    mov     rdi, filename
+    call    printf
     mov     [rbp - 18h], rax
     xor     eax, eax
     lea     rdx, [rbp - 1Ch]
@@ -52,7 +54,7 @@ main:
     ; -------------------------------------------
     ; TODO #2 (Uncomment when file writing works
     ; correctly)
-    call    open_file
+    ; call    open_file
     ; -------------------------------------------
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
