@@ -351,12 +351,12 @@ _exit_error:
     ; Exit program with error code 1
     pop     rsi                         ; Pop the address of the error message into rdi
     xor     r12, r12
-    xor     rcx, rcx
     .calculate_length:
-        cmp     byte [rsi + rcx], 0
-        je      .print_error
-        inc     r12
-        jmp     .calculate_length
+        mov al, byte [rsi + r12]
+        cmp al, 0
+        je .print_error
+        inc r12
+        jmp .calculate_length
     .print_error:
         call    put_output_data             ; Print the error message
         mov     rdi, 1                      ; Exit status (1)
