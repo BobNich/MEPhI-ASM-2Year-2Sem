@@ -352,6 +352,7 @@ print_file:
     mov     rdi, [fd]
     mov     rsi, aSeriesMember
     mov		eax, 1
+    cvtss2sd    xmm0, xmm0
     call    fprintf
     add		rsp, 8
     leave
