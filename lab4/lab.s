@@ -141,11 +141,11 @@ custom:
         movss   xmm0, [rbp - 8h]
         addss   xmm0, [rbp - 4h]
         movss   [rbp - 8h], xmm0
+        call    print_file
         movss   xmm0, [rbp - 4h]
         movss   xmm1, [mask]
         andps   xmm0, xmm1
         comiss  xmm0, [rbp - 18h]
-        call    print_file
         jnb     .loop
     movss   xmm1, [rbp - 8h]
     movss   xmm0, [three]
