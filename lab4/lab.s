@@ -351,8 +351,6 @@ print_file:
 	sub		rsp, 8
     mov     rdi, [fd]
     mov     rsi, aSeriesMember
-    mov     rdx, 1
-    movss   xmm1, xmm0
     call    fprintf
     add		rsp, 8
     leave
