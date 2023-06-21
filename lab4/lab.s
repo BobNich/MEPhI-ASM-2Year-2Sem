@@ -73,7 +73,7 @@ main:
     ; -------------------------------------------
     ; TODO #3 (Uncomment when file writing works
     ; correctly)
-    ; call    close_file
+    call    close_file
     ; -------------------------------------------
     leave
     retn
@@ -349,16 +349,16 @@ close_file:
 print_file:
     ; -------------------------------------------
     ; TODO #7 (Print series member correctly)
-    ; push    rbp
-    ; mov     rbp, rsp
-    ; sub     rsp, 8
-    ; mov     rdx, 0
-    ; movss   [rbp - 4h], xmm0  ; series_member
-    ; mov     rsi, aSeriesMember
-    ; mov     rdi, [fd]
-    ; mov     rax, 1
-    ; call    fprintf
-    ; nop
-    ; leave
-    ; retn
+    push    rbp
+    mov     rbp, rsp
+    sub     rsp, 8
+    mov     rdi, [fd]
+    mov     rdx, 0
+    movss   [rbp - 4h], xmm0  ; series_member
+    mov     rsi, aSeriesMember
+    mov     rax, 1
+    call    fprintf
+    nop
+    leave
+    retn
     ; -------------------------------------------
