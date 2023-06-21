@@ -1,18 +1,22 @@
 BITS 64
 
 section .data
-    filename        dq 0
-    file_w_m        db "w", 0
-    fd              dq 0
+    ; -------------------------------------------
+    filename        dq 0                                ; имя файла
+    file_w_m        db "w", 0                           ; режим работы с файлом
+    fd              dq 0                                ; дескриптор файла
+    ; -------------------------------------------
     aInputX         db 'Input x: ',0
     aFloatFormat    db '%f',0
     aStringFormat   db '%f', 0
-    aFileOpenFailed db 'Error: File open failed.',0Ah,0
-    aTermInfinity   db 'Term is infinity',0Ah,0
+    ; -------------------------------------------
+    aFileOpenFailed db 'Error: File open failed.',0Ah,0 ; Сообщение о том, что файл не открылся
+    aTermInfinity   db 'Term is infinity',0Ah,0         ; Сообщение о том, что вышли за бесконечность
+    aSeriesMember   db "%-10d %f",0x0a,0                ; Добавляем в файл с данным форматированием
+    ; -------------------------------------------
     aInputPrecision db 'Input precision: ',0
     aLibResultF     db 'Lib result: %f',0Ah,0
     aCustomResultF  db 'Custom result: %f',0Ah,0
-    aSeriesMember   db "%-10d %f",0x0a,0
     three_double    dq 4008000000000000h
     one             dd 3F800000h
     minus_one       dd 0BF800000h
@@ -28,6 +32,7 @@ section .text
     extern  fopen
     extern  fclose
     extern  fabs
+    extern  isinf
     extern  sin
     global  main
 
@@ -37,13 +42,10 @@ main:
     push    rbx
     sub     rsp, 18h
     ; -------------------------------------------
-    ; TODO #6 (argc handling)
-    ; mov     rdi, [rsp + 8]
-    ; cmp     rdi, 2
-    ; jne      .end
+    ; TODO #1 (Handle filename and argc != 2)
+    ; mov	rcx, [rsi + 8]
+    ; call  get_filename
     ; -------------------------------------------
-    mov	    rcx, [rsi + 8]
-    call    get_filename
     mov     [rbp - 18h], rax
     xor     eax, eax
     lea     rdx, [rbp - 1Ch]
@@ -51,7 +53,11 @@ main:
     mov     rsi, rdx        ; precision
     mov     rdi, rax        ; x
     call    scan
-    call    open_file
+    ; -------------------------------------------
+    ; TODO #2 (Uncomment when file writing works
+    ; correctly)
+    ; call    open_file
+    ; -------------------------------------------
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
     movaps  xmm1, xmm0      ; precision
@@ -68,14 +74,13 @@ main:
     mov     eax, 0
     mov     rdx, [rbp - 18h]
     mov     rbx, [rbp - 8h]
-    .end:
     ; -------------------------------------------
     ; TODO #3 (Uncomment when file writing works
     ; correctly)
     ; call    close_file
     ; -------------------------------------------
-        leave
-        retn
+    leave
+    retn
 
 get_filename:
     push    rbp
@@ -317,37 +322,44 @@ print:
     retn
 
 open_file:
-    push    rbp
-    mov     rbp, rsp
-    mov     rdi, filename
-    mov     rsi, file_w_m
-    call    fopen
-    mov     [fd], rax ; fd
-    test    rax, rax
-    js      .file_open_failed
-    jmp     .end
-    .file_open_failed:
-        lea     rax, aFileOpenFailed
-        mov     rdi, rax
-        mov     eax, 0
-        call    printf
-    .end:
-        nop
-        leave
-        retn
+    ; -------------------------------------------
+    ; TODO #5 (Open file correctly)
+    ; push    rbp
+    ; mov     rbp, rsp
+    ; mov     rdi, filename
+    ; mov     rsi, file_w_m
+    ; call    fopen
+    ; mov     [fd], rax ; fd
+    ; test    rax, rax
+    ; js      .file_open_failed
+    ; jmp     .end
+    ; .file_open_failed:
+    ;     lea     rax, aFileOpenFailed
+    ;     mov     rdi, rax
+    ;     mov     eax, 0
+    ;     call    printf
+    ; .end:
+    ;     nop
+    ;     leave
+    ;     retn
+    ; -------------------------------------------
 
 close_file:
-    push    rbp
-    mov     rbp, rsp
-    mov     rdi, [fd]
-    call    fclose
-    nop
-    leave
-    ret
+    ; -------------------------------------------
+    ; TODO #6 (Close file correctly)
+    ; push    rbp
+    ; mov     rbp, rsp
+    ; mov	    rax, 1
+    ; mov     rdi, [fd]
+    ; call    fclose
+    ; nop
+    ; leave
+    ; ret
+    ; -------------------------------------------
 
 print_file:
     ; -------------------------------------------
-    ; TODO #5 (Print series member correctly)
+    ; TODO #7 (Print series member correctly)
     ; push    rbp
     ; mov     rbp, rsp
     ; sub     rsp, 8
