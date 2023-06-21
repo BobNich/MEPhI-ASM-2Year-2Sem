@@ -356,12 +356,10 @@ close_file:
 print_file:
     push    rbp
     mov     rbp, rsp
-    sub     rsp, 8
     mov     rdi, [fd]
     mov     rsi, format_string
     mov     rdx, message
     xor     rax, rax
     call    fprintf
-    nop
     leave
     retn
