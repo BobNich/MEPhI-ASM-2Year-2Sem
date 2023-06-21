@@ -346,16 +346,23 @@ close_file:
     ret
 
 print_file:
-    ; -------------------------------------------------
-    ; TODO №2 (Print series member and it's 'n'-номер члена в ряде)
     push    rbp
     mov     rbp, rsp
 	sub		rsp, 8
+
+    push    rbx
+    push    rdi
+    push    rsi
+
     mov     rdi, [fd]
     mov     rsi, aSeriesMember
     mov     rdx, 1
     call    fprintf
     add		rsp, 8
+
+    pop     rsi
+    pop     rdi
+    pop     rbx
+
     leave
     retn
-     ; -------------------------------------------------
