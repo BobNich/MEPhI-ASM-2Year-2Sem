@@ -42,7 +42,7 @@ main:
     sub     rsp, 18h
     mov     rax, [rbp + 8]
     cmp     rax, 2
-    mov     rdi, rax
+    mov     rdi, [rax]
     call    printf
     jne     .end_program
     ; -------------------------------------------
