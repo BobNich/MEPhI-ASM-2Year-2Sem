@@ -133,6 +133,7 @@ custom:
         mov     edi, edx        ; n
         movd    xmm0, eax       ; x
         call    series_member
+        call    printf
         ; -------------------------------------------------
         ; TODO #4 (Print term to file and handle infinity.
         ; If intinity -> end program, close file
