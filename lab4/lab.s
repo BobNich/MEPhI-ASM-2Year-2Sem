@@ -212,10 +212,6 @@ series_member:
     divss   xmm0, xmm1
     movss   [rbp - 4h], xmm0
     movss   xmm0, [rbp - 4h]
-    push    rdi
-    mov     rdi, aFloatFormat
-    call    printf
-    pop     rdi
     leave
     retn
 
