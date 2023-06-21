@@ -213,8 +213,8 @@ series_member:
     movss   [rbp - 4h], xmm0
     movss   xmm0, [rbp - 4h]
     call    isinf
-    test    eax, eax
-    jnz     .infinite
+    cmp     eax, 0
+    jne     .infinite
     jmp     .continue
     .infinite:
         mov     rdi, aTermInfinity
