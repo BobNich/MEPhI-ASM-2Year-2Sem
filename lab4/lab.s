@@ -52,7 +52,7 @@ main:
     ; -------------------------------------------
     ; TODO #2 (Uncomment when file writing works
     ; correctly)
-    ; call    open_file
+    call    open_file
     ; -------------------------------------------
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
@@ -320,9 +320,8 @@ print:
 open_file:
     push    rbp
     mov     rbp, rsp
-    sub     rsp, 18h
-    mov     rdx, [file_w_m]    ; mode
-    mov     rax, [filename]    ; filename
+    mov     rdx, file_w_m    ; mode
+    mov     rax, filename    ; filename
     mov     rdi, rax           ; filename
     mov     rsi, rdx           ; mode
     call    fopen
