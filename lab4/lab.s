@@ -336,6 +336,8 @@ open_file:
     .file_open_failed:
         mov     rdi, aFileOpenFailed
         call    printf
+        mov     rdi, 1
+        call    exit
         leave
         ret
 
