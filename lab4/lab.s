@@ -1,10 +1,7 @@
 BITS 64
 
 section .data
-    ; -------------------------------------------------
-    ; TODO #0 (Remove constant filename)
-    filename        db 'example.txt', 0
-    ; -------------------------------------------------
+    filename        dq 0
     file_w_m        db "w", 0
     fd              dq 0
     aInputX         db 'Input x: ',0
@@ -44,11 +41,8 @@ main:
     mov     eax, edi
     cmp     eax, 2
     jne     .args_error
-    ; -------------------------------------------
-    ; TODO #1 (Handle filename)
-    ; mov	rcx, [rsi + 8]
-    ; call  get_filename
-    ; -------------------------------------------
+    mov	    rcx, [rsi + 8]
+    call    get_filename
     mov     [rbp - 18h], rax
     xor     eax, eax
     lea     rdx, [rbp - 1Ch]
