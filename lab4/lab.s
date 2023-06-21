@@ -236,7 +236,7 @@ custom_pow:
             movss   xmm0, [rbp - 18h]
             movss   xmm1, [one]
             comiss  xmm0, xmm1
-        ja      .loop
+        ja  .loop
     movss   xmm0, [rbp - 4h]
     pop     rbp
     retn
@@ -348,12 +348,12 @@ close_file:
 print_file:
     push        rbp
     mov         rbp, rsp
-	sub		    rsp, 8
+    sub         rsp, 8
     mov         rdi, [fd]
     mov         rsi, aSeriesMember
-    mov		    eax, 1
+    mov         eax, 1
     cvtss2sd    xmm0, xmm0
     call        fprintf
-    add		    rsp, 8
+    add         rsp, 8
     leave
     retn
