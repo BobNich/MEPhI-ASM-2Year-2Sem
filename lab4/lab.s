@@ -363,15 +363,13 @@ print_file:
     retn
 
 check_infinity:
-    ; ----------------------
-    ; TODO № 1 (Handle infinity)
     push    rbp
     mov     rbp, rsp
-    cvtss2sd    xmm0, xmm0
-    call    isinf
-    cmp     eax, 0
-    jne     .infinite
-    jmp     .continue
+    mov     eax, 0x7F800000 
+    movd    xmm1, eax
+    ucomiss xmm0, xmm1
+    jbe .continue
+    jmp infinite
     .infinite:
         mov     rdi, aTermInfinity
         call    printf
@@ -381,4 +379,3 @@ check_infinity:
     .continue:
         leave
         retn
-    ; ----------------------
