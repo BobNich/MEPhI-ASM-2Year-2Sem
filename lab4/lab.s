@@ -2,7 +2,6 @@ BITS 64
 
 section .data
     file_w_m        db 'w', 0
-    filename        dq 0
     fd              dq 0
     aInputX         db 'Input x: ',0
     aFloatFormat    db '%f',0
@@ -20,6 +19,9 @@ section .data
     three           dd 40400000h
     mask            dd 7FFFFFFFh
     four            dd 40800000h
+
+section .bss
+    filename resb 256
 
 section .text
     extern  scanf
