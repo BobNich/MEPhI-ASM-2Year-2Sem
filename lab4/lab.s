@@ -373,9 +373,10 @@ check_infinity:
     .infinite:
         mov     rdi, aTermInfinity
         call    printf
-        call    close_file
         mov     rdi, 1
         call    exit
+        leave
+        retn
     .continue:
         leave
         retn
