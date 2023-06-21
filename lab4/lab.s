@@ -320,6 +320,10 @@ print:
 open_file:
     push    rbp
     mov     rbp, rsp
+    mov     rdi, file_w_m
+    call    printf
+    mov     rdi, filename
+    call    printf
     mov     rdx, file_w_m    ; mode
     mov     rax, filename    ; filename
     mov     rdi, rax           ; filename
