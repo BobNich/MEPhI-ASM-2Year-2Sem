@@ -139,10 +139,6 @@ custom:
         movd    eax, xmm0
         mov     [rbp - 4h], eax
         call    print_file
-        ; ---------------------------
-        ; TODO № 0 (Handle infinity)
-        call    check_infinity
-        ; ---------------------------
         movss   xmm0, [rbp - 8h]
         addss   xmm0, [rbp - 4h]
         movss   [rbp - 8h], xmm0
@@ -361,22 +357,3 @@ print_file:
     add		    rsp, 8
     leave
     retn
-
-check_infinity:
-    push    rbp
-    mov     rbp, rsp
-    mov     eax, 1000 
-    movd    xmm1, eax
-    ucomiss xmm0, xmm1
-    jbe .continue
-    jmp .infinite
-    .infinite:
-        mov     rdi, aTermInfinity
-        call    printf
-        mov     rdi, 1
-        call    exit
-        leave
-        retn
-    .continue:
-        leave
-        retn
