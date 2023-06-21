@@ -31,6 +31,7 @@ section .text
     extern  fabs
     extern  isinf
     extern  sin
+    extern  exit
     global  main
 
 main:
