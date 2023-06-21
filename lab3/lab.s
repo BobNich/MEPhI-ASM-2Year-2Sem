@@ -27,11 +27,11 @@ section .data
 
 ; CONSTANT ERROR MSGS
     err_file                db "Error: invalid file or not available for reading", 0x0a, 0
-    err_file_length         db 49
+    err_file_length         db 48
     err_no_argv             db "Error: no arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
-    err_no_argv_length      db 74
+    err_no_argv_length      db 73
     err_too_many_argv       db "Error: too many arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
-    err_many_argv_length    db 80
+    err_many_argv_length    db 79
 
 ; SIZES
     buffer_size dq 10
