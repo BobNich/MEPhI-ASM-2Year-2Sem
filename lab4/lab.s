@@ -320,14 +320,10 @@ print:
 open_file:
     push    rbp
     mov     rbp, rsp
-    mov     rdi, file_w_m
-    call    printf
-    mov     rdi, filename
-    call    printf
-    mov     rdx, file_w_m       ; mode
-    mov     rax, filename       ; filename
-    mov     rdi, rax           ; filename
-    mov     rsi, rdx           ; mode
+    mov     rdx, file_w_m
+    mov     rax, filename
+    mov     rdi, rax
+    mov     rsi, rdx
     call    fopen
     cmp     rax, 0
     je      .file_open_failed
