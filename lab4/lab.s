@@ -9,7 +9,7 @@ section .data
     aArgsError      db "Use ./lab <filename> to run program properly", 0x0a, 0
     aFileOpenFailed db 'Error: File open failed.',0Ah,0
     aTermInfinity   db 'Term is infinity',0Ah,0
-    aSeriesMember   db "%-10d",0x0a,0
+    aSeriesMember   db "%-10d %f",0x0a,0
     aInputPrecision db 'Input precision: ',0
     aLibResultF     db 'Lib result: %f',0Ah,0
     aCustomResultF  db 'Custom result: %f',0Ah,0
@@ -136,7 +136,6 @@ custom:
         mov     edi, edx        ; n
         movd    xmm0, eax       ; x
         call    series_member
-        call    print_file
         movd    eax, xmm0
         mov     [rbp - 4h], eax
         movss   xmm0, [rbp - 8h]
@@ -347,12 +346,15 @@ close_file:
     ret
 
 print_file:
-    push    rbp
-    mov     rbp, rsp
-    mov     rdi, [fd]
-    mov     rsi, aSeriesMember
-    mov     rdx, 1
-    xor     rax, rax
-    call    fprintf
-    leave
-    retn
+    ; -------------------------------------------------
+    ; TODO №2 (Print series member and it's 'n'-номер члена в ряде)
+    ; push    rbp
+    ; mov     rbp, rsp
+    ; mov     rdi, [fd]
+    ; mov     rsi, aSeriesMember
+    ; mov     rdx, 1
+    ; xor     rax, rax
+    ; call    fprintf
+    ; leave
+    ; retn
+     ; -------------------------------------------------
