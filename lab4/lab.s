@@ -350,12 +350,13 @@ print_file:
     ; TODO №2 (Print series member and it's 'n'-номер члена в ряде)
     push    rbp
     mov     rbp, rsp
-    sub     rsp, 10h
+	sub		rsp, 8
     mov     rdi, [fd]
-    lea     rax, aSeriesMember
-    mov     rsi, rax
+    mov     rsi, aSeriesMember
     mov     rdx, 1
+    mov		rax, 1
     call    fprintf
+    add		rsp, 8
     leave
     retn
      ; -------------------------------------------------
