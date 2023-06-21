@@ -139,6 +139,7 @@ custom:
         movd    eax, xmm0
         mov     [rbp - 4h], eax
         call    print_file
+        call    check_infinity
         movss   xmm0, [rbp - 8h]
         addss   xmm0, [rbp - 4h]
         movss   [rbp - 8h], xmm0
@@ -357,3 +358,20 @@ print_file:
     add		    rsp, 8
     leave
     retn
+
+check_infinity:
+    push    rbp
+    mov     rbp, rsp
+    call    isinf
+    cmp     eax, 0
+    jne     .infinite
+    jmp     .continue
+    .infinite:
+        mov     rdi, aTermInfinity
+        call    printf
+        call    close_file
+        mov     rdi, 1
+        call    exit
+    .continue:
+        leave
+        retn
