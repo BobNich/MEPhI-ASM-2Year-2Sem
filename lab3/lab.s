@@ -26,16 +26,15 @@ section .data
     NULL  equ 0
 
 ; CONSTANT ERROR MSGS
-    err_file db "Error: invalid file or not available for reading", 0x0a, 0
-    err_no_argv db "Error: no arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
-    err_too_many_argv db "Error: too many arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
+    err_file                db "Error: invalid file or not available for reading", 0x0a, 0
+    err_no_argv             db "Error: no arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
+    err_too_many_argv       db "Error: too many arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
 
 ; SIZES
     buffer_size dq 10
     output_size dq 0
 
 ; FILE
-    filename dq 0
     fd dq 0
     file_offset dq 0
 
@@ -46,6 +45,7 @@ section .data
 
 section .bss
     ; DATA (INPUT/OUTPUT)
+    filename resb 256
     data_buffer resq 10
     output_buffer resq 10
 
@@ -329,18 +329,18 @@ close_file:
 
 _argv_not_passed:
     ; Exit program with printing error msg (no needed argument)
-    push err_no_argv
-    jmp _exit_error
+    push    err_no_argv
+    jmp     _exit_error
 
 _argv_to_many_passed:
     ; Exit program with printing error msg (too many arguments)
-    push err_too_many_argv
-    jmp _exit_error
+    push    err_too_many_argv
+    jmp     _exit_error
 
 _file_invalid:
     ; Exit program with printing error msg (invalid file)
-    push err_file
-    jmp _exit_error
+    push    err_file
+    jmp     _exit_error
 
 _exit_normal:
     ; Exit program with error code 0 (OK)
@@ -349,10 +349,18 @@ _exit_normal:
 
 _exit_error:
     ; Exit program with error code 1
-    pop     rdi                         ; Pop the address of the error message into rdi
-    call    put_output_data             ; Print the error message
-    mov     rdi, 1                      ; Exit status (1)
-    jmp     _exit
+    pop     rsi                         ; Pop the address of the error message into rdi
+    xor     r12, r12
+    .calculate_length:
+        mov al, byte [rsi + r12]
+        cmp al, 0
+        je .print_error
+        inc r12
+        jmp .calculate_length
+    .print_error:
+        call    put_output_data             ; Print the error message
+        mov     rdi, 1                      ; Exit status (1)
+        jmp     _exit
 
 _exit:
     ; Exit program

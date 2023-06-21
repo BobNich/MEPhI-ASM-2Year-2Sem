@@ -1,12 +1,15 @@
 BITS 64
 
 section .data
-    filename        db 'output.txt', 0
+    file_w_m        db 'w', 0
     fd              dq 0
     aInputX         db 'Input x: ',0
     aFloatFormat    db '%f',0
     aStringFormat   db '%f', 0
+    aArgsError      db "Use ./lab <filename> to run program properly", 0x0a, 0
     aFileOpenFailed db 'Error: File open failed.',0Ah,0
+    aTermInfinity   db 'Term is infinity',0Ah,0
+    aSeriesMember   db "%-10d %f",0x0a,0
     aInputPrecision db 'Input precision: ',0
     aLibResultF     db 'Lib result: %f',0Ah,0
     aCustomResultF  db 'Custom result: %f',0Ah,0
@@ -17,6 +20,9 @@ section .data
     mask            dd 7FFFFFFFh
     four            dd 40800000h
 
+section .bss
+    filename resb 256
+
 section .text
     extern  scanf
     extern  printf
@@ -25,7 +31,9 @@ section .text
     extern  fopen
     extern  fclose
     extern  fabs
+    extern  isinf
     extern  sin
+    extern  exit
     global  main
 
 main:
@@ -33,6 +41,11 @@ main:
     mov     rbp, rsp
     push    rbx
     sub     rsp, 18h
+    mov     eax, edi
+    cmp     eax, 2
+    jne     .args_error
+    mov	    rcx, [rsi + 8]
+    call    get_filename
     mov     [rbp - 18h], rax
     xor     eax, eax
     lea     rdx, [rbp - 1Ch]
@@ -58,8 +71,31 @@ main:
     mov     rdx, [rbp - 18h]
     mov     rbx, [rbp - 8h]
     call    close_file
-    leave
-    retn
+    jmp     .end_program
+    .args_error:
+        mov     rdi, aArgsError
+        call    printf
+        leave
+        retn
+    .end_program:
+        leave
+        retn
+
+get_filename:
+    push    rbp
+    mov     rbp, rsp
+    xor rdx, rdx
+    .copy_filename_loop:
+        mov al, byte [rcx + rdx]
+        mov [filename + rdx], al
+        cmp al, 0
+        je .done_filename_copying
+        inc rdx
+        jmp .copy_filename_loop
+    .done_filename_copying:
+        mov [filename + rdx], al
+        leave
+        retn
 
 lib:
     push    rbp
@@ -100,9 +136,9 @@ custom:
         mov     edi, edx        ; n
         movd    xmm0, eax       ; x
         call    series_member
-        call    print_file
         movd    eax, xmm0
         mov     [rbp - 4h], eax
+        call    print_file
         movss   xmm0, [rbp - 8h]
         addss   xmm0, [rbp - 4h]
         movss   [rbp - 8h], xmm0
@@ -118,7 +154,6 @@ custom:
     divss   xmm0, xmm1
     leave
     retn
-
 
 series_member:
     push    rbp
@@ -201,7 +236,7 @@ custom_pow:
             movss   xmm0, [rbp - 18h]
             movss   xmm1, [one]
             comiss  xmm0, xmm1
-        ja      .loop
+        ja  .loop
     movss   xmm0, [rbp - 4h]
     pop     rbp
     retn
@@ -283,39 +318,42 @@ print:
 open_file:
     push    rbp
     mov     rbp, rsp
-    sub     rsp, 8
-    mov     rdi, filename
-    mov     rax, 0
+    mov     rdx, file_w_m
+    mov     rax, filename
+    mov     rdi, rax
+    mov     rsi, rdx
     call    fopen
+    cmp     rax, 0
+    je      .file_open_failed
     mov     [fd], rax
-    cmp     qword[fd], 0
-    jmp     .end
+    leave
+    ret
     .file_open_failed:
-        lea     rdi, aFileOpenFailed
+        mov     rdi, aFileOpenFailed
         call    printf
-    .end:
-        nop
+        mov     rdi, 1
+        call    exit
         leave
-        retn
+        ret
 
 close_file:
     push    rbp
     mov     rbp, rsp
-    mov     rdi, [fd]
+    mov     rax, [fd]
+    mov     rdi, rax
     call    fclose
-    nop
     leave
     ret
 
 print_file:
-    push    rbp
-    mov     rbp, rsp
-    movss   [rbp - 4h], xmm0  ; series_member
-    mov     qword[rbp - 8h], fd
-    mov     rdx, [rbp - 4h]
-    mov     rax, [rbp - 8h]
-    mov     rdi, aStringFormat
-    call    fprintf
-    nop
+    push        rbp
+    mov         rbp, rsp
+    sub         rsp, 8
+    mov         rdi, [fd]
+    mov         rsi, aSeriesMember
+    mov         eax, 1
+    cvtss2sd    xmm0, xmm0
+    call        fprintf
+    add         rsp, 8
     leave
     retn
