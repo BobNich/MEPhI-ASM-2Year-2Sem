@@ -40,9 +40,9 @@ main:
     mov     rbp, rsp
     push    rbx
     sub     rsp, 18h
-    mov eax, dword [rbp + 8]
-    cmp eax, 2
-    jne end_program
+    mov     eax, dword [rbp + 8]
+    cmp     eax, 2
+    jne     .end_program
     ; -------------------------------------------
     ; TODO #1 (Handle filename and argc != 2 correctly)
     ; mov	rcx, [rsi + 8]
