@@ -1,7 +1,7 @@
 BITS 64
 
 section .data
-    filename        dq 0
+    filename        db 'example.txt', 0
     file_w_m        db "w", 0
     fd              dq 0
     aInputX         db 'Input x: ',0
@@ -40,8 +40,8 @@ main:
     ; -------------------------------------------
     ; TODO #1 (Handle argc != 2)
     ; -------------------------------------------
-    mov	rcx, [rsi + 8]
-    call  get_filename
+    ; mov	rcx, [rsi + 8]
+    ; call  get_filename
     mov     [rbp - 18h], rax
     xor     eax, eax
     lea     rdx, [rbp - 1Ch]
@@ -324,8 +324,8 @@ open_file:
     call    printf
     mov     rdi, filename
     call    printf
-    mov     rdx, file_w_m    ; mode
-    mov     rax, filename    ; filename
+    mov     rdx, file_w_m       ; mode
+    mov     rax, filename       ; filename
     mov     rdi, rax           ; filename
     mov     rsi, rdx           ; mode
     call    fopen
