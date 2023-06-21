@@ -354,7 +354,6 @@ print_file:
     mov     rdi, [fd]
     mov     rsi, aSeriesMember
     mov     rdx, 1
-    mov		rax, 1
     call    fprintf
     add		rsp, 8
     leave
