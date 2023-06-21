@@ -369,7 +369,7 @@ check_infinity:
     movd    xmm1, eax
     ucomiss xmm0, xmm1
     jbe .continue
-    jmp infinite
+    jmp .infinite
     .infinite:
         mov     rdi, aTermInfinity
         call    printf
