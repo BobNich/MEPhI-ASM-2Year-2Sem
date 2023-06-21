@@ -321,25 +321,18 @@ open_file:
     mov     rax, filename
     mov     rdi, rax
     mov     rsi, rdx
-    push    rdi
-    push    rsi
     call    fopen
     cmp     rax, 0
     je      .file_open_failed
     mov     [fd], rax
-    pop     rsi
-    pop     rdi
     leave
-    pop     rbp
     ret
     .file_open_failed:
         mov     rdi, aFileOpenFailed
         call    printf
         mov     rdi, 1
         call    exit
-        pop     rdi
         leave
-        pop     rbp
         ret
 
 close_file:
