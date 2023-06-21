@@ -378,5 +378,7 @@ check_infinity:
         leave
         retn
     .continue:
+        mov     rdi, aTermInfinity
+        call    printf
         leave
         retn
