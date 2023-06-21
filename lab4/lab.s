@@ -136,6 +136,7 @@ custom:
         mov     edi, edx        ; n
         movd    xmm0, eax       ; x
         call    series_member
+        call    print_file
         movd    eax, xmm0
         mov     [rbp - 4h], eax
         movss   xmm0, [rbp - 8h]
@@ -347,13 +348,15 @@ close_file:
 print_file:
     ; -------------------------------------------------
     ; TODO №2 (Print series member and it's 'n'-номер члена в ряде)
-    ; push    rbp
-    ; mov     rbp, rsp
-    ; mov     rdi, [fd]
-    ; mov     rsi, aSeriesMember
-    ; mov     rdx, 1
-    ; xor     rax, rax
-    ; call    fprintf
-    ; leave
-    ; retn
+    push    rbp
+    mov     rbp, rsp
+    sub     rsp, 10h
+    mov     rdi, [fd]
+    lea     rax, aSeriesMember
+    mov     rsi, rax
+    mov     rdx, 1
+    mov     xmm1, xmm0
+    call    fprintf
+    leave
+    retn
      ; -------------------------------------------------
