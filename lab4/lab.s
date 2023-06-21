@@ -52,7 +52,6 @@ main:
     ; -------------------------------------------
     ; TODO #2 (Uncomment when file writing works
     ; correctly)
-    mov     rdi, [filename]
     call    open_file
     ; -------------------------------------------
     movss   xmm0, [rbp - 1Ch]
@@ -322,8 +321,6 @@ open_file:
     push    rbp
     mov     rbp, rsp
     sub     rsp, 18h
-    mov     rax, [rbp + 8]     ; filename
-    mov     qword [filename], rax
     mov     rdx, [file_w_m]    ; mode
     mov     rax, [filename]    ; filename
     mov     rdi, rax           ; filename
@@ -344,8 +341,8 @@ close_file:
     push    rbp
     mov     rbp, rsp
     sub     rsp, 18h
-    mov     rax, [fd]          ; file descriptor
-    mov     rdi, rax           ; file descriptor
+    mov     rax, [fd]
+    mov     rdi, rax
     call    fclose
     leave
     ret
