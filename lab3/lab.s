@@ -27,11 +27,8 @@ section .data
 
 ; CONSTANT ERROR MSGS
     err_file                db "Error: invalid file or not available for reading", 0x0a, 0
-    err_file_length         db 48
     err_no_argv             db "Error: no arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
-    err_no_argv_length      db 73
     err_too_many_argv       db "Error: too many arguments. Please, use ./lab <filename> to run program properly", 0x0a, 0
-    err_many_argv_length    db 56
 
 ; SIZES
     buffer_size dq 10
@@ -333,19 +330,16 @@ close_file:
 _argv_not_passed:
     ; Exit program with printing error msg (no needed argument)
     push    err_no_argv
-    mov     r12, [err_no_argv_length]
     jmp     _exit_error
 
 _argv_to_many_passed:
     ; Exit program with printing error msg (too many arguments)
     push    err_too_many_argv
-    mov     r12, [err_many_argv_length]
     jmp     _exit_error
 
 _file_invalid:
     ; Exit program with printing error msg (invalid file)
     push    err_file
-    mov     r12, [err_file_length]
     jmp     _exit_error
 
 _exit_normal:
