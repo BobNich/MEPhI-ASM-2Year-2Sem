@@ -136,6 +136,9 @@ custom:
         mov     edi, edx        ; n
         movd    xmm0, eax       ; x
         call    series_member
+        call    isinf
+        test    eax, eax
+        jnz     .infinite
         movd    eax, xmm0
         mov     [rbp - 4h], eax
         movss   xmm0, [rbp - 8h]
@@ -151,8 +154,15 @@ custom:
     mulss   xmm0, xmm1
     movss   xmm1, [four]
     divss   xmm0, xmm1
-    leave
-    retn
+    jmp     .end
+    .infinite:
+        mov     rdi, aTermInfinity
+        call    printf
+        mov     rdi, 1
+        call    exit
+    .end:
+        leave
+        retn
 
 series_member:
     push    rbp
