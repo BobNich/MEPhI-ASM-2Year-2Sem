@@ -19,8 +19,8 @@ section .data
     three           dd 40400000h
     mask            dd 7FFFFFFFh
     four            dd 40800000h
-    format_string db "Hello, %s!", 0
-    message db "world", 0
+    format_string   db "Hello, %s!", 0
+    message         db "world", 0
 
 section .bss
     filename resb 256
@@ -357,10 +357,11 @@ print_file:
     push    rbp
     mov     rbp, rsp
     sub     rsp, 8
-    ; mov     rsi, format_string
-    ; mov     rdx, message
-    ; xor     rax, rax
-    ; call    fprintf
+    mov     rdi, [fd]
+    mov     rsi, format_string
+    mov     rdx, message
+    xor     rax, rax
+    call    fprintf
     nop
     leave
     retn
