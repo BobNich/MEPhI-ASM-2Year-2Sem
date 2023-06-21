@@ -367,6 +367,7 @@ check_infinity:
     ; TODO № 1 (Handle infinity)
     push    rbp
     mov     rbp, rsp
+    cvtss2sd    xmm0, xmm0
     call    isinf
     cmp     eax, 0
     jne     .infinite
