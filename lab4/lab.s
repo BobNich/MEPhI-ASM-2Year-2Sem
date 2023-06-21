@@ -38,10 +38,10 @@ main:
     push    rbx
     sub     rsp, 18h
     ; -------------------------------------------
-    ; TODO #1 (Handle argc != 2)
-    ; -------------------------------------------
+    ; TODO #1 (Handle filename and argc != 2)
     ; mov	rcx, [rsi + 8]
     ; call  get_filename
+    ; -------------------------------------------
     mov     [rbp - 18h], rax
     xor     eax, eax
     lea     rdx, [rbp - 1Ch]
@@ -49,11 +49,7 @@ main:
     mov     rsi, rdx        ; precision
     mov     rdi, rax        ; x
     call    scan
-    ; -------------------------------------------
-    ; TODO #2 (Uncomment when file writing works
-    ; correctly)
     call    open_file
-    ; -------------------------------------------
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
     movaps  xmm1, xmm0      ; precision
@@ -70,11 +66,7 @@ main:
     mov     eax, 0
     mov     rdx, [rbp - 18h]
     mov     rbx, [rbp - 8h]
-    ; -------------------------------------------
-    ; TODO #3 (Uncomment when file writing works
-    ; correctly)
     call    close_file
-    ; -------------------------------------------
     leave
     retn
 
