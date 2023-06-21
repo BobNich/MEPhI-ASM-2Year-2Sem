@@ -353,7 +353,7 @@ print_file:
     mov     rdi, [fd]
     mov     rsi, aSeriesMember
     mov     rdx, 0
-    lea     rdx, [rel float_number]
+    lea     rcx, [rel float_number]
     xor     rax, rax
     call    fprintf
     leave
