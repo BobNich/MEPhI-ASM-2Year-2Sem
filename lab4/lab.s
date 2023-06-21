@@ -9,7 +9,7 @@ section .data
     aArgsError      db "Use ./lab <filename> to run program properly", 0x0a, 0
     aFileOpenFailed db 'Error: File open failed.',0Ah,0
     aTermInfinity   db 'Term is infinity',0Ah,0
-    aSeriesMember   db "%-10d %f",0x0a,0
+    aSeriesMember   db "%-10d",0x0a,0
     aInputPrecision db 'Input precision: ',0
     aLibResultF     db 'Lib result: %f',0Ah,0
     aCustomResultF  db 'Custom result: %f',0Ah,0
@@ -19,7 +19,6 @@ section .data
     three           dd 40400000h
     mask            dd 7FFFFFFFh
     four            dd 40800000h
-    float_number    dq 3.14
 
 section .bss
     filename resb 256
@@ -352,9 +351,8 @@ print_file:
     mov     rbp, rsp
     mov     rdi, [fd]
     mov     rsi, aSeriesMember
-    mov     rdx, 0
-    lea     rax, [rel float_number]
-    xor     rcx, rcx
+    mov     rdx, 1
+    xor     rax, rax
     call    fprintf
     leave
     retn
