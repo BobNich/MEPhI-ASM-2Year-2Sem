@@ -222,6 +222,9 @@ series_member:
         mov     rdi, 1
         call    exit
     .continue:
+        mov     rdi, aFloatFormat
+        mov     rax, 1
+        call    printf
         leave
         retn
 
