@@ -357,20 +357,3 @@ print_file:
     add		    rsp, 8
     leave
     retn
-
-check_infinity:
-    ; push    rbp
-    ; mov     rbp, rsp
-    ; call    isinf
-    ; cmp     eax, 0
-    ; jne     .infinite
-    ; jmp     .continue
-    ; .infinite:
-    ;     mov     rdi, aTermInfinity
-    ;     call    printf
-    ;     call    close_file
-    ;     mov     rdi, 1
-    ;     call    exit
-    ; .continue:
-    ;     leave
-    ;     retn
