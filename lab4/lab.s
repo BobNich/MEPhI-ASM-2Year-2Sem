@@ -31,7 +31,7 @@ section .text
     extern  fopen
     extern  fclose
     extern  fabs
-    extern  isfinite
+    extern  isinf
     extern  sin
     extern  exit
     global  main
@@ -136,7 +136,7 @@ custom:
         mov     edi, edx        ; n
         movd    xmm0, eax       ; x
         call    series_member
-        call    isfinite
+        call    isinf
         test    eax, eax
         jnz     .infinite
         movd    eax, xmm0
