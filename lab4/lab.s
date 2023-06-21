@@ -349,20 +349,10 @@ print_file:
     push    rbp
     mov     rbp, rsp
 	sub		rsp, 8
-
-    push    rbx
-    push    rdi
-    push    rsi
-
     mov     rdi, [fd]
     mov     rsi, aSeriesMember
     mov     rdx, 1
     call    fprintf
     add		rsp, 8
-
-    pop     rsi
-    pop     rdi
-    pop     rbx
-
     leave
     retn
