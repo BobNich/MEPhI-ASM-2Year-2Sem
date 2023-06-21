@@ -42,8 +42,6 @@ main:
     ; -------------------------------------------
     mov	rcx, [rsi + 8]
     call  get_filename
-    mov     rdi, filename
-    call    printf
     mov     [rbp - 18h], rax
     xor     eax, eax
     lea     rdx, [rbp - 1Ch]
