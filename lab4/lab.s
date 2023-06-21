@@ -120,8 +120,6 @@ custom:
         mov     edi, edx        ; n
         movd    xmm0, eax       ; x
         call    series_member
-        mov     rdi, xmm0
-        call    printf
         call    print_file
         movd    eax, xmm0
         mov     [rbp - 4h], eax
