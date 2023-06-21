@@ -2,7 +2,6 @@ BITS 64
 
 section .data
     filename        dq 0
-    file_w_m        db "w", 0
     fd              dq 0
     aInputX         db 'Input x: ',0
     aFloatFormat    db '%f',0
@@ -320,7 +319,7 @@ print:
 open_file:
     push    rbp
     mov     rbp, rsp
-    mov     rdx, file_w_m
+    mov     rdx, 1
     mov     rax, filename
     mov     rdi, rax
     mov     rsi, rdx
