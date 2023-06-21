@@ -136,6 +136,8 @@ custom:
         mov     edi, edx        ; n
         movd    xmm0, eax       ; x
         call    series_member
+        mov     rdi, aTermInfinity
+        call    printf
         call    isinf
         test    eax, eax
         jnz     .infinite
