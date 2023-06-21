@@ -346,14 +346,14 @@ close_file:
     ret
 
 print_file:
-    push    rbp
-    mov     rbp, rsp
-	sub		rsp, 8
-    mov     rdi, [fd]
-    mov     rsi, aSeriesMember
-    mov		eax, 1
+    push        rbp
+    mov         rbp, rsp
+	sub		    rsp, 8
+    mov         rdi, [fd]
+    mov         rsi, aSeriesMember
+    mov		    eax, 1
     cvtss2sd    xmm0, xmm0
-    call    fprintf
-    add		rsp, 8
+    call        fprintf
+    add		    rsp, 8
     leave
     retn
