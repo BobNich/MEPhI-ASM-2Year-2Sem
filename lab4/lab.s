@@ -19,6 +19,8 @@ section .data
     three           dd 40400000h
     mask            dd 7FFFFFFFh
     four            dd 40800000h
+    format_string db "Hello, %s!", 0
+    message db "world", 0
 
 section .bss
     filename resb 256
@@ -140,7 +142,7 @@ custom:
         ; TODO #4 (Print term to file and handle infinity.
         ; If intinity -> end program, close file
         ; and print <aTermInfinity> msg)
-        ; call    print_file
+        call    print_file
         ; -------------------------------------------------
         movd    eax, xmm0
         mov     [rbp - 4h], eax
@@ -352,18 +354,13 @@ close_file:
     ret
 
 print_file:
-    ; -------------------------------------------
-    ; TODO #7 (Print series member correctly)
-    ; push    rbp
-    ; mov     rbp, rsp
-    ; sub     rsp, 8
-    ; mov     rdx, 0
-    ; movss   [rbp - 4h], xmm0  ; series_member
-    ; mov     rsi, aSeriesMember
-    ; mov     rdi, [fd]
-    ; mov     rax, 1
-    ; call    fprintf
-    ; nop
-    ; leave
-    ; retn
-    ; -------------------------------------------
+    push    rbp
+    mov     rbp, rsp
+    sub     rsp, 8
+    mov     rsi, format_string
+    mov     rdx, message
+    xor     rax, rax
+    call    fprintf
+    nop
+    leave
+    retn
