@@ -52,8 +52,8 @@ main:
     ; -------------------------------------------
     ; TODO #2 (Uncomment when file writing works
     ; correctly)
-    ; mov     rdi, filename
-    ; call    open_file
+    mov     rdi, [filename]
+    call    open_file
     ; -------------------------------------------
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
