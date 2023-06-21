@@ -357,10 +357,10 @@ print_file:
     push    rbp
     mov     rbp, rsp
     sub     rsp, 8
-    mov     rsi, format_string
-    mov     rdx, message
-    xor     rax, rax
-    call    fprintf
+    ; mov     rsi, format_string
+    ; mov     rdx, message
+    ; xor     rax, rax
+    ; call    fprintf
     nop
     leave
     retn
