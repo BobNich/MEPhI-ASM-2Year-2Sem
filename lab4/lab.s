@@ -215,6 +215,7 @@ series_member:
     call    isinf
     test    eax, eax
     jnz     .infinite
+    jmp     .continue
     .infinite:
         mov     rdi, aTermInfinity
         call    printf
