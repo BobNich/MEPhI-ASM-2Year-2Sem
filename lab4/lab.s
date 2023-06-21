@@ -138,11 +138,6 @@ custom:
         mov     edi, edx        ; n
         movd    xmm0, eax       ; x
         call    series_member
-        ; -------------------------------------------------
-        ; TODO #4 (Print term to file and handle infinity.
-        ; If intinity -> end program, close file
-        ; and print <aTermInfinity> msg)
-        ; -------------------------------------------------
         movd    eax, xmm0
         mov     [rbp - 4h], eax
         movss   xmm0, [rbp - 8h]
