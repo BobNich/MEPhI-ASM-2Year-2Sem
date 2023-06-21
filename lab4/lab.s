@@ -10,6 +10,7 @@ section .data
     aInputX         db 'Input x: ',0
     aFloatFormat    db '%f',0
     aStringFormat   db '%f', 0
+    aArgsError      db "Use ./lab <filename> to run program properly", 0x0a, 0
     aFileOpenFailed db 'Error: File open failed.',0Ah,0
     aTermInfinity   db 'Term is infinity',0Ah,0
     aSeriesMember   db "%-10d %f",0x0a,0
@@ -40,11 +41,11 @@ main:
     mov     rbp, rsp
     push    rbx
     sub     rsp, 18h
-    mov     eax, edi 
+    mov     eax, edi
     cmp     eax, 2
-    jne     .end_program
+    jne     .args_error
     ; -------------------------------------------
-    ; TODO #1 (Handle filename and argc != 2 correctly)
+    ; TODO #1 (Handle filename)
     ; mov	rcx, [rsi + 8]
     ; call  get_filename
     ; -------------------------------------------
@@ -73,6 +74,12 @@ main:
     mov     rdx, [rbp - 18h]
     mov     rbx, [rbp - 8h]
     call    close_file
+    jmp     .end_program
+    .args_error:
+        mov     rdi, aArgsError
+        call    printf
+        leave
+        retn
     .end_program:
         leave
         retn
