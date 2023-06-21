@@ -1,8 +1,8 @@
 BITS 64
 
 section .data
-    file_w_m        db 'w', 0
     filename        dq 0
+    file_w_m        db 'w', 0
     fd              dq 0
     aInputX         db 'Input x: ',0
     aFloatFormat    db '%f',0
