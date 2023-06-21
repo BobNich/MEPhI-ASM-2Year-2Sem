@@ -333,6 +333,7 @@ open_file:
     .file_open_failed:
         mov     rdi, aFileOpenFailed
         call    printf
+        jmp     .args_error
         leave
         ret
 
