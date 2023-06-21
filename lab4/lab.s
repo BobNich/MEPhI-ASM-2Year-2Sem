@@ -355,7 +355,7 @@ print_file:
     lea     rax, aSeriesMember
     mov     rsi, rax
     mov     rdx, 1
-    mov     xmm1, xmm0
+    movaps     xmm1, xmm0
     call    fprintf
     leave
     retn
