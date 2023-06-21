@@ -333,6 +333,7 @@ print_file:
     mov     rbp, rsp
     mov     rdi, [fd]
     mov     rdx, 0
+    mov		eax, 1
     mov     rsi, aSeriesMember
     call    fprintf
     leave
