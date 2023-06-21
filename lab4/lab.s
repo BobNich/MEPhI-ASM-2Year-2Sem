@@ -138,7 +138,7 @@ custom:
         call    series_member
         movd    eax, xmm0
         mov     [rbp - 4h], eax
-        ; call    print_file
+        call    print_file
         ; ---------------------------
         ; TODO № 0 (Handle infinity)
         call    check_infinity
