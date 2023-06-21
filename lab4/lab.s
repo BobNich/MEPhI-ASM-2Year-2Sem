@@ -129,7 +129,7 @@ custom:
         ; TODO #4 (Print term to file and handle infinity.
         ; If intinity -> end program, close file
         ; and print <aTermInfinity> msg)
-        ; call    print_file
+        call    print_file
         ; -------------------------------------------------
         movd    eax, xmm0
         mov     [rbp - 4h], eax
