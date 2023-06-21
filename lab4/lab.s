@@ -120,6 +120,8 @@ custom:
         mov     edi, edx        ; n
         movd    xmm0, eax       ; x
         call    series_member
+        mov     rdi, xmm0
+        call    printf
         call    print_file
         movd    eax, xmm0
         mov     [rbp - 4h], eax
@@ -331,10 +333,5 @@ close_file:
 print_file:
     push    rbp
     mov     rbp, rsp
-    ; mov     rdi, [fd]
-    ; mov     rdx, 0
-    ; mov		eax, 1
-    ; mov     rsi, aSeriesMember
-    ; call    fprintf
     leave
     retn
