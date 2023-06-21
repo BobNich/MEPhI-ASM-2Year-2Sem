@@ -212,21 +212,10 @@ series_member:
     divss   xmm0, xmm1
     movss   [rbp - 4h], xmm0
     movss   xmm0, [rbp - 4h]
-    call    isinf
-    cmp     eax, 0
-    jne     .infinite
-    jmp     .continue
-    .infinite:
-        mov     rdi, aTermInfinity
-        call    printf
-        mov     rdi, 1
-        call    exit
-    .continue:
-        mov     rdi, aFloatFormat
-        mov     rax, 1
-        call    printf
-        leave
-        retn
+    mov     rdi, aFloatFormat
+    call    printf
+    leave
+    retn
 
 custom_pow:
     push    rbp
