@@ -349,11 +349,11 @@ _exit_normal:
 
 _exit_error:
     ; Exit program with error code 1
-    pop     rdi                         ; Pop the address of the error message into rdi
-    mov     r12, qword [buffer_size]
+    pop     rsi                         ; Pop the address of the error message into rdi
+    mov     r12, 100
     call    put_output_data             ; Print the error message
     mov     rdi, 1                      ; Exit status (1)
-    jmp     _exit
+    jmp     _exitg
 
 _exit:
     ; Exit program
