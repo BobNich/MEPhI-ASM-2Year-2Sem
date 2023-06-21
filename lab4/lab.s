@@ -37,11 +37,6 @@ main:
     mov     rbp, rsp
     push    rbx
     sub     rsp, 18h
-    ; -------------------------------------------
-    ; TODO #1 (Handle filename and argc != 2)
-    ; mov	rcx, [rsi + 8]
-    ; call  get_filename
-    ; -------------------------------------------
     mov     [rbp - 18h], rax
     xor     eax, eax
     lea     rdx, [rbp - 1Ch]
@@ -125,12 +120,7 @@ custom:
         mov     edi, edx        ; n
         movd    xmm0, eax       ; x
         call    series_member
-        ; -------------------------------------------------
-        ; TODO #4 (Print term to file and handle infinity.
-        ; If intinity -> end program, close file
-        ; and print <aTermInfinity> msg)
         call    print_file
-        ; -------------------------------------------------
         movd    eax, xmm0
         mov     [rbp - 4h], eax
         movss   xmm0, [rbp - 8h]
@@ -339,18 +329,11 @@ close_file:
     ret
 
 print_file:
-    ; -------------------------------------------
-    ; TODO #7 (Print series member correctly)
     push    rbp
     mov     rbp, rsp
-    sub     rsp, 8
     mov     rdi, [fd]
     mov     rdx, 0
-    movss   [rbp - 4h], xmm0  ; series_member
     mov     rsi, aSeriesMember
-    mov     rax, 1
     call    fprintf
-    nop
     leave
     retn
-    ; -------------------------------------------
