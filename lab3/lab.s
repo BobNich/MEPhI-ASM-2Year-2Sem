@@ -35,7 +35,6 @@ section .data
     output_size dq 0
 
 ; FILE
-    filename dq 0
     fd dq 0
     file_offset dq 0
 
@@ -46,6 +45,7 @@ section .data
 
 section .bss
     ; DATA (INPUT/OUTPUT)
+    filename resb 256
     data_buffer resq 10
     output_buffer resq 10
 
