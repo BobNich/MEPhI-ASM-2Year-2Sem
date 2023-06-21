@@ -142,7 +142,6 @@ custom:
         ; TODO #4 (Print term to file and handle infinity.
         ; If intinity -> end program, close file
         ; and print <aTermInfinity> msg)
-        call    print_file
         ; -------------------------------------------------
         movd    eax, xmm0
         mov     [rbp - 4h], eax
@@ -153,6 +152,7 @@ custom:
         movss   xmm1, [mask]
         andps   xmm0, xmm1
         comiss  xmm0, [rbp - 18h]
+        call    print_file
         jnb     .loop
     movss   xmm1, [rbp - 8h]
     movss   xmm0, [three]
