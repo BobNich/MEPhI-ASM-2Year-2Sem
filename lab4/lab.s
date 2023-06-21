@@ -139,6 +139,11 @@ custom:
         movd    eax, xmm0
         mov     [rbp - 4h], eax
         call    print_file
+
+        call    isinf
+        cmp     rax, 0
+        jne     .infinity
+
         movss   xmm0, [rbp - 8h]
         addss   xmm0, [rbp - 4h]
         movss   [rbp - 8h], xmm0
@@ -152,8 +157,13 @@ custom:
     mulss   xmm0, xmm1
     movss   xmm1, [four]
     divss   xmm0, xmm1
-    leave
-    retn
+    jmp     .end
+    .infinity:
+        mov     rdi, aTermInfinity
+        call    printf
+    .end
+        leave
+        retn
 
 series_member:
     push    rbp
