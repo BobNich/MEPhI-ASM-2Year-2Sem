@@ -40,6 +40,9 @@ main:
     mov     rbp, rsp
     push    rbx
     sub     rsp, 18h
+    mov eax, dword [rbp + 8]
+    cmp eax, 2
+    jne end_program
     ; -------------------------------------------
     ; TODO #1 (Handle filename and argc != 2 correctly)
     ; mov	rcx, [rsi + 8]
@@ -70,8 +73,9 @@ main:
     mov     rdx, [rbp - 18h]
     mov     rbx, [rbp - 8h]
     call    close_file
-    leave
-    retn
+    .end_program:
+        leave
+        retn
 
 get_filename:
     push    rbp
