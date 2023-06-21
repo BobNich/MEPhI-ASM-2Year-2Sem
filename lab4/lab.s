@@ -138,8 +138,8 @@ custom:
         call    series_member
         movd    eax, xmm0
         mov     [rbp - 4h], eax
-        call    print_file
         call    check_infinity
+        call    print_file
         movss   xmm0, [rbp - 8h]
         addss   xmm0, [rbp - 4h]
         movss   [rbp - 8h], xmm0
