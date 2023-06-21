@@ -365,7 +365,7 @@ print_file:
 check_infinity:
     push    rbp
     mov     rbp, rsp
-    mov     eax, 0x7F800000 
+    mov     eax, 1000 
     movd    xmm1, eax
     ucomiss xmm0, xmm1
     jbe .continue
