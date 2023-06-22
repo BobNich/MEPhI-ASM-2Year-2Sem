@@ -21,22 +21,14 @@ int invert_image(char *input_filename, char *output_filename) {
 
     unsigned char *inverted_image = (unsigned char *) malloc(width * height);
 
-    for (int i = 0; i < width * height * channels; i += channels) {
-        unsigned char red = image[i];
-        unsigned char green = image[i + 1];
-        unsigned char blue = image[i + 2];
-        
-        unsigned char inverted_red = 255 - red;
-        unsigned char inverted_green = 255 - green;
-        unsigned char inverted_blue = 255 - blue;
-
-        unsigned char gray = (inverted_red + inverted_green + inverted_blue) / 3;
-        inverted_image[i / channels] = gray;
+    for (int i = 0; i < width * height * channels; i++) {
+        inverted_image[i] = 255 - image[i];
     }
 
     stbi_write_bmp(output_filename, width, height, 1, inverted_image);
 
-    free(image);
+    stbi_image_free(image);
     free(inverted_image);
+    
     return 0;
 }
