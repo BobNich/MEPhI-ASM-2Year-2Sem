@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-extern void process_image(char *input_filename, char *output_filename);
+extern void invert_image(char *input_filename, char *output_filename);
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    process_image(argv[1], argv[2]);
+    invert_image(argv[1], argv[2]);
 
     return 0;
 }
