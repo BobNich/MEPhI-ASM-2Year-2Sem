@@ -23,9 +23,9 @@ section .bss
     footer  resb 0x54
 
 section .text
-    global  process_image
+    global  invert_image
 
-process_image:
+invert_image:
     ; Arguments: rdi = input_filename, rsi = output_filename
     ; Call scan_image
     lea     rdi, [rdi]      ; input_filename
