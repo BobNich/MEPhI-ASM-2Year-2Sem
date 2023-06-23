@@ -15,20 +15,27 @@ int invert_image(char *input_filename, char *output_filename) {
     unsigned char *image = stbi_load_from_file(input, &width, &height, &channels, 0);
 
     if (image == NULL) {
-        printf("Couldn't load image\n");
+        printf("Could not load image\n");
         return 1;
     }
 
-    unsigned char *inverted_image = (unsigned char *) malloc(width * height);
+    unsigned char *gray_image = (unsigned char *) malloc(width * height);
 
-    for (int i = 0; i < width * height * channels; i++) {
-        inverted_image[i] = 255 - image[i];
+    for (int i = 0; i < width * height * channels; i += channels) {
+        unsigned char red = image[i];
+        unsigned char green = image[i + 1];
+        unsigned char blue = image[i + 2];
+
+        unsigned char min_val = (red < green) ? ((red < blue) ? red : blue) : ((green < blue) ? green : blue);
+        unsigned char max_val = (red > green) ? ((red > blue) ? red : blue) : ((green > blue) ? green : blue);
+
+        unsigned char gray = (min_val + max_val) / 2;
+        gray_image[i / channels] = gray;
     }
 
-    stbi_write_bmp(output_filename, width, height, 1, inverted_image);
+    stbi_write_bmp(output_filename, width, height, 1, gray_image);
 
-    stbi_image_free(image);
-    free(inverted_image);
-    
+    free(image);
+    free(gray_image);
     return 0;
 }
