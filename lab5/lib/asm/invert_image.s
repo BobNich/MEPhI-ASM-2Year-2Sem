@@ -98,10 +98,10 @@ scan_image:
 
     ; Read header
     mov     rax, SYS_READ
-    mov     rdi, r10                    ; file descriptor
-    mov     rsi, header                 ; buffer
-    mov     rdx, length_header          ; count
-    syscall                             ; read(fd = rdi, buf = rsi, count = rdx)
+    mov     rdi, r10        ; file descriptor
+    mov     rsi, header     ; buffer
+    mov     rdx, 0x36       ; count
+    syscall                 ; read(fd = rdi, buf = rsi, count = rdx)
 
     ; Get width and height from header
     mov     eax, dword[rsi + 0x12]
@@ -134,10 +134,10 @@ scan_image:
 
     ; Read footer
     mov     rax, SYS_READ
-    mov     rdi, r10                 ; file descriptor
-    mov     rdx, length_footer       ; count
-    mov     rsi, footer              ; buffer
-    syscall                          ; read(fd = rdi, buf = rsi, count = rdx)
+    mov     rdi, r10        ; file descriptor
+    mov     rdx, 0x54       ; count
+    mov     rsi, footer     ; buffer
+    syscall                 ; read(fd = rdi, buf = rsi, count = rdx)
 
     ; Return size
     pop     rax
