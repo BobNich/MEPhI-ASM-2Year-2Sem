@@ -11,7 +11,7 @@ int invert_image(char *input_filename, char *output_filename) {
         perror("Error opening input file");
         return 1;
     }
-    
+
     int width, height, channels;
     unsigned char *image = stbi_load_from_file(input, &width, &height, &channels, 0);
 
@@ -22,8 +22,13 @@ int invert_image(char *input_filename, char *output_filename) {
 
     unsigned char *inverted_image = (unsigned char *) malloc(width * height);
 
-    for (int i = 0; i < width * height * channels; i++) {
-        inverted_image[i] = 255 - image[i];
+    for (int i = 0; i < width * height * channels; i += channels) {
+        unsigned char red = 256 - image[i];
+        unsigned char green = 256 - image[i + 1];
+        unsigned char blue = 256 - image[i + 2];
+        inverted_image[i] = red;
+        inverted_image[i] = green;
+        inverted_image[i] = blue;
     }
 
     stbi_write_bmp(output_filename, width, height, 1, inverted_image);
