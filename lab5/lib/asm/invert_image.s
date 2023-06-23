@@ -19,8 +19,8 @@ section .data
     output_file_error   db "Error opening output file", 0x0a, 0
 
 section .bss
-    header  resb 0x36
-    footer  resb 0x54
+    header  resb length_header
+    footer  resb length_footer
 
 section .text
     global  invert_image
@@ -47,15 +47,19 @@ invert_image:
         movzx   rsi, byte [rbx + 0x01]  ; g
         movzx   rdx, byte [rbx + 0x02]  ; b
 
-        ; reverse color
-        xor     rdi, 0xff
-        xor     rsi, 0xff
-        xor     rdx, 0xff
+        ; Call max and min
+        call    max         ; max(r = rdi, g = rsi, b = rdx)
+        mov     r9, rax
+        call    min         ; max(r = rdi, g = rsi, b = rdx)
+
+        ; Calculate gray = (max + min) / 2
+        add     rax, r9
+        shr     rax, 1
 
         ; Store gray in data[i], data[i+1], data[i+2]
-        mov     byte [rbx], dil
-        mov     byte [rbx + 0x01], sil
-        mov     byte [rbx + 0x02], dl
+        mov     byte [rbx], al
+        mov     byte [rbx + 0x01], al
+        mov     byte [rbx + 0x02], al
 
         ; Update loop variables
         add     rbx, 3
@@ -94,10 +98,10 @@ scan_image:
 
     ; Read header
     mov     rax, SYS_READ
-    mov     rdi, r10                ; file descriptor
-    mov     rsi, header             ; buffer
-    mov     rdx, length_header      ; count
-    syscall                         ; read(fd = rdi, buf = rsi, count = rdx)
+    mov     rdi, r10        ; file descriptor
+    mov     rsi, header     ; buffer
+    mov     rdx, 0x36       ; count
+    syscall                 ; read(fd = rdi, buf = rsi, count = rdx)
 
     ; Get width and height from header
     mov     eax, dword[rsi + 0x12]
@@ -130,10 +134,10 @@ scan_image:
 
     ; Read footer
     mov     rax, SYS_READ
-    mov     rdi, r10                ; file descriptor
-    mov     rdx, length_footer      ; count
-    mov     rsi, footer             ; buffer
-    syscall                         ; read(fd = rdi, buf = rsi, count = rdx)
+    mov     rdi, r10        ; file descriptor
+    mov     rdx, 0x54       ; count
+    mov     rsi, footer     ; buffer
+    syscall                 ; read(fd = rdi, buf = rsi, count = rdx)
 
     ; Return size
     pop     rax
@@ -161,10 +165,10 @@ write_image:
 
     ; Write header
     mov     rax, SYS_WRITE
-    mov     rdi, r10                ; file descriptor
-    mov     rsi, header             ; header
-    mov     rdx, length_header      ; count
-    syscall                         ; write(fd = rdi, buf = rsi, count = rdx)
+    mov     rdi, r10            ; file descriptor
+    mov     rsi, header         ; header
+    mov     rdx, length_header  ; count
+    syscall                     ; write(fd = rdi, buf = rsi, count = rdx)
 
     ; Write data
     mov     rax, SYS_WRITE
@@ -175,15 +179,45 @@ write_image:
 
     ; Write footer
     mov     rax, SYS_WRITE
-    mov     rdi, r10                 ; file descriptor
-    mov     rsi, footer              ; footer
-    mov     rdx, length_footer       ; count
+    mov     rdi, r10            ; file descriptor
+    mov     rsi, footer         ; footer
+    mov     rdx, length_footer  ; count
     syscall
 
     ; Close file
     mov     rax, SYS_CLOSE
     mov     rdi, r10        ; file descriptor
     syscall                 ; close(fd = rdi)
+    ret
+
+min:
+    ; Arguments: rdi = r, rsi = g, rdx = b
+    cmp     rdi, rsi
+    jle     .r_less_or_equal_to_g
+        mov     rax, rsi
+        jmp     .compare_g_b
+    .r_less_or_equal_to_g:
+        mov     rax, rdi
+    .compare_g_b:
+    cmp     rax, rdx
+    jle     .return
+    mov     rax, rdx
+    .return:
+    ret
+
+max:
+    ; Arguments: rdi = r, rsi = g, rdx = b
+    cmp     rdi, rsi
+    jge     .r_greater_or_equal_to_g
+        mov     rax, rsi
+        jmp     .compare_g_b
+    .r_greater_or_equal_to_g:
+        mov     rax, rdi
+    .compare_g_b:
+    cmp     rax, rdx
+    jge     .return
+    mov     rax, rdx
+    .return:
     ret
 
 error_exit:
@@ -199,3 +233,4 @@ error_exit:
     mov     rax, SYS_EXIT
     xor     rdi, rdi        ; status 0
     syscall                 ; exit(status = rdi)
+
