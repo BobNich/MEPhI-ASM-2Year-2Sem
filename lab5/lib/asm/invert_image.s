@@ -47,19 +47,15 @@ invert_image:
         movzx   rsi, byte [rbx + 0x01]  ; g
         movzx   rdx, byte [rbx + 0x02]  ; b
 
-        ; Call max and min
-        call    max         ; max(r = rdi, g = rsi, b = rdx)
-        mov     r9, rax
-        call    min         ; max(r = rdi, g = rsi, b = rdx)
-
-        ; Calculate gray = (max + min) / 2
-        add     rax, r9
-        shr     rax, 1
+        ; reverse color
+        xor     rdi, 0xff
+        xor     rsi, 0xff
+        xor     rdx, 0xff
 
         ; Store gray in data[i], data[i+1], data[i+2]
-        mov     byte [rbx], al
-        mov     byte [rbx + 0x01], al
-        mov     byte [rbx + 0x02], al
+        mov     byte [rbx], dil
+        mov     byte [rbx + 0x01], sil
+        mov     byte [rbx + 0x02], dl
 
         ; Update loop variables
         add     rbx, 3
@@ -98,10 +94,10 @@ scan_image:
 
     ; Read header
     mov     rax, SYS_READ
-    mov     rdi, r10        ; file descriptor
-    mov     rsi, header     ; buffer
-    mov     rdx, 0x36       ; count
-    syscall                 ; read(fd = rdi, buf = rsi, count = rdx)
+    mov     rdi, r10                    ; file descriptor
+    mov     rsi, header                 ; buffer
+    mov     rdx, length_header          ; count
+    syscall                             ; read(fd = rdi, buf = rsi, count = rdx)
 
     ; Get width and height from header
     mov     eax, dword[rsi + 0x12]
@@ -134,10 +130,10 @@ scan_image:
 
     ; Read footer
     mov     rax, SYS_READ
-    mov     rdi, r10        ; file descriptor
-    mov     rdx, 0x54       ; count
-    mov     rsi, footer     ; buffer
-    syscall                 ; read(fd = rdi, buf = rsi, count = rdx)
+    mov     rdi, r10                 ; file descriptor
+    mov     rdx, length_footer       ; count
+    mov     rsi, footer              ; buffer
+    syscall                          ; read(fd = rdi, buf = rsi, count = rdx)
 
     ; Return size
     pop     rax
@@ -188,36 +184,6 @@ write_image:
     mov     rax, SYS_CLOSE
     mov     rdi, r10        ; file descriptor
     syscall                 ; close(fd = rdi)
-    ret
-
-min:
-    ; Arguments: rdi = r, rsi = g, rdx = b
-    cmp     rdi, rsi
-    jle     .r_less_or_equal_to_g
-        mov     rax, rsi
-        jmp     .compare_g_b
-    .r_less_or_equal_to_g:
-        mov     rax, rdi
-    .compare_g_b:
-    cmp     rax, rdx
-    jle     .return
-    mov     rax, rdx
-    .return:
-    ret
-
-max:
-    ; Arguments: rdi = r, rsi = g, rdx = b
-    cmp     rdi, rsi
-    jge     .r_greater_or_equal_to_g
-        mov     rax, rsi
-        jmp     .compare_g_b
-    .r_greater_or_equal_to_g:
-        mov     rax, rdi
-    .compare_g_b:
-    cmp     rax, rdx
-    jge     .return
-    mov     rax, rdx
-    .return:
     ret
 
 error_exit:
