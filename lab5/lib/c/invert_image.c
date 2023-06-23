@@ -28,7 +28,7 @@ int invert_image(char *input_filename, char *output_filename) {
 
     stbi_write_bmp(output_filename, width, height, channels, inverted_image);
     stbi_image_free(image);
-    free(inverted_image); // Free the allocated memory
+    free(inverted_image);
 
     return 0;
 }
