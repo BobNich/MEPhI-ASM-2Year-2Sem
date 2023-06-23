@@ -20,7 +20,7 @@ int invert_image(char *input_filename, char *output_filename) {
         return 1;
     }
 
-    unsigned char *inverted_image = (unsigned char *) malloc(width * height);
+    unsigned char *inverted_image = (unsigned char *) malloc(width * height * channels);
 
     for (int i = 0; i < width * height * channels; i++) {
         inverted_image[i] = 255 - image[i];
@@ -28,6 +28,7 @@ int invert_image(char *input_filename, char *output_filename) {
 
     stbi_write_bmp(output_filename, width, height, channels, inverted_image);
     stbi_image_free(image);
-    
+    free(inverted_image); // Free the allocated memory
+
     return 0;
 }
