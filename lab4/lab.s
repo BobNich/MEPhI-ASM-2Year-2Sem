@@ -342,8 +342,7 @@ open_file:
 close_file:
     push    rbp
     mov     rbp, rsp
-    mov     rax, [fd]
-    mov     rdi, rax
+    mov     rdi, [fd]
     call    fclose
     leave
     ret
