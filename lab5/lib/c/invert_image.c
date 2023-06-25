@@ -22,9 +22,9 @@ int invert_image(char *input_filename, char *output_filename) {
 
     unsigned char *inverted_image = (unsigned char *) malloc(width * height * channels);
 
-    // for (int i = 0; i < width * height * channels; i++) {
-    //     inverted_image[i] = 255 - image[i];
-    // }
+    for (int i = 0; i < width * height * channels; i++) {
+        inverted_image[i] = image[i];
+    }
 
     stbi_write_bmp(output_filename, width, height, channels, inverted_image);
     stbi_image_free(image);
