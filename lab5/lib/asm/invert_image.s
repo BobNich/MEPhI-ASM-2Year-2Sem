@@ -19,13 +19,13 @@ section .data
     output_file_error   db "Error opening output file", 0x0a, 0
 
 section .bss
-    header  resb 0x36
-    footer  resb 0x54
+    header  resb length_header
+    footer  resb length_footer
 
 section .text
-    global  process_image
+    global  invert_image
 
-process_image:
+invert_image:
     ; Arguments: rdi = input_filename, rsi = output_filename
     ; Call scan_image
     lea     rdi, [rdi]      ; input_filename
@@ -47,7 +47,7 @@ process_image:
         movzx   rsi, byte [rbx + 0x01]  ; g
         movzx   rdx, byte [rbx + 0x02]  ; b
 
-        ; reverse color
+        ; Reverse color
         xor     rdi, 0xff
         xor     rsi, 0xff
         xor     rdx, 0xff
@@ -94,10 +94,10 @@ scan_image:
 
     ; Read header
     mov     rax, SYS_READ
-    mov     rdi, r10                ; file descriptor
-    mov     rsi, header             ; buffer
-    mov     rdx, length_header      ; count
-    syscall                         ; read(fd = rdi, buf = rsi, count = rdx)
+    mov     rdi, r10                    ; file descriptor
+    mov     rsi, header                 ; buffer
+    mov     rdx, length_header       ; count
+    syscall                             ; read(fd = rdi, buf = rsi, count = rdx)
 
     ; Get width and height from header
     mov     eax, dword[rsi + 0x12]
@@ -130,10 +130,10 @@ scan_image:
 
     ; Read footer
     mov     rax, SYS_READ
-    mov     rdi, r10                ; file descriptor
-    mov     rdx, length_footer      ; count
-    mov     rsi, footer             ; buffer
-    syscall                         ; read(fd = rdi, buf = rsi, count = rdx)
+    mov     rdi, r10                 ; file descriptor
+    mov     rdx, length_footer       ; count
+    mov     rsi, footer              ; buffer
+    syscall                          ; read(fd = rdi, buf = rsi, count = rdx)
 
     ; Return size
     pop     rax
@@ -161,10 +161,10 @@ write_image:
 
     ; Write header
     mov     rax, SYS_WRITE
-    mov     rdi, r10                ; file descriptor
-    mov     rsi, header             ; header
-    mov     rdx, length_header      ; count
-    syscall                         ; write(fd = rdi, buf = rsi, count = rdx)
+    mov     rdi, r10            ; file descriptor
+    mov     rsi, header         ; header
+    mov     rdx, length_header  ; count
+    syscall                     ; write(fd = rdi, buf = rsi, count = rdx)
 
     ; Write data
     mov     rax, SYS_WRITE
@@ -175,9 +175,9 @@ write_image:
 
     ; Write footer
     mov     rax, SYS_WRITE
-    mov     rdi, r10                 ; file descriptor
-    mov     rsi, footer              ; footer
-    mov     rdx, length_footer       ; count
+    mov     rdi, r10            ; file descriptor
+    mov     rsi, footer         ; footer
+    mov     rdx, length_footer  ; count
     syscall
 
     ; Close file

@@ -32,8 +32,8 @@ main:
 
 ; Actually sort
 sort:
-    mov     rax, 0               ; init local counter
-    movzx   ecx, byte [cols]    ; counter
+    mov     rax, 0                                ; init local counter
+    movzx   ecx, byte [cols]                      ; counter
     .iterate_indexes_array:
         lea     rbx, [indexes_array + rax * 8]    ; calculate the address of next element in indexes_array
         mov     rbx, qword [rbx]                  ; load the current element
@@ -43,7 +43,7 @@ sort:
         pop     rcx
 
         inc     rax                               ; increment counter
-        loop     .iterate_indexes_array            ; loop
+        loop     .iterate_indexes_array           ; loop
     .end_loop:
     ret
 

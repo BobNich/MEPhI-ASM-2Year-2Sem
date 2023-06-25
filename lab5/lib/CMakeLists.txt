@@ -9,10 +9,10 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(stb)
 
 if (ASSEMBLER)
-    file(GLOB SOURCES impl/process_image.s)
+    file(GLOB SOURCES asm/invert_image.s)
     set_source_files_properties(${SOURCES} PROPERTIES LANGUAGE ASM_NASM COMPILE_FLAGS "-g -F dwarf")
 else ()
-    file(GLOB SOURCES impl/process_image.c)
+    file(GLOB SOURCES c/invert_image.c)
 endif ()
 
 add_library(lib STATIC ${SOURCES})
