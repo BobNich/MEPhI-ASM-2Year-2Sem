@@ -319,7 +319,7 @@ print:
 check_infinity:
     push    rbp
     mov     rbp, rsp
-    ; call    isinf
+    call    isinf
     ; cmp     rax, 0
     ; jne     .infinity
     ; jmp     .not_infinity
