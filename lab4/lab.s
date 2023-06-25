@@ -8,7 +8,7 @@ section .data
     aStringFormat   db '%f', 0
     aArgsError      db "Use ./lab <filename> to run program properly", 0x0a, 0
     aFileOpenFailed db 'Error: File open failed.',0Ah,0
-    aTermInfinity   db 'Term is infinity',0Ah,0
+    aTermInfinity   db 'Error. Term is infinity. All non-infinite elements are written to the file',0Ah,0
     aSeriesMember   db "%-10d %f",0x0a,0
     aInputPrecision db 'Input precision: ',0
     aLibResultF     db 'Lib result: %f',0Ah,0
