@@ -27,12 +27,11 @@ int invert_image(char *input_filename, char *output_filename) {
         return 0;
     }
 
-    // Invert the image
     int pixel_count = width * height;
     for (int i = 0; i < pixel_count; i++) {
-        inverted_data[(i * channels) + 0] = 255 - image_data[(i * channels) + 0]; // Red channel
-        inverted_data[(i * channels) + 1] = 255 - image_data[(i * channels) + 1]; // Green channel
-        inverted_data[(i * channels) + 2] = 255 - image_data[(i * channels) + 2]; // Blue channel
+        inverted_data[(i * channels) + 0] = 255 - image_data[(i * channels) + 0];
+        inverted_data[(i * channels) + 1] = 255 - image_data[(i * channels) + 1];
+        inverted_data[(i * channels) + 2] = 255 - image_data[(i * channels) + 2];
     }
 
     if (!stbi_write_bmp(output_filename, width, height, channels, inverted_data)) {
