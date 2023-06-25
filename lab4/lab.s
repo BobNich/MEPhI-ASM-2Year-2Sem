@@ -321,8 +321,6 @@ open_file:
     push    rbp
     mov     rbp, rsp
     sub     rsp, 8
-    mov     rdi, rdi
-    mov     rsi, rsi
     xor     edx, edx
     call    fopen
     mov     qword [rbp - 8], rax
