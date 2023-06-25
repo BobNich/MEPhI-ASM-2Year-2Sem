@@ -360,6 +360,5 @@ print_file:
     lea         rsi, aSeriesMember
     mov         eax, 1
     call        fprintf
-    add         rsp, 8
     leave
     retn
