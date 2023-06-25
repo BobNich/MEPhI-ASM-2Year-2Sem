@@ -350,11 +350,15 @@ close_file:
 print_file:
     push        rbp
     mov         rbp, rsp
-    sub         rsp, 8
+    sub         rsp, 10h
+    movss       [rbp - 4h], xmm0
+    pxor        xmm2, xmm2
+    cvtss2sd    xmm2, [rbp - 4h]
+    movq        rax, xmm2
+    movq        xmm0, rax
     mov         rdi, [fd]
     lea         rsi, aSeriesMember
     mov         eax, 1
-    cvtss2sd    xmm0, xmm0
     call        fprintf
     add         rsp, 8
     leave
