@@ -11,3 +11,4 @@ int main(int argc, char *argv[]) {
     process_image(argv[1], argv[2]);
 
     return 0;
+}
