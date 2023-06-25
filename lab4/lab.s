@@ -324,10 +324,10 @@ check_infinity:
     jne     .infinity
     jmp     .not_infinity
     .infinity:
-        lea     rdi, aFileOpenFailed
-        call    printf
-        ; mov     rdi, 1
-        ; call    exit
+        ; lea     rdi, aFileOpenFailed
+        ; call    printf
+        mov     rdi, 1
+        call    exit
         leave
         ret 
     .not_infinity:
