@@ -324,6 +324,7 @@ check_infinity:
     jne     .infinity
     jmp     .not_infinity
     .infinity:
+        mov     eax, 0
         lea     rdi, aTermInfinity
         call    printf
         mov     rdi, 1
