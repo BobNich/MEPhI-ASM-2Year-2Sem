@@ -327,15 +327,14 @@ open_file:
     call    fopen
     mov     qword [rbp - 8], rax
     cmp     qword [rbp - 8], 0
-    jne     file_opened
-    lea     rdi, [rel aFileOpenFailed]
-    call    printf
-    jmp     exit
-    file_opened:
+    jne     .file_opened
+    jmp     .error_exit
+    .file_opened:
         mov     [fd], rax
         leave
         ret
-    exit:
+    .error_exit:
+        lea     rdi, [rel aFileOpenFailed]
         call    printf
         mov     rdi, 1
         call    exit
