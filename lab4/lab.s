@@ -321,15 +321,15 @@ check_infinity:
     mov     rbp, rsp
     call    isinf
     cmp     rax, 0
-    ; jne     .infinity
+    jne     .infinity
     jmp     .not_infinity
-    ; .infinity:
-    ;     lea     rdi, aFileOpenFailed
-    ;     call    printf
-    ;     mov     rdi, 1
-    ;     call    exit
-    ;     leave
-    ;     ret 
+    .infinity:
+        lea     rdi, aFileOpenFailed
+        call    printf
+        ; mov     rdi, 1
+        ; call    exit
+        leave
+        ret 
     .not_infinity:
         leave
         retn
