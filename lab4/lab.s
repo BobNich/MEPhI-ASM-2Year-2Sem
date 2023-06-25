@@ -139,6 +139,7 @@ custom:
         movd    eax, xmm0
         mov     [rbp - 4h], eax
         call    print_file
+        call    check_infinity
         movss   xmm0, [rbp - 8h]
         addss   xmm0, [rbp - 4h]
         movss   [rbp - 8h], xmm0
@@ -314,6 +315,23 @@ print:
     nop
     leave
     retn
+
+check_infinity:
+    push    rbp
+    mov     rbp, rsp
+    call    isinf
+    cmp     rax, 0
+    jne     .infinity
+    .infinity:
+        lea     rdi, aFileOpenFailed
+        call    printf
+        mov     rdi, 1
+        call    exit
+        leave
+        ret 
+    .not_infinity:
+        leave
+        retn
 
 open_file:
     push    rbp
