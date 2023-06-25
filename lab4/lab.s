@@ -53,8 +53,8 @@ main:
     mov     rsi, rdx        ; precision
     mov     rdi, rax        ; x
     call    scan
-    lea     rdi, [rel filename]
-    lea     rsi, [rel file_w_m]
+    lea     rdi, filename
+    lea     rsi, file_w_m
     call    open_file
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
