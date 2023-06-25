@@ -322,6 +322,7 @@ check_infinity:
     call    isinf
     cmp     rax, 0
     jne     .infinity
+    jmp     .not_infinity
     .infinity:
         lea     rdi, aFileOpenFailed
         call    printf
