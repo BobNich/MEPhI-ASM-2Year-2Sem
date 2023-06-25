@@ -47,13 +47,10 @@ invert_image:
         movzx   rsi, byte [rbx + 0x01]  ; g
         movzx   rdx, byte [rbx + 0x02]  ; b
 
-        ; Invert colors
-        mov     dil, 255
-        sub     dil, byte [rbx]         ; Invert r
-        mov     sil, 255
-        sub     sil, byte [rbx + 0x01]  ; Invert g
-        mov     dl, 255
-        sub     dl, byte [rbx + 0x02]   ; Invert b
+        ; Reverse color
+        xor     rdi, 0xff
+        xor     rsi, 0xff
+        xor     rdx, 0xff
 
         ; Store gray in data[i], data[i+1], data[i+2]
         mov     byte [rbx], dil
