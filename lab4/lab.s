@@ -332,7 +332,7 @@ open_file:
     call    printf
     jmp     exit
     file_opened:
-        mov     [fd], qword [rbp - 8]
+        mov     [fd], rax
         leave
         ret
     exit:
