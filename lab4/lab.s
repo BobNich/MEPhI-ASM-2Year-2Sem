@@ -332,7 +332,7 @@ open_file:
         leave
         ret
     .error_exit:
-        lea     rdi, [rel aFileOpenFailed]
+        lea     rdi, aFileOpenFailed
         call    printf
         mov     rdi, 1
         call    exit
