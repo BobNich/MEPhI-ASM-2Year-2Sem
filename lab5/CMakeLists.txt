@@ -6,7 +6,7 @@ set(EXECUTABLE lab.out)
 
 option(ASSEMBLER "Use assembly implementation" ON)
 
-file(COPY assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY images DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(${EXECUTABLE} main.c)
 

@@ -8,7 +8,7 @@ section .data
     aStringFormat   db '%f', 0
     aArgsError      db "Use ./lab <filename> to run program properly", 0x0a, 0
     aFileOpenFailed db 'Error: File open failed.',0Ah,0
-    aTermInfinity   db 'Term is infinity',0Ah,0
+    aTermInfinity   db 'Error: Term is infinity. All non-infinite elements are written to the file',0Ah,0
     aSeriesMember   db "%-10d %f",0x0a,0
     aInputPrecision db 'Input precision: ',0
     aLibResultF     db 'Lib result: %f',0Ah,0
@@ -139,6 +139,7 @@ custom:
         movd    eax, xmm0
         mov     [rbp - 4h], eax
         call    print_file
+        call    check_infinity
         movss   xmm0, [rbp - 8h]
         addss   xmm0, [rbp - 4h]
         movss   [rbp - 8h], xmm0
@@ -315,21 +316,44 @@ print:
     leave
     retn
 
+check_infinity:
+    push    rbp
+    mov     rbp, rsp
+    call    isinf
+    cmp     rax, 0
+    jne     .infinity
+    jmp     .not_infinity
+    .infinity:
+        mov     eax, 0
+        lea     rdi, aTermInfinity
+        call    printf
+        call    close_file
+        mov     rdi, 1
+        call    exit
+        leave
+        ret 
+    .not_infinity:
+        leave
+        retn
+
 open_file:
     push    rbp
     mov     rbp, rsp
-    mov     rdx, file_w_m
-    mov     rax, filename
-    mov     rdi, rax
-    mov     rsi, rdx
+    sub     rsp, 8
+    lea     rdi, filename
+    lea     rsi, file_w_m
+    xor     edx, edx
     call    fopen
-    cmp     rax, 0
-    je      .file_open_failed
-    mov     [fd], rax
-    leave
-    ret
-    .file_open_failed:
-        mov     rdi, aFileOpenFailed
+    mov     qword [rbp - 8], rax
+    cmp     qword [rbp - 8], 0
+    jne     .file_opened
+    jmp     .error_exit
+    .file_opened:
+        mov     [fd], rax
+        leave
+        ret
+    .error_exit:
+        lea     rdi, aFileOpenFailed
         call    printf
         mov     rdi, 1
         call    exit
@@ -339,8 +363,7 @@ open_file:
 close_file:
     push    rbp
     mov     rbp, rsp
-    mov     rax, [fd]
-    mov     rdi, rax
+    mov     rdi, [fd]
     call    fclose
     leave
     ret
@@ -349,11 +372,15 @@ print_file:
     push        rbp
     mov         rbp, rsp
     sub         rsp, 8
+    pxor        xmm2, xmm2
+    cvtss2sd    xmm2, xmm0
+    movq        rax, xmm2
+    movq        xmm0, rax
     mov         rdi, [fd]
-    mov         rsi, aSeriesMember
+    lea         rsi, aSeriesMember
     mov         eax, 1
-    cvtss2sd    xmm0, xmm0
     call        fprintf
+    movq        xmm0, xmm2
     add         rsp, 8
     leave
     retn
