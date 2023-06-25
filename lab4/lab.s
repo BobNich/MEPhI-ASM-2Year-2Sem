@@ -53,6 +53,8 @@ main:
     mov     rsi, rdx        ; precision
     mov     rdi, rax        ; x
     call    scan
+    lea     rdi, [rel filename]
+    lea     rsi, [rel file_w_m]
     call    open_file
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
@@ -318,18 +320,22 @@ print:
 open_file:
     push    rbp
     mov     rbp, rsp
-    mov     rdx, file_w_m
-    mov     rax, filename
-    mov     rdi, rax
-    mov     rsi, rdx
+    sub     rsp, 8
+    mov     rdi, rdi
+    mov     rsi, rsi
+    xor     edx, edx
     call    fopen
-    cmp     rax, 0
-    je      .file_open_failed
-    mov     [fd], rax
-    leave
-    ret
-    .file_open_failed:
-        mov     rdi, aFileOpenFailed
+    mov     qword [rbp - 8], rax
+    cmp     qword [rbp - 8], 0
+    jne     file_opened
+    lea     rdi, [rel aFileOpenFailed]
+    call    printf
+    jmp     exit
+    file_opened:
+        mov     [fd], qword [rbp - 8]
+        leave
+        ret
+    exit:
         call    printf
         mov     rdi, 1
         call    exit
