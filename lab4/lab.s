@@ -359,6 +359,7 @@ print_file:
     lea         rsi, aSeriesMember
     mov         eax, 1
     call        fprintf
+    movq        xmm0, xmm2
     add         rsp, 8
     leave
     retn
