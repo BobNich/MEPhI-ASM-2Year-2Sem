@@ -320,9 +320,9 @@ check_infinity:
     push    rbp
     mov     rbp, rsp
     call    isinf
-    ; cmp     rax, 0
+    cmp     rax, 0
     ; jne     .infinity
-    ; jmp     .not_infinity
+    jmp     .not_infinity
     ; .infinity:
     ;     lea     rdi, aFileOpenFailed
     ;     call    printf
