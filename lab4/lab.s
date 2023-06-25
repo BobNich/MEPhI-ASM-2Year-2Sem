@@ -327,6 +327,7 @@ check_infinity:
         mov     eax, 0
         lea     rdi, aTermInfinity
         call    printf
+        call    close_file
         mov     rdi, 1
         call    exit
         leave
