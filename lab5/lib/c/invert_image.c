@@ -21,13 +21,11 @@ int process_image(char *input_filename, char *output_filename) {
 
     if (!stbi_write_bmp(output_filename, width, height, channels, image_data)) {
         printf("Error writing output image: %s\n", stbi_failure_reason());
-        free(inverted_data);
-        stbi_image_free(image_data);
+        free(image_data);
         return 0;
     }
 
-    free(inverted_data);
-    stbi_image_free(image_data);
+    free(image_data);
     return 1;
 }
 
