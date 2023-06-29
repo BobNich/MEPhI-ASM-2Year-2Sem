@@ -49,7 +49,6 @@ main:
     cmp     eax, 2
     jne     .args_error
     mov	    rcx, [rsi + 8]
-    call    get_filename
     mov     [rbp - 18h], rax
     xor     eax, eax
     lea     rdx, [rbp - 1Ch]
@@ -57,7 +56,6 @@ main:
     mov     rsi, rdx        ; precision
     mov     rdi, rax        ; x
     call    scan
-    call    open_file
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
     movaps  xmm1, xmm0      ; precision
@@ -74,7 +72,6 @@ main:
     mov     eax, 0
     mov     rdx, [rbp - 18h]
     mov     rbx, [rbp - 8h]
-    call    close_file
     jmp     .end_program
     .args_error:
         mov     rdi, aArgsError
