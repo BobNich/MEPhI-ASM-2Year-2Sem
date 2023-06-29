@@ -9,9 +9,8 @@
 #define msg_lib_result "Lib result: %f\n"
 #define msg_custom_result "Custom result: %f\n"
 
-#define msg_infinity_term "Error: Term is infinity"
-
 #define ZERO 0.0f
+#define MINUS_ONE -1.0f
 #define ONE 1.0f
 #define TWO 2.0f
 #define THREE 3.0f
@@ -48,7 +47,7 @@ float custom(float x, float precision) {
     while (fabs(term) > precision) {
         sum += term;
         i += 1;
-        a_term = a_term * (-1) * (x * x) / ((TWO * i + TWO) * (TWO * i + THREE));
+        a_term = a_term * MINUS_ONE * (x * x) / ((TWO * i + TWO) * (TWO * i + THREE));
         b_term = NINE * b_term + EIGHT;
         term = a_term * b_term;
     }
