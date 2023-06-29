@@ -16,6 +16,7 @@ section .data
     three_double    dq 4008000000000000h
     minus_one       dd 0BF800000h
     mask            dd 7FFFFFFFh
+    infinity        dd 7F7FFFFFh
     zero            dd 80000000h
     one             dd 3F800000h
     two             dd 40000000h
@@ -151,6 +152,9 @@ custom:
         movd        xmm0, edx
         mov         edi, eax
         call        print_file
+        mov         eax, [rbp - 0Ch]
+        movd        xmm0, eax
+        call        check_infinity
         movss       xmm0, [rbp - 8h]
         addss       xmm0, [rbp - 0Ch]
         movss       [rbp - 8h], xmm0
@@ -254,20 +258,26 @@ print:
 check_infinity:
     push    rbp
     mov     rbp, rsp
-    call    isinf
-    cmp     rax, 0
+    sub     rsp, 10h
+    movss   [rbp - 4h], xmm0
+    movss   xmm0, [rbp - 4h]
+    movss   xmm1, [mask]
+    andps   xmm0, xmm1
+    ucomiss xmm0, [infinity]
+    setbe   al
+    xor     eax, 1
+    test    al, al
+    jz      .not_infinity
     jne     .infinity
-    jmp     .not_infinity
     .infinity:
         mov     eax, 0
         lea     rdi, aTermInfinity
         call    printf
         call    close_file
-        mov     rdi, 1
+        mov     edi, 1
         call    exit
-        leave
-        ret 
     .not_infinity:
+        nop
         leave
         retn
 

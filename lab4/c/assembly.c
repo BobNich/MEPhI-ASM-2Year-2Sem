@@ -41,6 +41,12 @@ void printToFile(int i, float x) {
     printf(msg_file, i, x);
 }
 
+void checkInfinity(float term) {
+    if (isinf(term)) {
+        exit(1);
+    }
+}
+
 float custom(float x, float precision) {
     
     float a_term = (x * x * x) / EIGHT;
@@ -52,6 +58,7 @@ float custom(float x, float precision) {
     
     while (fabs(term) > precision) {
         printToFile(i, term);
+        checkInfinity(term);
         sum += term;
         i += 1;
         a_term = a_term * MINUS_ONE * (x * x) / ((TWO * i + TWO) * (TWO * i + THREE));
