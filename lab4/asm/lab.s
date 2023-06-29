@@ -14,11 +14,15 @@ section .data
     aLibResultF     db 'Lib result: %f',0Ah,0
     aCustomResultF  db 'Custom result: %f',0Ah,0
     three_double    dq 4008000000000000h
-    one             dd 3F800000h
     minus_one       dd 0BF800000h
-    three           dd 40400000h
     mask            dd 7FFFFFFFh
+    zero            dd 80000000h
+    one             dd 3F800000h
+    two             dd 40000000h
+    three           dd 40400000h
     four            dd 40800000h
+    eight           dd 41000000h
+    nine            dd 41100000h
 
 section .bss
     filename resb 256
@@ -120,12 +124,71 @@ lib:
     leave
     retn
 
-; TODO() Implement custom function
 custom:
-    push    rbp
-    mov     rbp, rsp
-    leave
-    retn
+    push        rbp
+    mov         rbp,rsp
+    movss       [rbp - 24h], xmm0
+    movss       [rbp - 28h], xmm1
+    movss       xmm0, [rbp - 24h]
+    mulss       xmm0,xmm0
+    mulss       xmm0, [rbp - 24h]
+    movss       xmm1, eight
+    divss       xmm0,xmm1
+    movss       [rbp - 14h], xmm0
+    movss       xmm0, eight
+    movss       [rbp - 10h],xmm0
+    movss       xmm0, [rbp - 14h]
+    mulss       xmm0, [rbp - 10h]
+    movss       [rbp - 0Ch], xmm0
+    pxor        xmm0,xmm0
+    movss       [rbp - 8h], xmm0
+    mov         [rbp - 4h], 0
+    jmp         .end
+    .loop:
+        movss       xmm0, [rbp - 8h]
+        addss       xmm0, [rbp - 0Ch]
+        movss       [rbp - 8h], xmm0
+        add         [rbp - 4h], 1
+        movss       xmm0, [rbp - 14h]
+        movss       xmm1, zero
+        xorps       xmm1, xmm0
+        movss       xmm0, [rbp - 24h]
+        mulss       xmm0, xmm0
+        mulss       xmm1, xmm0
+        pxor        xmm0, xmm0
+        cvtsi2ss    xmm0, [rbp - 4h]
+        movaps      xmm2, xmm0
+        addss       xmm2, xmm0
+        movss       xmm0, two
+        addss       xmm2, xmm0
+        pxor        xmm0, xmm0
+        cvtsi2ss    xmm0, [rbp - 4h]
+        movaps      xmm3, xmm0
+        addss       xmm3, xmm0
+        movss       xmm0, three
+        addss       xmm0, xmm3
+        mulss       xmm2, xmm0
+        divss       xmm1, xmm2
+        movaps      xmm0, xmm1
+        movss       [rbp - 14h], xmm0
+        movss       xmm1, [rbp - 10h]
+        movss       xmm0, nine
+        mulss       xmm1, xmm0
+        movss       xmm0, eight
+        addss       xmm0, xmm1
+        movss       [rbp - 10h], xmm0
+        movss       xmm0, [rbp - 14h]
+        mulss       xmm0, [rbp - 10h]
+        movss       [rbp - 0Ch], xmm0
+    .end:
+        movss       xmm0, [rbp-8h]
+        movss       xmm1, mask
+        andps       xmm0, xmm1
+        comiss      xmm0, [rbp-28h]
+        ja          .loop
+        movss       xmm0, [rbp - 8h]
+        pop         rbp
+        retn
 
 scan:
     push    rbp
@@ -250,67 +313,3 @@ print_file:
     add         rsp, 8
     leave
     retn
-
-; custom:
-;     push   rbp
-;     mov    rbp,rsp
-;     movss  [rbp-0x24], xmm0
-;     movss  [rbp-0x28], xmm1
-;     movss  xmm0, [rbp-0x24]
-;     mulss  xmm0,xmm0
-;     mulss  xmm0, [rbp-0x24]
-;     movss  xmm1, [rip+0xd97]        # 0x2060
-;     divss  xmm0,xmm1
-;     movss  [rbp-0x14],xmm0
-;     movss  xmm0, [rip+0xd86]        # 0x2060
-;     movss   [rbp-0x10],xmm0
-;     movss  xmm0, [rbp-0x14]
-;     mulss  xmm0, [rbp-0x10]
-;     movss   [rbp-0xc],xmm0
-;     pxor   xmm0,xmm0
-;     movss   [rbp-0x8],xmm0
-;     mov     [rbp-0x4],0x0
-;     jmp    0x13ac <custom+263>
-;     movss  xmm0, [rbp-0x8]
-;     addss  xmm0, [rbp-0xc]
-;     movss   [rbp-0x8],xmm0
-;     add     [rbp-0x4],0x1
-;     movss  xmm0, [rbp-0x14]
-;     movss  xmm1, [rip+0xd4d]        # 0x2070
-;     xorps  xmm1,xmm0
-;     movss  xmm0, [rbp-0x24]
-;     mulss  xmm0,xmm0
-;     mulss  xmm1,xmm0
-;     pxor   xmm0,xmm0
-;     cvtsi2ss xmm0, [rbp-0x4]
-;     movaps xmm2,xmm0
-;     addss  xmm2,xmm0
-;     movss  xmm0, [rip+0xd35]        # 0x2080
-;     addss  xmm2,xmm0
-;     pxor   xmm0,xmm0
-;     cvtsi2ss xmm0, [rbp-0x4]
-;     movaps xmm3,xmm0
-;     addss  xmm3,xmm0
-;     movss  xmm0, [rip+0xd1d]        # 0x2084
-;     addss  xmm0,xmm3
-;     mulss  xmm2,xmm0
-;     divss  xmm1,xmm2
-;     movaps xmm0,xmm1
-;     movss  [rbp-0x14],xmm0
-;     movss  xmm1, [rbp-0x10]
-;     movss  xmm0, [rip+0xd00]        # 0x2088
-;     mulss  xmm1,xmm0
-;     movss  xmm0, [rip+0xccc]        # 0x2060
-;     addss  xmm0,xmm1
-;     movss  [rbp-0x10],xmm0
-;     movss  xmm0, [rbp-0x14]
-;     mulss  xmm0, [rbp-0x10]
-;     movss   [rbp-0xc],xmm0
-;     movss  xmm0, [rbp-0xc]
-;     movss  xmm1, [rip+0xcd7]        # 0x2090
-;     andps  xmm0,xmm1
-;     comiss xmm0, [rbp-0x28]
-;     ja     0x1303 <custom+94>
-;     movss  xmm0, [rbp-0x8]
-;     pop    rbp
-;     ret
