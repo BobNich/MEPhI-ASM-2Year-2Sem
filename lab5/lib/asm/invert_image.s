@@ -1,33 +1,16 @@
 section .data
-; No data section is required for this function
+; No data
 
 section .text
 global invert_image
 
 invert_image:
-    ; Function prologue
-    push rbp
-    mov rbp, rsp
-    
-    ; Saving non-volatile registers
-    push rbx
-    push r12
-    push r13
-    push r14
-    push r15
-    
-    ; Extract function parameters
-    mov rdi, rdi ; image_data
-    mov esi, esi ; width
-    mov edx, edx ; height
-    mov ecx, ecx ; channels
-    
     ; Calculate pixel_count
     mov r8, rsi   ; r8 = width
     imul r8, rdx  ; r8 = width * height
     
     ; Loop counter
-    xor r9d, r9d
+    xor r9, r9
     
 invert_loop:
     ; Calculate image_data index
@@ -40,18 +23,8 @@ invert_loop:
     xor byte [rdi + rax + 2], 0xFF
     
     ; Increment loop counter
-    inc r9d
-    cmp r9d, r8d  ; Compare loop_counter with pixel_count
+    inc r9
+    cmp r9, r8  ; Compare loop_counter with pixel_count
     jl invert_loop
-    
-    ; Function epilogue
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop rbx
-    mov rsp, rbp
-    pop rbp
-    
-    ; Return from the function
+
     ret
