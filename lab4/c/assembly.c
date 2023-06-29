@@ -46,7 +46,6 @@ float custom(float x, float precision) {
     int i = 0;
     
     while (fabs(term) > precision) {
-        printf("Term: %f\n", term);
         sum += term;
         i += 1;
         a_term = a_term * (-1) * (x * x) / ((TWO * i + TWO) * (TWO * i + THREE));

@@ -250,3 +250,67 @@ print_file:
     add         rsp, 8
     leave
     retn
+
+; custom:
+;     push   rbp
+;     mov    rbp,rsp
+;     movss  [rbp-0x24], xmm0
+;     movss  [rbp-0x28], xmm1
+;     movss  xmm0, [rbp-0x24]
+;     mulss  xmm0,xmm0
+;     mulss  xmm0, [rbp-0x24]
+;     movss  xmm1, [rip+0xd97]        # 0x2060
+;     divss  xmm0,xmm1
+;     movss  [rbp-0x14],xmm0
+;     movss  xmm0, [rip+0xd86]        # 0x2060
+;     movss   [rbp-0x10],xmm0
+;     movss  xmm0, [rbp-0x14]
+;     mulss  xmm0, [rbp-0x10]
+;     movss   [rbp-0xc],xmm0
+;     pxor   xmm0,xmm0
+;     movss   [rbp-0x8],xmm0
+;     mov     [rbp-0x4],0x0
+;     jmp    0x13ac <custom+263>
+;     movss  xmm0, [rbp-0x8]
+;     addss  xmm0, [rbp-0xc]
+;     movss   [rbp-0x8],xmm0
+;     add     [rbp-0x4],0x1
+;     movss  xmm0, [rbp-0x14]
+;     movss  xmm1, [rip+0xd4d]        # 0x2070
+;     xorps  xmm1,xmm0
+;     movss  xmm0, [rbp-0x24]
+;     mulss  xmm0,xmm0
+;     mulss  xmm1,xmm0
+;     pxor   xmm0,xmm0
+;     cvtsi2ss xmm0, [rbp-0x4]
+;     movaps xmm2,xmm0
+;     addss  xmm2,xmm0
+;     movss  xmm0, [rip+0xd35]        # 0x2080
+;     addss  xmm2,xmm0
+;     pxor   xmm0,xmm0
+;     cvtsi2ss xmm0, [rbp-0x4]
+;     movaps xmm3,xmm0
+;     addss  xmm3,xmm0
+;     movss  xmm0, [rip+0xd1d]        # 0x2084
+;     addss  xmm0,xmm3
+;     mulss  xmm2,xmm0
+;     divss  xmm1,xmm2
+;     movaps xmm0,xmm1
+;     movss  [rbp-0x14],xmm0
+;     movss  xmm1, [rbp-0x10]
+;     movss  xmm0, [rip+0xd00]        # 0x2088
+;     mulss  xmm1,xmm0
+;     movss  xmm0, [rip+0xccc]        # 0x2060
+;     addss  xmm0,xmm1
+;     movss  [rbp-0x10],xmm0
+;     movss  xmm0, [rbp-0x14]
+;     mulss  xmm0, [rbp-0x10]
+;     movss   [rbp-0xc],xmm0
+;     movss  xmm0, [rbp-0xc]
+;     movss  xmm1, [rip+0xcd7]        # 0x2090
+;     andps  xmm0,xmm1
+;     comiss xmm0, [rbp-0x28]
+;     ja     0x1303 <custom+94>
+;     movss  xmm0, [rbp-0x8]
+;     pop    rbp
+;     ret
