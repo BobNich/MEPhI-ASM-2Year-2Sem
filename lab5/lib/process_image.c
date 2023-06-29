@@ -7,6 +7,8 @@
 #include "stb_image.h"
 #include "stb_image_write.h"
 
+extern void invert_image(unsigned char *image_data, int width, int height, int channels);
+
 int process_image(char *input_filename, char *output_filename) {
     int width, height, channels;
     unsigned char *image_data = stbi_load(input_filename, &width, &height, &channels, 0);
