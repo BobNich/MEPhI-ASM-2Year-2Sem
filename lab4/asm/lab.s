@@ -132,10 +132,10 @@ custom:
     movss       xmm0, [rbp - 24h]
     mulss       xmm0,xmm0
     mulss       xmm0, [rbp - 24h]
-    movss       xmm1, eight
+    movss       xmm1, [eight]
     divss       xmm0,xmm1
     movss       [rbp - 14h], xmm0
-    movss       xmm0, eight
+    movss       xmm0, [eight]
     movss       [rbp - 10h],xmm0
     movss       xmm0, [rbp - 14h]
     mulss       xmm0, [rbp - 10h]
@@ -150,7 +150,7 @@ custom:
         movss       [rbp - 8h], xmm0
         add         [rbp - 4h], 1
         movss       xmm0, [rbp - 14h]
-        movss       xmm1, zero
+        movss       xmm1, [zero]
         xorps       xmm1, xmm0
         movss       xmm0, [rbp - 24h]
         mulss       xmm0, xmm0
@@ -159,22 +159,22 @@ custom:
         cvtsi2ss    xmm0, [rbp - 4h]
         movaps      xmm2, xmm0
         addss       xmm2, xmm0
-        movss       xmm0, two
+        movss       xmm0, [two]
         addss       xmm2, xmm0
         pxor        xmm0, xmm0
         cvtsi2ss    xmm0, [rbp - 4h]
         movaps      xmm3, xmm0
         addss       xmm3, xmm0
-        movss       xmm0, three
+        movss       xmm0, [three]
         addss       xmm0, xmm3
         mulss       xmm2, xmm0
         divss       xmm1, xmm2
         movaps      xmm0, xmm1
         movss       [rbp - 14h], xmm0
         movss       xmm1, [rbp - 10h]
-        movss       xmm0, nine
+        movss       xmm0, [nine]
         mulss       xmm1, xmm0
-        movss       xmm0, eight
+        movss       xmm0, [eight]
         addss       xmm0, xmm1
         movss       [rbp - 10h], xmm0
         movss       xmm0, [rbp - 14h]
@@ -182,7 +182,7 @@ custom:
         movss       [rbp - 0Ch], xmm0
     .end:
         movss       xmm0, [rbp-8h]
-        movss       xmm1, mask
+        movss       xmm1, [mask]
         andps       xmm0, xmm1
         comiss      xmm0, [rbp-28h]
         ja          .loop
