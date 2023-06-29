@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "process_image.h"
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
