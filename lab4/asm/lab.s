@@ -127,6 +127,7 @@ lib:
 custom:
     push        rbp
     mov         rbp, rsp
+    sub         rsp, 30h
     movss       [rbp - 24h], xmm0
     movss       [rbp - 28h], xmm1
     movss       xmm0, [rbp - 24h]
@@ -145,6 +146,11 @@ custom:
     mov         dword [rbp - 4h], 0
     jmp         .end
     .loop:
+        mov         edx, [rbp - 0Ch]
+        mov         eax, [rbp - 4h]
+        movd        xmm0, edx
+        mov         edi, eax
+        call        print_file
         movss       xmm0, [rbp - 8h]
         addss       xmm0, [rbp - 0Ch]
         movss       [rbp - 8h], xmm0
@@ -187,7 +193,7 @@ custom:
         comiss      xmm0, [rbp - 28h]
         ja          .loop
         movss       xmm0, [rbp - 8h]
-        pop         rbp
+        leave
         retn
 
 scan:
@@ -300,16 +306,20 @@ close_file:
 print_file:
     push        rbp
     mov         rbp, rsp
-    sub         rsp, 8
-    pxor        xmm2, xmm2
-    cvtss2sd    xmm2, xmm0
-    movq        rax, xmm2
-    movq        xmm0, rax
-    mov         rdi, [fd]
-    lea         rsi, aSeriesMember
+    sub         rsp, 10h
+    mov         [rbp - 4h], edi
+    movss       [rbp - 8h], xmm0
+    pxor        xmm1, xmm1
+    cvtss2sd    xmm1, [rbp - 8h]
+    movq        rcx, xmm1
+    mov         rax, [fd]
+    mov         edx, [rbp - 4h]
+    movq        xmm0, rcx
+    lea         rcx, aSeriesMember
+    mov         rsi, rcx
+    mov         rdi, rax
     mov         eax, 1
     call        fprintf
-    movq        xmm0, xmm2
-    add         rsp, 8
+    nop
     leave
     retn

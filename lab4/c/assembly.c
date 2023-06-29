@@ -9,6 +9,8 @@
 #define msg_lib_result "Lib result: %f\n"
 #define msg_custom_result "Custom result: %f\n"
 
+#define msg_file "%-10d %f"
+
 #define ZERO 0.0f
 #define MINUS_ONE -1.0f
 #define ONE 1.0f
@@ -35,6 +37,10 @@ float lib(float x) {
     return pow(res, THREE);
 }
 
+void printToFile(int i, float x) {
+    printf(msg_file, i, x);
+}
+
 float custom(float x, float precision) {
     
     float a_term = (x * x * x) / EIGHT;
@@ -45,6 +51,7 @@ float custom(float x, float precision) {
     int i = 0;
     
     while (fabs(term) > precision) {
+        printToFile(i, term);
         sum += term;
         i += 1;
         a_term = a_term * MINUS_ONE * (x * x) / ((TWO * i + TWO) * (TWO * i + THREE));
