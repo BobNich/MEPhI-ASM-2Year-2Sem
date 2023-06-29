@@ -14,11 +14,16 @@ section .data
     aLibResultF     db 'Lib result: %f',0Ah,0
     aCustomResultF  db 'Custom result: %f',0Ah,0
     three_double    dq 4008000000000000h
-    one             dd 3F800000h
     minus_one       dd 0BF800000h
-    three           dd 40400000h
     mask            dd 7FFFFFFFh
+    infinity        dd 7F7FFFFFh
+    zero            dd 80000000h
+    one             dd 3F800000h
+    two             dd 40000000h
+    three           dd 40400000h
     four            dd 40800000h
+    eight           dd 41000000h
+    nine            dd 41100000h
 
 section .bss
     filename resb 256
@@ -40,7 +45,7 @@ main:
     push    rbp
     mov     rbp, rsp
     push    rbx
-    sub     rsp, 18h
+    sub     rsp, 28h
     mov     eax, edi
     cmp     eax, 2
     jne     .args_error
@@ -121,145 +126,79 @@ lib:
     retn
 
 custom:
-    push    rbp
-    mov     rbp, rsp
-    sub     rsp, 18h
-    movss   [rbp - 14h], xmm0
-    movss   [rbp - 18h], xmm1
-    mov     qword[rbp - 0Ch], 0
-    pxor    xmm0, xmm0
-    movss   [rbp - 8h], xmm0
+    push        rbp
+    mov         rbp, rsp
+    sub         rsp, 30h
+    movss       [rbp - 24h], xmm0
+    movss       [rbp - 28h], xmm1
+    movss       xmm0, [rbp - 24h]
+    mulss       xmm0, xmm0
+    mulss       xmm0, [rbp - 24h]
+    movss       xmm1, [eight]
+    divss       xmm0, xmm1
+    movss       [rbp - 14h], xmm0
+    movss       xmm0, [eight]
+    movss       [rbp - 10h], xmm0
+    movss       xmm0, [rbp - 14h]
+    mulss       xmm0, [rbp - 10h]
+    movss       [rbp - 0Ch], xmm0
+    pxor        xmm0, xmm0
+    movss       [rbp - 8h], xmm0
+    mov         dword [rbp - 4h], 0
+    jmp         .end
     .loop:
-        add     qword[rbp - 0Ch], 1
-        mov     edx, [rbp - 0Ch]
-        mov     eax, [rbp - 14h]
-        mov     edi, edx        ; n
-        movd    xmm0, eax       ; x
-        call    series_member
-        movd    eax, xmm0
-        mov     [rbp - 4h], eax
-        call    print_file
-        call    check_infinity
-        movss   xmm0, [rbp - 8h]
-        addss   xmm0, [rbp - 4h]
-        movss   [rbp - 8h], xmm0
-        movss   xmm0, [rbp - 4h]
-        movss   xmm1, [mask]
-        andps   xmm0, xmm1
-        comiss  xmm0, [rbp - 18h]
-        jnb     .loop
-    movss   xmm1, [rbp - 8h]
-    movss   xmm0, [three]
-    mulss   xmm0, xmm1
-    movss   xmm1, [four]
-    divss   xmm0, xmm1
-    leave
-    retn
-
-series_member:
-    push    rbp
-    mov     rbp, rsp
-    sub     rsp, 18h
-    movss   [rbp - 14h], xmm0
-    mov     [rbp - 18h], edi
-    pxor    xmm1, xmm1
-    cvtsi2ss xmm1, [rbp - 18h]
-    movss   xmm0, [one]
-    addss   xmm0, xmm1
-    movaps  xmm1, xmm0      ; p
-    mov     eax, [minus_one]
-    movd    xmm0, eax       ; x
-    call    custom_pow
-    movd    eax, xmm0
-    mov     [rbp - 4h], eax
-    pxor    xmm0, xmm0
-    cvtsi2ss xmm0, [rbp - 18h]
-    addss   xmm0, xmm0
-    movaps  xmm1, xmm0      ; p
-    mov     eax, [three]
-    movd    xmm0, eax       ; x
-    call    custom_pow
-    movd    eax, xmm0
-    movss   xmm1, [one]
-    movd    xmm0, eax
-    subss   xmm0, xmm1
-    movss   xmm1, [rbp - 4h]
-    mulss   xmm0, xmm1
-    movss   [rbp - 4h], xmm0
-    pxor    xmm0, xmm0
-    cvtsi2ss xmm0, [rbp - 18h]
-    movaps  xmm1, xmm0
-    addss   xmm1, xmm0
-    movss   xmm0, [one]
-    addss   xmm0, xmm1
-    mov     eax, [rbp - 14h]
-    movaps  xmm1, xmm0      ; p
-    movd    xmm0, eax       ; x
-    call    custom_pow
-    movss   xmm1, [rbp - 4h]
-    mulss   xmm0, xmm1
-    movss   [rbp - 4h], xmm0
-    pxor    xmm0, xmm0
-    cvtsi2ss xmm0, [rbp - 18h]
-    movaps  xmm1, xmm0
-    addss   xmm1, xmm0
-    movss   xmm0, [one]
-    addss   xmm0, xmm1
-    cvttss2si eax, xmm0
-    mov     edi, eax        ; n
-    call    custom_fact
-    pxor    xmm1, xmm1
-    cvtsi2ss xmm1, eax
-    movss   xmm0, [rbp - 4h]
-    divss   xmm0, xmm1
-    movss   [rbp - 4h], xmm0
-    movss   xmm0, [rbp - 4h]
-    leave
-    retn
-
-custom_pow:
-    push    rbp
-    mov     rbp, rsp
-    movss   [rbp - 14h], xmm0
-    movss   [rbp - 18h], xmm1
-    movss   xmm0, [rbp - 14h]
-    movss   [rbp - 4h], xmm0
-    jmp     .check
-    .loop:
-        movss   xmm0, [rbp - 4h]
-        mulss   xmm0, [rbp - 14h]
-        movss   [rbp - 4h], xmm0
-        movss   xmm0, [rbp - 18h]
-        movss   xmm1, [one]
-        subss   xmm0, xmm1
-        movss   [rbp - 18h], xmm0
-        .check:
-            movss   xmm0, [rbp - 18h]
-            movss   xmm1, [one]
-            comiss  xmm0, xmm1
-        ja  .loop
-    movss   xmm0, [rbp - 4h]
-    pop     rbp
-    retn
-
-custom_fact:
-    push    rbp
-    mov     rbp, rsp
-    mov     [rbp - 14h], edi
-    mov     eax, [rbp - 14h]
-    mov     [rbp - 4h], eax
-    jmp     .check
-    .loop:
-        sub     dword[rbp - 14h], 1
-        mov     eax, [rbp - 4h]
-        imul    eax, [rbp - 14h]
-        mov     [rbp - 4h], eax
-        .check:
-            cmp     dword[rbp - 14h], 1
-            jg      .loop
-    mov     eax, [rbp - 4h]
-    pop     rbp
-    retn
+        mov         edx, [rbp - 0Ch]
+        mov         eax, [rbp - 4h]
+        movd        xmm0, edx
+        mov         edi, eax
+        call        print_file
+        mov         eax, [rbp - 0Ch]
+        movd        xmm0, eax
+        call        check_infinity
+        movss       xmm0, [rbp - 8h]
+        addss       xmm0, [rbp - 0Ch]
+        movss       [rbp - 8h], xmm0
+        add         dword [rbp - 4h], 1
+        movss       xmm0, [rbp - 14h]
+        movss       xmm1, [zero]
+        xorps       xmm1, xmm0
+        movss       xmm0, [rbp - 24h]
+        mulss       xmm0, xmm0
+        mulss       xmm1, xmm0
+        pxor        xmm0, xmm0
+        cvtsi2ss    xmm0, [rbp - 4h]
+        movaps      xmm2, xmm0
+        addss       xmm2, xmm0
+        movss       xmm0, [two]
+        addss       xmm2, xmm0
+        pxor        xmm0, xmm0
+        cvtsi2ss    xmm0, [rbp - 4h]
+        movaps      xmm3, xmm0
+        addss       xmm3, xmm0
+        movss       xmm0, [three]
+        addss       xmm0, xmm3
+        mulss       xmm2, xmm0
+        divss       xmm1, xmm2
+        movaps      xmm0, xmm1
+        movss       [rbp - 14h], xmm0
+        movss       xmm1, [rbp - 10h]
+        movss       xmm0, [nine]
+        mulss       xmm1, xmm0
+        movss       xmm0, [eight]
+        addss       xmm0, xmm1
+        movss       [rbp - 10h], xmm0
+        movss       xmm0, [rbp - 14h]
+        mulss       xmm0, [rbp - 10h]
+        movss       [rbp - 0Ch], xmm0
+    .end:
+        movss       xmm0, [rbp - 0Ch]
+        movss       xmm1, [mask]
+        andps       xmm0, xmm1
+        comiss      xmm0, [rbp - 28h]
+        ja          .loop
+        movss       xmm0, [rbp - 8h]
+        leave
+        retn
 
 scan:
     push    rbp
@@ -319,20 +258,26 @@ print:
 check_infinity:
     push    rbp
     mov     rbp, rsp
-    call    isinf
-    cmp     rax, 0
+    sub     rsp, 10h
+    movss   [rbp - 4h], xmm0
+    movss   xmm0, [rbp - 4h]
+    movss   xmm1, [mask]
+    andps   xmm0, xmm1
+    ucomiss xmm0, [infinity]
+    setbe   al
+    xor     eax, 1
+    test    al, al
+    jz      .not_infinity
     jne     .infinity
-    jmp     .not_infinity
     .infinity:
         mov     eax, 0
         lea     rdi, aTermInfinity
         call    printf
         call    close_file
-        mov     rdi, 1
+        mov     edi, 1
         call    exit
-        leave
-        ret 
     .not_infinity:
+        nop
         leave
         retn
 
@@ -371,16 +316,20 @@ close_file:
 print_file:
     push        rbp
     mov         rbp, rsp
-    sub         rsp, 8
-    pxor        xmm2, xmm2
-    cvtss2sd    xmm2, xmm0
-    movq        rax, xmm2
-    movq        xmm0, rax
-    mov         rdi, [fd]
-    lea         rsi, aSeriesMember
+    sub         rsp, 10h
+    mov         [rbp - 4h], edi
+    movss       [rbp - 8h], xmm0
+    pxor        xmm1, xmm1
+    cvtss2sd    xmm1, [rbp - 8h]
+    movq        rcx, xmm1
+    mov         rax, [fd]
+    mov         edx, [rbp - 4h]
+    movq        xmm0, rcx
+    lea         rcx, aSeriesMember
+    mov         rsi, rcx
+    mov         rdi, rax
     mov         eax, 1
     call        fprintf
-    movq        xmm0, xmm2
-    add         rsp, 8
+    nop
     leave
     retn
