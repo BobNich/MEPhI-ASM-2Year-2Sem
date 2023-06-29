@@ -9,11 +9,15 @@
 #define msg_lib_result "Lib result: %f\n"
 #define msg_custom_result "Custom result: %f\n"
 
+#define msg_infinity_term "Error: Term is infinity"
+
 #define ZERO 0.0f
 #define ONE 1.0f
 #define TWO 2.0f
 #define THREE 3.0f
 #define FOUR 4.0f
+#define EIGHT 8.0f
+#define NINE 9.0f
 
 void scan(float *x, float *precision) {
     printf(msg_scan_x);
@@ -32,44 +36,28 @@ float lib(float x) {
     return pow(res, THREE);
 }
 
-int custom_fact(int n) {
-    int res = n;
-    while (n > 1) {
-        n -= 1;
-        res *= n;
-    }
-    return res;
-}
-
-float custom_pow(float x, float p) {
-    float res = x;
-    while (p > 1) {
-        res *= x;
-        p -= 1;
-    }
-    return res;
-}
-
-float series_member(float x, int n) {
-    float res = custom_pow(-ONE, n + ONE);
-    res *= custom_pow(THREE, TWO * n) - ONE;
-    res *= custom_pow(x, TWO * n + ONE);
-    res /= custom_fact(TWO * n + ONE);
-    return res;
-}
-
 float custom(float x, float precision) {
-    int n = 0;
-    float res = ZERO, member;
-    do {
-        n += 1;
-        member = series_member(x, n);
-        res += member;
-    } while (fabs(member) >= precision);
-    return res * THREE / FOUR;
+    
+    float a_term = (x * x * x) / EIGHT;
+    float b_term = EIGHT;
+    float term = a_term * b_term;
+    
+    float sum = 0;
+    int i = 0;
+    
+    while (fabs(term) > precision) {
+        printf("Term: %f\n", term);
+        sum += term;
+        i += 1;
+        a_term = a_term * (-1) * (x * x) / ((TWO * i + TWO) * (TWO * i + THREE));
+        b_term = NINE * b_term + EIGHT;
+        term = a_term * b_term;
+    }
+    
+    return sum;
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     float x, precision;
     scan(&x, &precision);
     print(lib(x), custom(x, precision));
