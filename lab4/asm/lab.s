@@ -142,13 +142,13 @@ custom:
     movss       [rbp - 0Ch], xmm0
     pxor        xmm0,xmm0
     movss       [rbp - 8h], xmm0
-    mov         [rbp - 4h], 0
+    mov         qword [rbp - 4h], 0
     jmp         .end
     .loop:
         movss       xmm0, [rbp - 8h]
         addss       xmm0, [rbp - 0Ch]
         movss       [rbp - 8h], xmm0
-        add         [rbp - 4h], 1
+        add         qword [rbp - 4h], 1
         movss       xmm0, [rbp - 14h]
         movss       xmm1, [zero]
         xorps       xmm1, xmm0
