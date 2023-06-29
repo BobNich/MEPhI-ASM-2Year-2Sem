@@ -195,7 +195,18 @@ custom:
         movss       xmm1, [mask]
         andps       xmm0, xmm1
         comiss      xmm0, [rbp - 28h]
-        ja          .loop
+        jnb          .loop
+        mov         edx, [rbp - 0Ch]
+        mov         eax, [rbp - 4h]
+        movd        xmm0, edx
+        mov         edi, eax
+        call        print_file
+        mov         eax, [rbp - 0Ch]
+        movd        xmm0, eax
+        call        check_infinity
+        movss       xmm0, [rbp - 8h]
+        addss       xmm0, [rbp - 0Ch]
+        movss       [rbp - 8h], xmm0
         movss       xmm0, [rbp - 8h]
         leave
         retn
