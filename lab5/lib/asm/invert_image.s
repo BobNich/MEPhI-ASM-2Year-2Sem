@@ -23,8 +23,8 @@ invert_image:
     mov ecx, ecx ; channels
     
     ; Calculate pixel_count
-    mov r8, esi   ; r8 = width
-    imul r8, edx  ; r8 = width * height
+    mov r8, rsi   ; r8 = width
+    imul r8, rdx  ; r8 = width * height
     
     ; Loop counter
     xor r9d, r9d
@@ -32,7 +32,7 @@ invert_image:
 invert_loop:
     ; Calculate image_data index
     mov rax, r9  ; rax = loop_counter
-    imul rax, ecx  ; rax = loop_counter * channels
+    imul rax, rcx  ; rax = loop_counter * channels
     
     ; Invert the color channels
     xor byte [rdi + rax], 0xFF
