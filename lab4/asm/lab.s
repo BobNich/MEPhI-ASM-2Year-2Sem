@@ -44,11 +44,12 @@ main:
     push    rbp
     mov     rbp, rsp
     push    rbx
-    sub     rsp, 18h
+    sub     rsp, 28h
     mov     eax, edi
     cmp     eax, 2
     jne     .args_error
     mov	    rcx, [rsi + 8]
+    call    get_filename
     mov     [rbp - 18h], rax
     xor     eax, eax
     lea     rdx, [rbp - 1Ch]
@@ -56,6 +57,7 @@ main:
     mov     rsi, rdx        ; precision
     mov     rdi, rax        ; x
     call    scan
+    call    open_file
     movss   xmm0, [rbp - 1Ch]
     mov     eax, [rbp - 20h]
     movaps  xmm1, xmm0      ; precision
@@ -72,6 +74,7 @@ main:
     mov     eax, 0
     mov     rdx, [rbp - 18h]
     mov     rbx, [rbp - 8h]
+    call    close_file
     jmp     .end_program
     .args_error:
         mov     rdi, aArgsError
@@ -123,29 +126,29 @@ lib:
 
 custom:
     push        rbp
-    mov         rbp,rsp
+    mov         rbp, rsp
     movss       [rbp - 24h], xmm0
     movss       [rbp - 28h], xmm1
     movss       xmm0, [rbp - 24h]
-    mulss       xmm0,xmm0
+    mulss       xmm0, xmm0
     mulss       xmm0, [rbp - 24h]
     movss       xmm1, [eight]
-    divss       xmm0,xmm1
+    divss       xmm0, xmm1
     movss       [rbp - 14h], xmm0
     movss       xmm0, [eight]
-    movss       [rbp - 10h],xmm0
+    movss       [rbp - 10h], xmm0
     movss       xmm0, [rbp - 14h]
     mulss       xmm0, [rbp - 10h]
     movss       [rbp - 0Ch], xmm0
-    pxor        xmm0,xmm0
+    pxor        xmm0, xmm0
     movss       [rbp - 8h], xmm0
-    mov         qword [rbp - 4h], 0
+    mov         [rbp - 4h], 0
     jmp         .end
     .loop:
         movss       xmm0, [rbp - 8h]
         addss       xmm0, [rbp - 0Ch]
         movss       [rbp - 8h], xmm0
-        add         qword [rbp - 4h], 1
+        add         [rbp - 4h], 1
         movss       xmm0, [rbp - 14h]
         movss       xmm1, [zero]
         xorps       xmm1, xmm0
@@ -178,10 +181,10 @@ custom:
         mulss       xmm0, [rbp - 10h]
         movss       [rbp - 0Ch], xmm0
     .end:
-        movss       xmm0, [rbp-8h]
+        movss       xmm0, [rbp - 8h]
         movss       xmm1, [mask]
         andps       xmm0, xmm1
-        comiss      xmm0, [rbp-28h]
+        comiss      xmm0, [rbp - 28h]
         ja          .loop
         movss       xmm0, [rbp - 8h]
         pop         rbp
