@@ -16,10 +16,10 @@ int process_image(char *input_filename, char *output_filename) {
     }
 
     time_t start = clock();
-    invert_image(image_data, width, height, channels)
+    invert_image(image_data, width, height, channels);
     printf("Time: %f\n", ((double) clock() - start) / CLOCKS_PER_SEC);
 
-    if (!stbi_write_bmp(output_filename, width, height, channels, inverted_data)) {
+    if (!stbi_write_bmp(output_filename, width, height, channels, image_data)) {
         printf("Error writing output image: %s\n", stbi_failure_reason());
         free(inverted_data);
         stbi_image_free(image_data);
